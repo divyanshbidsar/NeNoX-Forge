@@ -6,119 +6,199 @@
   <title>Join Team NeNoX-Forge | Hackathon 2026</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    /* Custom CSS animations for smooth transition */
+    #splash-screen {
+      transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+    }
+    
+    .splash-logo {
+      transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), 
+                  width 1s cubic-bezier(0.16, 1, 0.3, 1), 
+                  height 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #main-content {
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    .content-visible {
+      opacity: 1 !important;
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-      
-      <!-- Video Logo Group -->
-      <div class="flex items-center space-x-3">
-        <video 
-          src="logo.mp4" 
-          autoplay 
-          loop 
-          muted 
-          playsinline 
-          class="h-10 w-10 rounded-full border border-slate-700/50 object-cover shadow-sm">
-        </video>
-        <span class="font-bold text-lg tracking-wide text-white">NeNoX-Forge</span>
-      </div>
-
-      <a href="#apply" class="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-all shadow-md shadow-indigo-600/30">
-        Apply Now
-      </a>
+  <!-- FULL-SCREEN SPLASH LOADING OVERLAY -->
+  <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center pointer-events-auto">
+    <div id="splash-logo-container" class="flex flex-col items-center space-y-4">
+      <video 
+        src="logo.mp4" 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        class="splash-logo h-32 w-32 rounded-full border-2 border-indigo-500/50 object-cover shadow-2xl shadow-indigo-500/30">
+      </video>
+      <span id="splash-text" class="text-2xl font-extrabold tracking-widest text-white uppercase transition-opacity duration-500">
+        NeNoX-Forge
+      </span>
     </div>
-  </nav>
+  </div>
 
-  <!-- HERO SECTION -->
-  <header class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-    <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">
-      🚀 Campus Recruitment
-    </span>
-    <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 text-white tracking-tight leading-tight">
-      Building the next big project for the Hackathon.
-    </h1>
-    <p class="text-slate-400 text-lg sm:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
-      We are looking for motivated developers, designers, and innovators to join team <span class="text-indigo-400 font-semibold">NeNoX-Forge</span>. Let's collaborate, build fast, and win together.
-    </p>
-    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <a href="#apply" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
-        Join the Team
-      </a>
-      <a href="#roles" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium px-8 py-3.5 rounded-xl transition-all">
-        View Open Roles
-      </a>
-    </div>
-  </header>
-
-  <!-- OPEN ROLES SECTION -->
-  <section id="roles" class="max-w-5xl mx-auto px-6 py-16 border-t border-slate-800/60">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-white">Roles We Are Recruiting</h2>
-      <p class="text-slate-400 mt-2">No prior hackathon experience required—just commitment and enthusiasm!</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <!-- Role 1: Frontend / Fullstack -->
-      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
-          &lt;/&gt;
+  <!-- MAIN WEBSITE CONTENT -->
+  <div id="main-content" class="min-h-screen flex flex-col justify-between">
+    
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
+      <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        
+        <!-- Video Logo Placeholder Target -->
+        <div class="flex items-center space-x-3">
+          <div id="nav-logo-target" class="h-10 w-10">
+            <!-- Logo lands here after splash animation -->
+          </div>
+          <span class="font-bold text-lg tracking-wide text-white">NeNoX-Forge</span>
         </div>
-        <h3 class="text-xl font-bold text-white">Frontend / Web Dev</h3>
-        <p class="text-slate-400 text-sm mt-2">
-          Help craft clean interfaces and fast interactive web applications using React, Next.js, or HTML/Tailwind.
-        </p>
+
+        <a href="#apply" class="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-all shadow-md shadow-indigo-600/30">
+          Apply Now
+        </a>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+      <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">
+        🚀 Campus Recruitment
+      </span>
+      <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 text-white tracking-tight leading-tight">
+        Building the next big project for the Hackathon.
+      </h1>
+      <p class="text-slate-400 text-lg sm:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
+        We are looking for motivated developers, designers, and innovators to join team <span class="text-indigo-400 font-semibold">NeNoX-Forge</span>. Let's collaborate, build fast, and win together.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="#apply" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
+          Join the Team
+        </a>
+        <a href="#roles" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium px-8 py-3.5 rounded-xl transition-all">
+          View Open Roles
+        </a>
+      </div>
+    </header>
+
+    <!-- OPEN ROLES SECTION -->
+    <section id="roles" class="max-w-5xl mx-auto px-6 py-16 border-t border-slate-800/60">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white">Roles We Are Recruiting</h2>
+        <p class="text-slate-400 mt-2">No prior hackathon experience required—just commitment and enthusiasm!</p>
       </div>
 
-      <!-- Role 2: Backend / AI -->
-      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
-          ⚡
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+            &lt;/&gt;
+          </div>
+          <h3 class="text-xl font-bold text-white">Frontend / Web Dev</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Help craft clean interfaces and fast interactive web applications using React, Next.js, or HTML/Tailwind.
+          </p>
         </div>
-        <h3 class="text-xl font-bold text-white">Backend & AI / ML</h3>
-        <p class="text-slate-400 text-sm mt-2">
-          Build robust REST APIs, handle database logic, or integrate LLMs and machine learning models using Python/Node.js.
-        </p>
-      </div>
 
-      <!-- Role 3: UI/UX & Pitch -->
-      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
-          🎨
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+            ⚡
+          </div>
+          <h3 class="text-xl font-bold text-white">Backend & AI / ML</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Build robust REST APIs, handle database logic, or integrate LLMs and machine learning models using Python/Node.js.
+          </p>
         </div>
-        <h3 class="text-xl font-bold text-white">UI/UX & Presenter</h3>
-        <p class="text-slate-400 text-sm mt-2">
-          Design beautiful Figma prototypes, craft compelling pitch decks, and present our final solution to judges.
-        </p>
+
+        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+            🎨
+          </div>
+          <h3 class="text-xl font-bold text-white">UI/UX & Presenter</h3>
+          <p class="text-slate-400 text-sm mt-2">
+            Design beautiful Figma prototypes, craft compelling pitch decks, and present our final solution to judges.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- APPLICATION SECTION -->
+    <section id="apply" class="max-w-3xl mx-auto px-6 py-16 border-t border-slate-800/60 w-full">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-white">Apply for the Team</h2>
+        <p class="text-slate-400 mt-2">Fill out this quick form. It takes less than 2 minutes.</p>
       </div>
 
-    </div>
-  </section>
-
-  <!-- APPLICATION SECTION -->
-  <section id="apply" class="max-w-3xl mx-auto px-6 py-16 border-t border-slate-800/60 w-full">
-    <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-white">Apply for the Team</h2>
-      <p class="text-slate-400 mt-2">Fill out this quick form. It takes less than 2 minutes.</p>
-    </div>
-
-    <!-- FORM PLACEHOLDER / EMBED CONTAINER -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-8 shadow-2xl">
-      <!-- REPLACE THE PLACEHOLDER BELOW WITH YOUR TALLY IFRAME WHEN READY -->
-      <div class="text-center py-12">
-        <p class="text-slate-300 font-medium">Application form area.</p>
-        <p class="text-slate-500 text-sm mt-2">Create a form on Tally.so and embed the link here!</p>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-8 shadow-2xl">
+        <div class="text-center py-12">
+          <p class="text-slate-300 font-medium">Application form area.</p>
+          <p class="text-slate-500 text-sm mt-2">Create a form on Tally.so and embed the link here!</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-900 bg-slate-950/50 py-8 text-center text-slate-500 text-sm">
-    <p>© 2026 Team NeNoX-Forge • Built for University Hackathon Recruitment</p>
-  </footer>
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-900 bg-slate-950/50 py-8 text-center text-slate-500 text-sm">
+      <p>© 2026 Team NeNoX-Forge • Built for University Hackathon Recruitment</p>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT FOR 3-SECOND SPLASH ANIMATION -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const splashScreen = document.getElementById('splash-screen');
+      const splashText = document.getElementById('splash-text');
+      const splashLogoContainer = document.getElementById('splash-logo-container');
+      const videoLogo = splashScreen.querySelector('video');
+      const navTarget = document.getElementById('nav-logo-target');
+      const mainContent = document.getElementById('main-content');
+
+      // Wait 2.2 seconds before starting the transition to the navbar
+      setTimeout(() => {
+        // Hide splash text
+        splashText.style.opacity = '0';
+
+        // Get coordinates of the navbar logo target
+        const targetRect = navTarget.getBoundingClientRect();
+        const startRect = videoLogo.getBoundingClientRect();
+
+        // Calculate translation delta
+        const deltaX = targetRect.left - startRect.left - (startRect.width - targetRect.width) / 2;
+        const deltaY = targetRect.top - startRect.top - (startRect.height - targetRect.height) / 2;
+
+        // Shrink video and move it precisely to navbar position
+        videoLogo.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        videoLogo.style.width = '40px';
+        videoLogo.style.height = '40px';
+        videoLogo.style.borderWidth = '1px';
+
+        // Fade in main site content
+        mainContent.classList.add('content-visible');
+
+        // After 1 second (animation finish), dock logo permanently in navbar & clean up splash screen
+        setTimeout(() => {
+          videoLogo.style.transform = 'none';
+          videoLogo.className = 'h-10 w-10 rounded-full border border-slate-700/50 object-cover shadow-sm';
+          navTarget.appendChild(videoLogo);
+          splashScreen.style.opacity = '0';
+          splashScreen.style.visibility = 'hidden';
+          splashScreen.style.pointerEvents = 'none';
+        }, 1000);
+
+      }, 2200); // 2.2s delay + 0.8s movement = exactly 3 seconds total splash time
+    });
+  </script>
 
 </body>
 </html>
