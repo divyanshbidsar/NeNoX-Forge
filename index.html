@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Join Team NeNoX-Forge | Hackathon 2026</title>
+  <title>NeNoX Forge | Hackathon Team Recruitment</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons for Discord & Document -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* Custom CSS transitions for splash animation */
+    /* Custom animations */
     #splash-screen {
       transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
     }
@@ -29,149 +31,186 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="bg-black text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
 
   <!-- FULL-SCREEN SPLASH LOADING OVERLAY -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center pointer-events-auto">
+  <div id="splash-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center pointer-events-auto">
     <div id="splash-logo-container" class="flex flex-col items-center space-y-4">
       <video 
-        src="logo.mp4" 
+        src="./logo.mp4" 
         autoplay 
         loop 
         muted 
         playsinline 
-        class="splash-logo h-32 w-32 rounded-full border-2 border-indigo-500/50 object-cover shadow-2xl shadow-indigo-500/30">
+        class="splash-logo h-36 w-36 rounded-full border-2 border-red-600/60 object-cover shadow-[0_0_50px_rgba(220,38,38,0.5)]">
       </video>
       <span id="splash-text" class="text-2xl font-extrabold tracking-widest text-white uppercase transition-opacity duration-500">
-        NeNoX-Forge
+        NeNoX Forge
       </span>
     </div>
   </div>
 
   <!-- MAIN WEBSITE CONTENT -->
-  <div id="main-content" class="min-h-screen flex flex-col justify-between">
+  <div id="main-content" class="min-h-screen flex flex-col justify-between relative">
     
     <!-- NAVBAR -->
-    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
-      <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-black/80 border-b border-red-900/40">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         
-        <!-- Video Logo Target (Splash docks here) -->
+        <!-- Video Logo Target -->
         <div class="flex items-center space-x-3">
           <div id="nav-logo-target" class="h-10 w-10">
             <!-- Animated Logo Lands Here -->
           </div>
-          <span class="font-bold text-lg tracking-wide text-white">NeNoX-Forge</span>
+          <span class="font-bold text-xl tracking-wider text-white">NeNoX Forge</span>
         </div>
 
-        <a href="#apply" class="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-all shadow-md shadow-indigo-600/30">
-          Apply Now
+        <a href="#apply" class="text-sm font-semibold bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-red-600/30">
+          Apply Link
         </a>
       </div>
     </nav>
 
-    <!-- HERO SECTION WITH VIDEO BACKGROUND -->
-    <header class="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center overflow-hidden rounded-3xl my-6 border border-slate-800/80 w-[calc(100%-2rem)]">
+    <!-- HERO SECTION (MATCHING YOUR REFERENCE IMAGE LAYOUT) -->
+    <header class="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 overflow-hidden">
       
-      <!-- Hero Background Video -->
+      <!-- BACKGROUND VIDEO WITH RED TINT OVERLAY -->
       <video 
-        src="bg-video.mp4" 
+        src="./bg-video.mp4" 
         autoplay 
         loop 
         muted 
         playsinline 
-        class="absolute inset-0 w-full h-full object-cover z-0 opacity-25 filter blur-[1px]">
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-30 filter blur-[1px]">
       </video>
 
-      <!-- Vignette Overlay for Text Contrast -->
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/50 z-0"></div>
+      <!-- Crimson Gradient Overlay for Deep Red Theme -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-red-950/40 z-0"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.15)_0%,transparent_70%)] z-0"></div>
 
-      <!-- Hero Content Layer -->
-      <div class="relative z-10">
-        <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">
-          🚀 Campus Recruitment
-        </span>
-        <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 text-white tracking-tight leading-tight">
-          Building the next big project for the Hackathon.
-        </h1>
-        <p class="text-slate-300 text-lg sm:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
-          We are looking for motivated developers, designers, and innovators to join team <span class="text-indigo-400 font-semibold">NeNoX-Forge</span>. Let's collaborate, build fast, and win together.
-        </p>
-        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <a href="#apply" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
-            Join the Team
-          </a>
-          <a href="#roles" class="w-full sm:w-auto bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700 font-medium px-8 py-3.5 rounded-xl transition-all backdrop-blur-sm">
-            View Open Roles
-          </a>
+      <!-- 3-COLUMN REFERENCE GRID -->
+      <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- LEFT COLUMN: ABOUT / MISSION TEXT -->
+        <div class="lg:col-span-5 text-left space-y-4 bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-red-900/30 shadow-2xl">
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+            NeNoX Forge
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            We are building a dedicated team of students to compete—and win—in hackathons all year long. We won't micro-manage you, push you to care, or chase you for updates. We want self-driven builders who want to be here, collaborate, and execute on their own initiative.
+          </p>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed pt-2 border-t border-red-900/40">
+            Here's the deal: When you hit a wall or face a tough technical challenge, we've got your back with guidance and support. But the fire to show up and build has to come from you.
+          </p>
         </div>
-      </div>
 
+        <!-- CENTER COLUMN: HERO LOGO VIDEO -->
+        <div class="lg:col-span-3 flex justify-center items-center py-6">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-rose-700 rounded-full blur-xl opacity-50 group-hover:opacity-80 transition duration-1000"></div>
+            <video 
+              src="./logo.mp4" 
+              autoplay 
+              loop 
+              muted 
+              playsinline 
+              class="relative h-64 w-64 sm:h-72 sm:w-72 rounded-full object-cover border-2 border-red-600/80 shadow-2xl shadow-red-900/50">
+            </video>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: ACTION LINKS & COMMUNITY -->
+        <div class="lg:col-span-4 flex flex-col justify-center space-y-6 pl-0 lg:pl-6">
+          
+          <!-- Discord Link -->
+          <a href="https://discord.gg" target="_blank" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
+            <div class="w-12 h-12 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-brands fa-discord"></i>
+            </div>
+            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
+              NeNoX Forge Server
+            </span>
+          </a>
+
+          <!-- Application Link -->
+          <a href="#apply" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
+            <div class="w-12 h-12 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
+              Application Link
+            </span>
+          </a>
+
+          <!-- Team Details Link -->
+          <a href="#roles" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
+            <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
+              Team Details
+            </span>
+          </a>
+
+        </div>
+
+      </div>
     </header>
 
-    <!-- OPEN ROLES SECTION -->
-    <section id="roles" class="max-w-5xl mx-auto px-6 py-16 border-t border-slate-800/60">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-white">Roles We Are Recruiting</h2>
-        <p class="text-slate-400 mt-2">No prior hackathon experience required—just commitment and enthusiasm!</p>
+    <!-- SCROLL CONTENT: ROLES SECTION -->
+    <section id="roles" class="max-w-6xl mx-auto px-6 py-24 border-t border-red-900/30 w-full">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Open Team Roles</h2>
+        <p class="text-red-400/80 mt-2">Scroll down to view requirements and join our lineup</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- Role 1 -->
-        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
+          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
             &lt;/&gt;
           </div>
-          <h3 class="text-xl font-bold text-white">Frontend / Web Dev</h3>
-          <p class="text-slate-400 text-sm mt-2">
-            Help craft clean interfaces and fast interactive web applications using React, Next.js, or HTML/Tailwind.
-          </p>
+          <h3 class="text-xl font-bold text-white">Frontend Dev</h3>
+          <p class="text-slate-400 text-sm mt-2">React, Tailwind CSS, Next.js, UI architecture.</p>
         </div>
 
-        <!-- Role 2 -->
-        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
+          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
             ⚡
           </div>
-          <h3 class="text-xl font-bold text-white">Backend & AI / ML</h3>
-          <p class="text-slate-400 text-sm mt-2">
-            Build robust REST APIs, handle database logic, or integrate LLMs and machine learning models using Python/Node.js.
-          </p>
+          <h3 class="text-xl font-bold text-white">Backend & AI</h3>
+          <p class="text-slate-400 text-sm mt-2">Python, Node.js, REST APIs, LLMs & ML pipelines.</p>
         </div>
 
-        <!-- Role 3 -->
-        <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
+          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
             🎨
           </div>
-          <h3 class="text-xl font-bold text-white">UI/UX & Presenter</h3>
-          <p class="text-slate-400 text-sm mt-2">
-            Design beautiful Figma prototypes, craft compelling pitch decks, and present our final solution to judges.
-          </p>
+          <h3 class="text-xl font-bold text-white">UI/UX & Pitch</h3>
+          <p class="text-slate-400 text-sm mt-2">Figma, product design, pitch deck creation, presenting.</p>
         </div>
 
       </div>
     </section>
 
-    <!-- APPLICATION SECTION -->
-    <section id="apply" class="max-w-3xl mx-auto px-6 py-16 border-t border-slate-800/60 w-full">
+    <!-- SCROLL CONTENT: APPLICATION FORM SECTION -->
+    <section id="apply" class="max-w-3xl mx-auto px-6 py-20 border-t border-red-900/30 w-full">
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-white">Apply for the Team</h2>
-        <p class="text-slate-400 mt-2">Fill out this quick form. It takes less than 2 minutes.</p>
+        <h2 class="text-3xl font-bold text-white">Apply for NeNoX Forge</h2>
+        <p class="text-slate-400 mt-2">Ready to execute? Fill out the form below.</p>
       </div>
 
-      <!-- EMBED FORM CONTAINER -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-8 shadow-2xl">
+      <div class="bg-red-950/10 border border-red-900/40 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm">
         <div class="text-center py-12">
-          <p class="text-slate-300 font-medium">Application form area.</p>
-          <p class="text-slate-500 text-sm mt-2">Create a form on Tally.so and embed the link here!</p>
+          <p class="text-slate-300 font-medium">Application Form Container</p>
+          <p class="text-red-400/70 text-sm mt-2">Embed your Tally.so form link here when ready.</p>
         </div>
       </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="border-t border-slate-900 bg-slate-950/50 py-8 text-center text-slate-500 text-sm">
-      <p>© 2026 Team NeNoX-Forge • Built for University Hackathon Recruitment</p>
+    <footer class="border-t border-red-900/30 bg-black/80 py-8 text-center text-slate-500 text-sm">
+      <p>© 2026 Team NeNoX Forge • Built for University Hackathons</p>
     </footer>
 
   </div>
@@ -203,7 +242,7 @@
 
         setTimeout(() => {
           videoLogo.style.transform = 'none';
-          videoLogo.className = 'h-10 w-10 rounded-full border border-slate-700/50 object-cover shadow-sm';
+          videoLogo.className = 'h-10 w-10 rounded-full border border-red-600/60 object-cover shadow-sm';
           navTarget.appendChild(videoLogo);
           splashScreen.style.opacity = '0';
           splashScreen.style.visibility = 'hidden';
