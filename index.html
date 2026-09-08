@@ -12,10 +12,20 @@
   <!-- NAVBAR -->
   <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
     <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <span class="w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></span>
+      
+      <!-- Video Logo Group -->
+      <div class="flex items-center space-x-3">
+        <video 
+          src="logo.mp4" 
+          autoplay 
+          loop 
+          muted 
+          playsinline 
+          class="h-10 w-10 rounded-full border border-slate-700/50 object-cover shadow-sm">
+        </video>
         <span class="font-bold text-lg tracking-wide text-white">NeNoX-Forge</span>
       </div>
+
       <a href="#apply" class="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition-all shadow-md shadow-indigo-600/30">
         Apply Now
       </a>
@@ -95,9 +105,13 @@
       <p class="text-slate-400 mt-2">Fill out this quick form. It takes less than 2 minutes.</p>
     </div>
 
-    <!-- FORM PLACEHOLDER -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
-      <p class="text-slate-300 font-medium">Application form will appear here once we set up Tally.so!</p>
+    <!-- FORM PLACEHOLDER / EMBED CONTAINER -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-8 shadow-2xl">
+      <!-- REPLACE THE PLACEHOLDER BELOW WITH YOUR TALLY IFRAME WHEN READY -->
+      <div class="text-center py-12">
+        <p class="text-slate-300 font-medium">Application form area.</p>
+        <p class="text-slate-500 text-sm mt-2">Create a form on Tally.so and embed the link here!</p>
+      </div>
     </div>
   </section>
 
