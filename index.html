@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <style>
-    /* Custom CSS animations for smooth transition */
+    /* Custom CSS transitions for splash animation */
     #splash-screen {
       transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
     }
@@ -55,10 +55,10 @@
     <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
       <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         
-        <!-- Video Logo Placeholder Target -->
+        <!-- Video Logo Target (Splash docks here) -->
         <div class="flex items-center space-x-3">
           <div id="nav-logo-target" class="h-10 w-10">
-            <!-- Logo lands here after splash animation -->
+            <!-- Animated Logo Lands Here -->
           </div>
           <span class="font-bold text-lg tracking-wide text-white">NeNoX-Forge</span>
         </div>
@@ -69,25 +69,43 @@
       </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <header class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-      <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">
-        🚀 Campus Recruitment
-      </span>
-      <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 text-white tracking-tight leading-tight">
-        Building the next big project for the Hackathon.
-      </h1>
-      <p class="text-slate-400 text-lg sm:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
-        We are looking for motivated developers, designers, and innovators to join team <span class="text-indigo-400 font-semibold">NeNoX-Forge</span>. Let's collaborate, build fast, and win together.
-      </p>
-      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <a href="#apply" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
-          Join the Team
-        </a>
-        <a href="#roles" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium px-8 py-3.5 rounded-xl transition-all">
-          View Open Roles
-        </a>
+    <!-- HERO SECTION WITH VIDEO BACKGROUND -->
+    <header class="relative max-w-5xl mx-auto px-6 pt-24 pb-20 text-center overflow-hidden rounded-3xl my-6 border border-slate-800/80 w-[calc(100%-2rem)]">
+      
+      <!-- Hero Background Video -->
+      <video 
+        src="bg-video.mp4" 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-25 filter blur-[1px]">
+      </video>
+
+      <!-- Vignette Overlay for Text Contrast -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/50 z-0"></div>
+
+      <!-- Hero Content Layer -->
+      <div class="relative z-10">
+        <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">
+          🚀 Campus Recruitment
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-extrabold mt-6 text-white tracking-tight leading-tight">
+          Building the next big project for the Hackathon.
+        </h1>
+        <p class="text-slate-300 text-lg sm:text-xl mt-6 max-w-2xl mx-auto leading-relaxed">
+          We are looking for motivated developers, designers, and innovators to join team <span class="text-indigo-400 font-semibold">NeNoX-Forge</span>. Let's collaborate, build fast, and win together.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a href="#apply" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
+            Join the Team
+          </a>
+          <a href="#roles" class="w-full sm:w-auto bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700 font-medium px-8 py-3.5 rounded-xl transition-all backdrop-blur-sm">
+            View Open Roles
+          </a>
+        </div>
       </div>
+
     </header>
 
     <!-- OPEN ROLES SECTION -->
@@ -99,6 +117,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
+        <!-- Role 1 -->
         <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
           <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
             &lt;/&gt;
@@ -109,6 +128,7 @@
           </p>
         </div>
 
+        <!-- Role 2 -->
         <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
           <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
             ⚡
@@ -119,6 +139,7 @@
           </p>
         </div>
 
+        <!-- Role 3 -->
         <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800 hover:border-indigo-500/50 transition-all">
           <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold mb-4">
             🎨
@@ -139,6 +160,7 @@
         <p class="text-slate-400 mt-2">Fill out this quick form. It takes less than 2 minutes.</p>
       </div>
 
+      <!-- EMBED FORM CONTAINER -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-8 shadow-2xl">
         <div class="text-center py-12">
           <p class="text-slate-300 font-medium">Application form area.</p>
@@ -154,39 +176,31 @@
 
   </div>
 
-  <!-- JAVASCRIPT FOR 3-SECOND SPLASH ANIMATION -->
+  <!-- JAVASCRIPT FOR SPLASH SCREEN TRANSITION -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       const splashScreen = document.getElementById('splash-screen');
       const splashText = document.getElementById('splash-text');
-      const splashLogoContainer = document.getElementById('splash-logo-container');
       const videoLogo = splashScreen.querySelector('video');
       const navTarget = document.getElementById('nav-logo-target');
       const mainContent = document.getElementById('main-content');
 
-      // Wait 2.2 seconds before starting the transition to the navbar
       setTimeout(() => {
-        // Hide splash text
         splashText.style.opacity = '0';
 
-        // Get coordinates of the navbar logo target
         const targetRect = navTarget.getBoundingClientRect();
         const startRect = videoLogo.getBoundingClientRect();
 
-        // Calculate translation delta
         const deltaX = targetRect.left - startRect.left - (startRect.width - targetRect.width) / 2;
         const deltaY = targetRect.top - startRect.top - (startRect.height - targetRect.height) / 2;
 
-        // Shrink video and move it precisely to navbar position
         videoLogo.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         videoLogo.style.width = '40px';
         videoLogo.style.height = '40px';
         videoLogo.style.borderWidth = '1px';
 
-        // Fade in main site content
         mainContent.classList.add('content-visible');
 
-        // After 1 second (animation finish), dock logo permanently in navbar & clean up splash screen
         setTimeout(() => {
           videoLogo.style.transform = 'none';
           videoLogo.className = 'h-10 w-10 rounded-full border border-slate-700/50 object-cover shadow-sm';
@@ -196,7 +210,7 @@
           splashScreen.style.pointerEvents = 'none';
         }, 1000);
 
-      }, 2200); // 2.2s delay + 0.8s movement = exactly 3 seconds total splash time
+      }, 2200);
     });
   </script>
 
