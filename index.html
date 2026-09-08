@@ -6,11 +6,11 @@
   <title>NeNoX Forge | Hackathon Team Recruitment</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons for Discord & Document -->
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* Custom animations */
+    /* Custom splash animations */
     #splash-screen {
       transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
     }
@@ -65,13 +65,20 @@
           <span class="font-bold text-xl tracking-wider text-white">NeNoX Forge</span>
         </div>
 
-        <a href="#apply" class="text-sm font-semibold bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-red-600/30">
-          Apply Link
+        <!-- Discord Button (Top Right) -->
+        <a 
+          href="https://discord.gg" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/30">
+          <i class="fa-brands fa-discord text-lg"></i>
+          <span>Join Discord</span>
         </a>
+
       </div>
     </nav>
 
-    <!-- HERO SECTION (MATCHING YOUR REFERENCE IMAGE LAYOUT) -->
+    <!-- HERO SECTION -->
     <header class="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 overflow-hidden">
       
       <!-- BACKGROUND VIDEO WITH RED TINT OVERLAY -->
@@ -84,7 +91,7 @@
         class="absolute inset-0 w-full h-full object-cover z-0 opacity-30 filter blur-[1px]">
       </video>
 
-      <!-- Crimson Gradient Overlay for Deep Red Theme -->
+      <!-- Crimson Gradient Overlay -->
       <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-red-950/40 z-0"></div>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.15)_0%,transparent_70%)] z-0"></div>
 
@@ -157,47 +164,103 @@
       </div>
     </header>
 
-    <!-- SCROLL CONTENT: ROLES SECTION -->
-    <section id="roles" class="max-w-6xl mx-auto px-6 py-24 border-t border-red-900/30 w-full">
+    <!-- ROLES SECTION -->
+    <section id="roles" class="max-w-7xl mx-auto px-6 py-24 border-t border-red-900/30 w-full">
       <div class="text-center mb-16">
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Open Team Roles</h2>
-        <p class="text-red-400/80 mt-2">Scroll down to view requirements and join our lineup</p>
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white">Team Details & Open Roles</h2>
+        <p class="text-red-400/80 mt-3 text-lg">Detailed breakdown of specialized roles for our hackathon lineup</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
-          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
-            &lt;/&gt;
+        <!-- ROLE 1: Ethical Hacker -->
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Ethical Hacker / Security Specialist</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Linux (Debian/Arch/RHEL), Bash/Shell scripting, Nmap, Metasploit, Wireshark, Burp Suite, Network Security, System Hardening.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              You are the team's defensive shield and offensive strategist. Your job is to secure application endpoints, manage secure cloud/Linux deployments, and identify critical vulnerabilities before deployment. For cybersecurity-focused hackathon tracks, you lead exploit demonstrations, write custom penetration scripts, and ensure all API integrations adhere to strict zero-trust standards under intense time constraints.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-white">Frontend Dev</h3>
-          <p class="text-slate-400 text-sm mt-2">React, Tailwind CSS, Next.js, UI architecture.</p>
         </div>
 
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
-          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
-            ⚡
+        <!-- ROLE 2: Frontend Developer -->
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-code"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Frontend Developer</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> React.js, Next.js, TypeScript, Tailwind CSS, Redux/Zustand, WebSockets, Responsive UI Architecture.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              You own the client-side execution and user experience. You convert raw Figma prototypes into production-ready, lightning-fast web applications. You are responsible for modular state management, seamless API integration, dynamic client-side rendering, and ensuring the final product looks polished, responsive, and ready for live judge demonstrations within hours.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-white">Backend & AI</h3>
-          <p class="text-slate-400 text-sm mt-2">Python, Node.js, REST APIs, LLMs & ML pipelines.</p>
         </div>
 
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/60 transition-all backdrop-blur-sm">
-          <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 font-bold text-xl mb-4">
-            🎨
+        <!-- ROLE 3: Backend Developer -->
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Backend Developer</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Python (FastAPI/Django), Node.js (Express), RESTful & GraphQL APIs, PostgreSQL/MongoDB, Redis, LLM Integration, ML Pipelines.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              You build the engine powering our applications. Your primary focus is designing scalable server architectures, optimizing database schema, managing authentication flows, and integrating AI models or external data pipelines. You work closely with the frontend team to supply clean endpoints and keep backend response times virtually instantaneous during live stress tests.
+            </p>
           </div>
-          <h3 class="text-xl font-bold text-white">UI/UX & Pitch</h3>
-          <p class="text-slate-400 text-sm mt-2">Figma, product design, pitch deck creation, presenting.</p>
+        </div>
+
+        <!-- ROLE 4: Research, Strategy & PM -->
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Research, Strategy & PM</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Market & Academic Research, Agile/Scrum Management, Problem Framing, Notion/Jira, Pitch Deck Strategy, Executive Storytelling.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              You are the team’s operational backbone and product strategist. You validate problem statements, analyze target audience pain points, and define the core minimum viable product (MVP) scope so developers don't waste time on non-essential features. You maintain strict sprint timelines during 24–48 hour hackathons, manage documentation, and craft the winning narrative for final judge presentations.
+            </p>
+          </div>
+        </div>
+
+        <!-- ROLE 5: UI/UX Designer & Product Lead -->
+        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group lg:col-span-2">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">UI/UX Designer & Product Lead</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Figma, Interactive Prototyping, Design Systems, Wireframing, User Flow Mapping, Pitch Deck Visuals, UI Motion/Animation.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              You define how the product feels, functions, and presents to judges. You translate rough ideas into clean, intuitive wireframes and high-fidelity interactive prototypes. You establish the visual brand, design system, and color palette early in the sprint, ensuring the engineering team has clear UI guidelines. Additionally, you design high-impact pitch deck visuals that hook judges instantly.
+            </p>
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- SCROLL CONTENT: APPLICATION FORM SECTION -->
+    <!-- APPLICATION SECTION -->
     <section id="apply" class="max-w-3xl mx-auto px-6 py-20 border-t border-red-900/30 w-full">
       <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-white">Apply for NeNoX Forge</h2>
-        <p class="text-slate-400 mt-2">Ready to execute? Fill out the form below.</p>
+        <p class="text-slate-400 mt-2">Ready to execute? Fill out the form linked above and join Discord.</p>
       </div>
 
       <div class="bg-red-950/10 border border-red-900/40 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm">
@@ -205,6 +268,13 @@
           <p class="text-slate-300 font-medium">Application Form Container</p>
           <p class="text-red-400/70 text-sm mt-2">Embed your Tally.so form link here when ready.</p>
         </div>
+      </div>
+
+      <!-- CLOSING MOTTO -->
+      <div class="text-center mt-10">
+        <p class="text-lg font-semibold tracking-wide text-red-500 uppercase">
+          Build on NeNoX <i class="fa-solid fa-heart text-red-600 animate-pulse mx-1"></i> to ace competition
+        </p>
       </div>
     </section>
 
@@ -215,8 +285,22 @@
 
   </div>
 
-  <!-- JAVASCRIPT FOR SPLASH SCREEN TRANSITION -->
+  <!-- FLOATING MUSIC TOGGLE BUTTON -->
+  <button 
+    id="music-toggle" 
+    aria-label="Toggle Background Music"
+    class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-red-950/80 border border-red-900/60 text-slate-400 hover:text-white hover:bg-red-900/90 hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.3)] transition-all duration-300 backdrop-blur-md group">
+    <i id="music-icon" class="fa-solid fa-music text-lg group-hover:rotate-12 transition-transform"></i>
+  </button>
+
+  <!-- AMBIENT AUDIO ELEMENT -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="./ambient.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- SCRIPTS -->
   <script>
+    // Splash Screen Transition Script
     window.addEventListener('DOMContentLoaded', () => {
       const splashScreen = document.getElementById('splash-screen');
       const splashText = document.getElementById('splash-text');
@@ -250,6 +334,46 @@
         }, 1000);
 
       }, 2200);
+    });
+
+    // Background Audio Control Script
+    document.addEventListener('DOMContentLoaded', () => {
+      const music = document.getElementById('bg-music');
+      const musicBtn = document.getElementById('music-toggle');
+      const musicIcon = document.getElementById('music-icon');
+
+      music.volume = 0.3; // 30% ambient volume
+      let isPlaying = false;
+
+      function toggleMusic() {
+        if (isPlaying) {
+          music.pause();
+          musicIcon.className = 'fa-solid fa-music text-lg text-slate-400';
+          musicBtn.classList.remove('border-red-500', 'shadow-[0_0_25px_rgba(220,38,38,0.8)]');
+          musicBtn.classList.add('border-red-900/60');
+        } else {
+          music.play().then(() => {
+            musicIcon.className = 'fa-solid fa-compact-disc text-lg text-red-400 animate-spin';
+            musicBtn.classList.remove('border-red-900/60');
+            musicBtn.classList.add('border-red-500', 'shadow-[0_0_25px_rgba(220,38,38,0.8)]');
+          }).catch(err => {
+            console.log("Autoplay prevented by browser environment:", err);
+          });
+        }
+        isPlaying = !isPlaying;
+      }
+
+      musicBtn.addEventListener('click', toggleMusic);
+
+      // Trigger playback on initial click anywhere to satisfy browser autoplay policies
+      const startAudioOnInteraction = () => {
+        if (!isPlaying) {
+          toggleMusic();
+        }
+        document.removeEventListener('click', startAudioOnInteraction);
+      };
+
+      document.addEventListener('click', startAudioOnInteraction, { once: true });
     });
   </script>
 
