@@ -7,9 +7,8 @@
 
   **Hyper-Fast • Radical Ownership • Hackathon Execution Engine**
 
-  [![Discord Shield](https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg)
-  [![Application Shield](https://img.shields.io/badge/Apply-Google_Form-DC2626?style=for-the-badge&logo=googleforms&logoColor=white)](https://forms.google.com)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-black?style=for-the-badge)](LICENSE)
+  [![Discord Shield](https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/tYzSBzRZGE)
+  [![Application Shield](https://img.shields.io/badge/Apply-Google_Form-DC2626?style=for-the-badge&logo=googleforms&logoColor=white)](https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header)
 
   <p align="center">
     We are an elite, high-velocity student hackathon team engineered to build, launch, and win competitive hackathons continuously.
