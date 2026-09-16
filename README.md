@@ -1,7 +1,5 @@
 <div align="center">
 
-  <!-- HEADER ANIMATION / LOGO -->
-  <img src="logo.mp4" alt="NeNoX Forge Logo" width="120" height="120" style="border-radius: 50%; border: 2px solid #b91c1c;" />
 
   #  NeNoX Forge
 
