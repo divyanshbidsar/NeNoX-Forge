@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction | NeNoX Forge Overview</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-black text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+
+  <!-- NAVBAR -->
+  <nav class="sticky top-0 z-50 backdrop-blur-md bg-black/80 border-b border-red-900/40">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center space-x-3">
+        <video src="logo.mp4" autoplay loop muted playsinline class="h-10 w-10 rounded-full border border-red-600/60 object-cover shadow-sm"></video>
+        <span class="font-bold text-xl tracking-wider text-white">NeNoX Forge</span>
+      </a>
+      <a href="index.html" class="text-sm font-semibold text-slate-400 hover:text-white transition-colors">
+        <i class="fa-solid fa-arrow-left mr-2"></i>Back to Home
+      </a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="max-w-4xl mx-auto px-6 py-16 flex-grow">
+    <div class="bg-red-950/20 border border-red-900/40 rounded-3xl p-8 sm:p-12 backdrop-blur-sm shadow-2xl">
+
+      <!-- HEADER TITLE -->
+      <div class="flex items-center space-x-4 mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-3xl">
+          <i class="fa-solid fa-fire text-red-500"></i>
+        </div>
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white">
+            Introduction to NeNoX Forge
+          </h1>
+          <p class="text-red-400 font-semibold text-sm tracking-wide uppercase">
+            Build With Purpose • Hackathon Collective
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-8 text-slate-300">
+
+        <!-- CORE MISSION & ETHOS -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold text-red-500">Our Ethos & Operating Style</h2>
+          <p class="text-sm leading-relaxed">
+            We are building a dedicated team of self-driven students to compete—and win—in hackathons all year long[cite: 6]. We operate as an autonomous, independent student collective without micro-management, progress chasing, or corporate bureaucratic fluff[cite: 6, 8]. We expect builders who show up, collaborate, take initiative, and execute hyper-fast on their own[cite: 6, 11].
+          </p>
+          <p class="text-sm leading-relaxed">
+            When you hit a wall or face a tough technical challenge, our experienced lineup has your back with mentorship and strategic guidance[cite: 6]. However, the internal fire to show up and build must originate from you[cite: 6].
+          </p>
+          <div class="p-4 rounded-xl bg-red-950/40 border border-red-800/50 text-red-400 text-xs sm:text-sm font-semibold uppercase tracking-wider">
+            Caution: We work aggressively ( Hyper Fast )[cite: 6]
+          </div>
+        </div>
+
+        <!-- GOVERNANCE & CORE PRINCIPLES -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold text-red-500">Governance & Core Guidelines</h2>
+          <ul class="list-disc list-inside space-y-3 text-sm leading-relaxed text-slate-300">
+            <li>
+              <span class="font-bold text-white">Independent Collective:</span> NeNoX Forge is a self-organized student group and not an agent or official entity of any college or university[cite: 8, 11, 15]. Members operate strictly at their own individual legal risk[cite: 8].
+            </li>
+            <li>
+              <span class="font-bold text-white">Strict Infrastructure Limits:</span> Security research, testing, or usage of security tools (such as Nmap, Metasploit, Wireshark, or Burp Suite) must occur strictly within authorized hackathon targets or isolated testbeds—never against university networks, portals, or campus Wi-Fi[cite: 4, 11].
+            </li>
+            <li>
+              <span class="font-bold text-white">Coursework Separation:</span> Our Discord, GitHub organizations, and drives are reserved for building hackathon projects and must never be used for trading coursework or academic dishonesty[cite: 11, 20].
+            </li>
+            <li>
+              <span class="font-bold text-white">Prize & IP Ownership:</span> Cash prizes, bounties, and grants belong strictly to the individual project team members based on pre-agreed splits[cite: 12, 20].
+            </li>
+          </ul>
+        </div>
+
+        <!-- SPECIALIZED TEAM ROLES -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold text-red-500">Specialized Team Roster</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+            <div class="p-4 rounded-xl bg-black/60 border border-red-900/30">
+              <span class="font-bold text-white block mb-1">01. Ethical Hacker / Security Specialist</span>
+              <p class="text-slate-400">Cybersecurity, network security, penetration testing, and endpoint defense[cite: 4].</p>
+            </div>
+            <div class="p-4 rounded-xl bg-black/60 border border-red-900/30">
+              <span class="font-bold text-white block mb-1">02. Frontend Developer</span>
+              <p class="text-slate-400">React.js, Next.js, TypeScript, and responsive client-side UI engineering[cite: 5].</p>
+            </div>
+            <div class="p-4 rounded-xl bg-black/60 border border-red-900/30">
+              <span class="font-bold text-white block mb-1">03. Backend Developer</span>
+              <p class="text-slate-400">FastAPI, Node.js, databases, microservices, and LLM integration[cite: 2].</p>
+            </div>
+            <div class="p-4 rounded-xl bg-black/60 border border-red-900/30">
+              <span class="font-bold text-white block mb-1">04. Research, Strategy & PM</span>
+              <p class="text-slate-400">Agile execution, problem framing, pitch decks, and competition rubrics[cite: 6].</p>
+            </div>
+            <div class="p-4 rounded-xl bg-black/60 border border-red-900/30 sm:col-span-2">
+              <span class="font-bold text-white block mb-1">05. UI/UX Designer & Product Lead</span>
+              <p class="text-slate-400">Figma, interactive prototypes, design systems, and motion graphics[cite: 6].</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="pt-6 border-t border-red-900/40 flex flex-col sm:flex-row gap-4">
+
+          <!-- APPLY BUTTON -->
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="flex-1 inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-lg shadow-red-600/30">
+            <span>Apply Now</span>
+            <i class="fa-solid fa-paper-plane ml-2"></i>
+          </a>
+
+          <!-- DISCORD BUTTON -->
+          <a href="https://discord.gg/tYzSBzRZGE"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-600/30">
+            <i class="fa-brands fa-discord mr-2 text-lg"></i>
+            <span>Join Discord</span>
+          </a>
+
+          <!-- TEAM DETAILS PDF BUTTON -->
+          <a href="NeNoX team Detail.pdf"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 border border-red-900/60 text-red-400 hover:text-white font-semibold transition-all">
+            <i class="fa-solid fa-file-pdf mr-2"></i>
+            <span>Team Details</span>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-red-900/30 bg-black/80 py-6 text-center text-slate-500 text-sm">
+    © 2026 Team NeNoX Forge • Built for University Hackathons[cite: 2, 4, 5, 6]
+  </footer>
+
+</body>
+</html>
