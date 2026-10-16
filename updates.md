@@ -29,6 +29,7 @@ For a policy or informational notice, use `Type: Policy`, `Label`, and `Descript
 - **Details:** TEAM: 1–3 | MODE: ONLINE
 - **Details:** 30 TEAMS → FINAL | DEADLINE: 05 OCT
 - **Link:** https://events.romeojuliet.love/crsu-hackathon-2026
+-  **Link label:** Open Website
 
 ## FirstHack 2026
 - **Type:** Event
@@ -38,6 +39,7 @@ For a policy or informational notice, use `Type: Policy`, `Label`, and `Descript
 - **Details:** TEAM: 1–4 | SOLO: YES
 - **Details:** FEE: ₹400 | REG. CLOSES: 19 OCT
 - **Link:** https://hackathon.firsthack.in/
+-  **Link label:** Open Website
 
 ## HypneXis '26
 - **Type:** Event
