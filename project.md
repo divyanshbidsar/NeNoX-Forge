@@ -12,7 +12,12 @@ To add a project, copy this example to the end of the file and replace the sampl
 ## NeNoX Forge Website
 - **Status:** Active
 - **Description:** The collective's main digital platform for projects, activities, team roles, student opportunities and community updates.
-- **Tags:** WEB, UI/UX, COMMUNITY
+- **Tags:** WEB, UI/UX, COMMUNITY, HTML
+
+## NeNoX Forge Discord Server
+- **Status:** Under Development
+- **Description:** A Python-powered project for developing and supporting the NeNoX Forge Discord server.
+- **Tags:** DISCORD, UNDERDEVELOPMENT, PYTHON
 
 ## AI-Assisted Cybersecurity Toolkit
 - **Status:** In Dev
