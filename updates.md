@@ -60,8 +60,3 @@ For a policy or informational notice, use `Type: Policy`, `Label`, and `Descript
 - **Details:** 50+ UNIVERSITIES | REG. CLOSED: 12 OCT
 - **Link:** https://internshala.com/competitions/hackx-3-0/
 - **Link label:** Check HackX 3.0
-
-## Eligibility is shown clearly
-- **Type:** Policy
-- **Label:** FILTER POLICY
-- **Description:** Events marked OPEN TO ALL do not require a specific college, degree or discipline. Student-only events are labelled separately instead of being presented as open to everyone.
