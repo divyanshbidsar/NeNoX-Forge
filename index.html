@@ -273,6 +273,45 @@
       </div>
     </section>
 
+    <!-- FORGE ACTIVITY SECTION -->
+    <section id="activity" class="max-w-7xl mx-auto px-6 py-16 border-t border-red-900/30 w-full">
+      <div class="text-center mb-12">
+        <h2 class="text-xs sm:text-sm font-extrabold tracking-[0.35em] text-red-500 uppercase">Forge Activity</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-7 items-start">
+        <div class="rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">01 / Projects</p>
+              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Projects</h3>
+            </div>
+            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
+              <i class="fa-solid fa-code"></i>
+            </div>
+          </div>
+          <div id="projects-list" class="space-y-3" aria-live="polite">
+            <p class="text-sm text-slate-400">Loading projects…</p>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">02 / Updates</p>
+              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Updates</h3>
+            </div>
+            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+          </div>
+          <div id="updates-list" class="space-y-3" aria-live="polite">
+            <p class="text-sm text-slate-400">Loading updates…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- APPLICATION SECTION -->
     <section id="apply" class="max-w-3xl mx-auto px-6 py-20 border-t border-red-900/30 w-full text-center">
       <h2 class="text-3xl sm:text-4xl font-bold text-white">Apply for NeNoX Forge</h2>
@@ -322,6 +361,147 @@
       const music = document.getElementById('bg-music');
       const musicBtn = document.getElementById('music-toggle');
       const musicIcon = document.getElementById('music-icon');
+
+      function parseMarkdownCards(markdown) {
+        return markdown.split(/^##\s+/m).slice(1).map(section => {
+          const lines = section.split(/\r?\n/);
+          const card = { title: lines[0].trim(), fields: {} };
+
+          lines.slice(1).forEach(line => {
+            const field = line.match(/^\s*-\s+\*\*([^*]+):\*\*\s*(.*)$/);
+            if (!field) return;
+            const key = field[1].trim().toLowerCase();
+            if (!card.fields[key]) card.fields[key] = [];
+            card.fields[key].push(field[2].trim());
+          });
+
+          return card;
+        }).filter(card => card.title);
+      }
+
+      function field(card, name) {
+        return card.fields[name] || [];
+      }
+
+      function element(tag, className, text) {
+        const node = document.createElement(tag);
+        node.className = className;
+        if (text) node.textContent = text;
+        return node;
+      }
+
+      function renderProjects(cards, container) {
+        container.replaceChildren();
+        if (!cards.length) {
+          container.append(element('p', 'text-sm text-slate-400', 'No projects have been listed yet.'));
+          return;
+        }
+
+        cards.forEach(card => {
+          const item = element('article', 'rounded-xl border border-red-950 bg-black/60 p-4');
+          const header = element('div', 'flex items-start justify-between gap-3');
+          header.append(element('h4', 'text-base sm:text-lg font-bold text-white', card.title));
+
+          const status = field(card, 'status')[0];
+          if (status) {
+            header.append(element('span', 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400', status));
+          }
+          item.append(header);
+
+          const description = field(card, 'description')[0];
+          if (description) item.append(element('p', 'mt-2 text-sm leading-relaxed text-slate-400', description));
+
+          const tags = field(card, 'tags').flatMap(value => value.split(',')).map(tag => tag.trim()).filter(Boolean);
+          if (tags.length) {
+            const tagList = element('div', 'mt-3 flex flex-wrap gap-2');
+            tags.forEach(tag => tagList.append(element('span', 'rounded bg-white/5 px-2 py-1 text-[10px] font-semibold text-slate-400', tag)));
+            item.append(tagList);
+          }
+
+          container.append(item);
+        });
+      }
+
+      function renderUpdates(cards, container) {
+        container.replaceChildren();
+        if (!cards.length) {
+          container.append(element('p', 'text-sm text-slate-400', 'No updates have been listed yet.'));
+          return;
+        }
+
+        cards.forEach(card => {
+          const isPolicy = field(card, 'type')[0]?.toLowerCase() === 'policy';
+          const item = element('article', 'rounded-xl border border-red-950 bg-black/60 p-4');
+
+          if (isPolicy) {
+            const heading = element('div', 'flex items-center gap-2');
+            heading.append(element('span', 'h-2 w-2 rounded-full bg-yellow-400'));
+            heading.append(element('p', 'text-[10px] font-extrabold tracking-[0.18em] text-yellow-400 uppercase', field(card, 'label')[0] || 'Policy'));
+            item.append(heading);
+            item.append(element('h4', 'mt-2 text-sm font-bold text-white', card.title));
+            const description = field(card, 'description')[0];
+            if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
+            container.append(item);
+            return;
+          }
+
+          const header = element('div', 'flex items-start justify-between gap-3');
+          header.append(element('p', 'text-[10px] font-extrabold tracking-[0.16em] text-red-500 uppercase', field(card, 'date')[0] || 'Update'));
+          const badge = field(card, 'badge')[0];
+          if (badge) {
+            const badgeClass = /student/i.test(badge)
+              ? 'shrink-0 rounded-full border border-yellow-900/70 bg-yellow-950/50 px-2.5 py-1 text-[10px] font-bold text-yellow-400'
+              : 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400';
+            header.append(element('span', badgeClass, badge));
+          }
+          item.append(header);
+          item.append(element('h4', 'mt-1 text-base font-bold text-white', card.title));
+
+          const description = field(card, 'description')[0];
+          if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
+
+          const details = field(card, 'details');
+          if (details.length) {
+            const detailList = element('div', 'mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2');
+            details.forEach(detail => detail.split('|').map(value => value.trim()).filter(Boolean).forEach(value => {
+              detailList.append(element('p', 'text-[9px] font-medium uppercase tracking-wide text-slate-500', value));
+            }));
+            item.append(detailList);
+          }
+
+          const link = field(card, 'link')[0];
+          if (link) {
+            try {
+              const url = new URL(link);
+              if (url.protocol === 'https:' || url.protocol === 'http:') {
+                const anchor = element('a', 'mt-3 flex w-full items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-red-700', field(card, 'link label')[0] || 'Learn more ↗');
+                anchor.href = url.href;
+                anchor.target = '_blank';
+                anchor.rel = 'noopener noreferrer';
+                item.append(anchor);
+              }
+            } catch (error) {
+              console.error(`Invalid update link in "${card.title}".`, error);
+            }
+          }
+
+          container.append(item);
+        });
+      }
+
+      async function loadMarkdown(file, container, render) {
+        try {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+          render(parseMarkdownCards(await response.text()), container);
+        } catch (error) {
+          console.error(`Unable to load ${file}.`, error);
+          container.replaceChildren(element('p', 'text-sm text-red-400', `Unable to fetch source file: ${file}.`));
+        }
+      }
+
+      loadMarkdown('project.md', document.getElementById('projects-list'), renderProjects);
+      loadMarkdown('updates.md', document.getElementById('updates-list'), renderUpdates);
 
       music.volume = 0.3;
       let isPlaying = false;
