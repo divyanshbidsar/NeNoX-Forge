@@ -37,6 +37,26 @@ For a policy or informational notice, use `Type: Policy`, `Label`, and `Descript
 - **Details:** TEAM: 1–4 | SOLO: YES
 - **Details:** FEE: ₹400 | REG. CLOSES: 19 OCT
 
+## HypneXis '26
+- **Type:** Event
+- **Date:** OFFLINE · 24–25 OCT 2026
+- **Badge:** APTITUDE TEST TONIGHT
+- **Description:** A 36-hour hackathon at Manipal University Jaipur with a ₹10L+ prize pool. Entry requires a 60-minute online aptitude challenge tonight, Oct 16, from 6:00–11:59 PM; results are expected tomorrow. Open to UG and PG students from any stream.
+- **Details:** TEAM: 1–4 | MODE: OFFLINE
+- **Details:** OVERNIGHT HACK: 24 OCT | GRAND FINALE: 25 OCT
+- **Link:** https://unstop.com/competitions/hypnexis-2026-manipal-university-mu-jaipur-1711890
+- **Link label:** Register and take the test
+
+## HackX 3.0
+- **Type:** Event
+- **Date:** OFFLINE · 30–31 OCT 2026
+- **Badge:** REGISTRATION CLOSED
+- **Description:** A 36-hour national hackathon at Manipal University Jaipur, with a ₹5L+ prize pool across 10 tracks, including AI/ML, cybersecurity and blockchain. Registrations closed Oct 12; check the event page in case they reopen.
+- **Details:** 10 TRACKS | 2,000+ BUILDERS
+- **Details:** 50+ UNIVERSITIES | REG. CLOSED: 12 OCT
+- **Link:** https://internshala.com/competitions/hackx-3-0/
+- **Link label:** Check HackX 3.0
+
 ## Eligibility is shown clearly
 - **Type:** Policy
 - **Label:** FILTER POLICY
