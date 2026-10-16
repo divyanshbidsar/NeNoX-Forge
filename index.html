@@ -1,528 +1,952 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeNoX Forge | Hackathon Team Recruitment</title>
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <style>
-    #splash-screen {
-      transition: opacity 1s ease-out, visibility 1s ease-out;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<title>NeNoX Forge | Hackathon Team Recruitment</title>
+
+<!-- logo.mp4 FIRST: its download starts before anything else can block parsing,
+     so the first frame is ready the instant the splash paints -->
+<link rel="preload" href="logo.mp4" as="video" type="video/mp4" fetchpriority="high">
+
+<!-- connect early so the CDNs are ready before they're needed -->
+<link rel="preconnect" href="https://nenox-forge-backend.onrender.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+
+<!-- font-awesome loads async: icons pop in when ready, never block the splash -->
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+<style>
+/* ===== CRITICAL: instant splash paint (needs no Tailwind) ===== */
+html{background:#000;-webkit-text-size-adjust:100%}
+img,video,canvas{max-width:100%}
+#splash-screen{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out,visibility .6s ease-out}
+#splash-screen .splash-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+#splash-screen video{width:clamp(14rem,38vmin,22rem);height:clamp(14rem,38vmin,22rem);border-radius:9999px;border:2px solid rgba(220,38,38,.6);background:radial-gradient(circle at 50% 35%,#3a0d0d 0%,#140404 55%,#000 100%);box-shadow:0 0 50px rgba(220,38,38,.5);animation:splashPulse 1.6s ease-in-out infinite}
+#splash-screen .splash-title{font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:.2em;color:#fff;text-transform:uppercase}
+@keyframes splashPulse{0%,100%{box-shadow:0 0 25px rgba(220,38,38,.35)}50%{box-shadow:0 0 60px rgba(220,38,38,.75)}}
+</style>
+
+<style>
+/* ============ PERFORMANCE-FIRST ANIMATION RULES ============
+   - Only `transform` and `opacity` are animated (GPU-composited, no layout/paint).
+   - No blur filters, no backdrop-blur, no glow/box-shadow animation.
+   - One shared set of classes instead of many overlapping rules. */
+
+/* ---------- Logo videos: always perfect circles ---------- */
+#hero-logo,#splash-screen video{aspect-ratio:1/1}
+
+/* ---------- Logo tilt (no glow) ---------- */
+.tilt-stage{perspective:800px;padding:1.5rem;touch-action:pan-y}
+.tilt-logo{
+  transform:rotateX(0deg) rotateY(0deg);
+  transition:transform .3s cubic-bezier(.2,.75,.25,1);
+  will-change:transform;
+  backface-visibility:hidden;
+  box-shadow:none !important;
+  filter:none !important;
+}
+.tilt-logo.is-tilting{transition:transform .08s linear}
+@keyframes sway{
+  0%,100%{transform:rotateX(0deg) rotateY(-8deg)}
+  50%{transform:rotateX(5deg) rotateY(8deg)}
+}
+@media (hover:none),(pointer:coarse){
+  .tilt-logo{animation:sway 6s ease-in-out infinite}
+}
+
+/* ---------- Enhanced zoom in / zoom out (GPU-friendly, no glow) ---------- */
+.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
+  transform:translate3d(0,0,0) scale(1);
+  transform-origin:center center;
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
+  backface-visibility:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+@media (hover:hover) and (pointer:fine){
+  .action-link:hover{transform:translate3d(0,-2px,0) scale(1.085)}
+  .card-lift:hover{transform:translate3d(0,-4px,0) scale(1.065)}
+  .panel-zoom:hover{transform:translate3d(0,-2px,0) scale(1.025)}
+}
+@media (hover:none),(pointer:coarse){
+}
+/* ---------- Dynamic-Island music player ---------- */
+.island-wrap{
+  position:fixed;z-index:60;
+  right:1.5rem;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
+  width:46px;height:46px;overflow:visible;
+}
+.island{
+  position:absolute;right:0;top:0;z-index:1;
+  display:flex;flex-direction:row-reverse;align-items:center;
+  width:46px;height:46px;overflow:visible;isolation:isolate;
+  border-radius:9999px;
+  background:#000;
+  box-shadow:0 0 0 1px rgba(255,255,255,.025),inset 0 1px 0 rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.7);
+  transition:width .6s cubic-bezier(.34,1.35,.45,1),transform .28s cubic-bezier(.2,.8,.2,1);
+  will-change:width,transform;
+  transform:scale(1);transform-origin:bottom right;
+}
+.island-wrap[data-open="true"],.island-wrap[data-open="true"] .island{width:min(320px,calc(100vw - 3rem))}
+@media (max-width:640px){
+  .island-wrap{right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px))}
+  .island-wrap[data-open="true"],.island-wrap[data-open="true"] .island{width:min(320px,calc(100vw - 2rem))}
+}
+.island::after{
+  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0) 48%);
+  opacity:.28;
+  transition:opacity 2.8s cubic-bezier(.22,1,.36,1);
+}
+
+/* music icon: hover zoom in/out removed */
+/* Scroll-linked premium white finish: grows progressively with scroll position,
+   and retreats progressively when scrolling back up (not a delayed on/off transition). */
+.island-wrap{--scroll-finish:0;}
+.island-wrap .island{
+  box-shadow:0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .22)),
+    inset 0 1px 0 rgba(255,255,255,calc(var(--scroll-finish) * .24)),
+    inset 0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .035)),
+    0 10px 24px rgba(0,0,0,.7);
+  transition:width .6s cubic-bezier(.34,1.35,.45,1),transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.island-wrap .island-icon{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--scroll-finish) * .24)),
+    0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .2));
+  transition:transform 1.8s cubic-bezier(.22,1,.36,1),color 2.6s ease-in-out,background 2.6s ease-in-out;
+  transform-origin:center;
+}
+.island-wrap .island::after{opacity:calc(.28 + var(--scroll-finish) * .72);transition:none;}
+
+/* External expanding ripple rings removed; keep the in-island music waves. */
+
+/* Icon: round chip + animated note */
+.island-icon{
+  position:relative;z-index:3;flex:0 0 40px;width:40px;height:40px;margin-right:3px;
+  display:grid;place-items:center;border:0;cursor:pointer;border-radius:9999px;
+  color:#f8fafc;font-size:1.1rem;
+  background:#000;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 0 0 1px rgba(255,255,255,.025);
+  transition:transform 1.8s cubic-bezier(.22,1,.36,1),color 2.6s ease-in-out,background 2.6s ease-in-out,box-shadow 3s cubic-bezier(.22,1,.36,1);
+  -webkit-tap-highlight-color:transparent;
+}
+.island-icon i.fa-music{display:block;transition:opacity .25s ease,transform .35s cubic-bezier(.34,1.4,.5,1)}
+.island-wrap[data-playing="true"] .island-icon{color:#fb7185;background:#000}
+.island-wrap[data-playing="true"] .island-icon i.fa-music{opacity:0;transform:scale(.3) rotate(-90deg)}
+/* Musical notes briefly burst outward when the pointer reaches the icon. */
+.island-icon{overflow:visible;isolation:isolate}
+.music-burst{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:visible}
+.music-burst i{position:absolute;left:50%;top:50%;display:block;white-space:nowrap;line-height:1;font-style:normal;font-size:12px;font-weight:700;opacity:0;color:#fff;text-shadow:0 0 6px rgba(34,211,238,.45);will-change:transform,opacity;backface-visibility:hidden}
+.island-wrap[data-playing="false"] .island-icon.notes-active .music-burst i{animation:noteBurst 1.25s cubic-bezier(.16,.7,.25,1) both}
+.island-wrap[data-playing="true"] .music-burst i{animation:none !important;opacity:0}
+.music-burst i:nth-child(1){--dx:-23px;--dy:-20px;--tone:#22d3ee;animation-delay:0s}
+.music-burst i:nth-child(2){--dx:24px;--dy:-19px;--tone:#c084fc;animation-delay:.06s}
+.music-burst i:nth-child(3){--dx:-25px;--dy:13px;--tone:#f9a8d4;animation-delay:.12s}
+.music-burst i:nth-child(4){--dx:23px;--dy:15px;--tone:#fbbf24;animation-delay:.18s}
+.music-burst i:nth-child(5){--dx:0px;--dy:-29px;--tone:#a3e635;animation-delay:.08s}
+.music-burst i{color:var(--tone,#fff)}
+@keyframes noteBurst{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.55) rotate(-12deg)}15%{opacity:1}68%{opacity:1}100%{opacity:0;transform:translate3d(calc(-50% + var(--dx)),calc(-50% + var(--dy)),0) scale(1) rotate(12deg)}}
+@media (hover:hover) and (pointer:fine){.island-icon:hover{transform:rotate(10deg)}}
+.island-icon:active{transform:rotate(10deg) !important;transition-duration:1.8s}
+.island-icon:focus-visible{outline:2px solid #e5e7eb;outline-offset:3px}
+
+
+/* Realistic vinyl disc: shows (and spins) only while the song plays */
+.vinyl{
+  position:absolute;inset:1px;border-radius:9999px;pointer-events:none;
+  opacity:0;transform:scale(.4);
+  transition:opacity .3s ease,transform .5s cubic-bezier(.34,1.4,.5,1);
+}
+.island-wrap[data-playing="true"] .vinyl{opacity:1;transform:scale(1)}
+.vinyl-spin{
+  position:absolute;inset:0;border-radius:9999px;
+  background:
+    radial-gradient(circle,#050505 0 1.5px,transparent 2px),
+    radial-gradient(circle,#ef4444 0 8px,#991b1b 9.5px,#0a0a0a 10.5px,transparent 11px),
+    repeating-radial-gradient(circle,#0c0c0c 0 1px,#1d1d1d 1.6px,#0c0c0c 2.6px);
+  box-shadow:inset 0 0 0 1px #2a2a2a;
+}
+.island-wrap[data-playing="true"] .vinyl-spin{animation:spin 2.4s linear infinite}
+.vinyl-spin::before{
+  content:"";position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-11px 0 0 -1.5px;
+  border-radius:9999px;background:#fecaca;
+}
+.vinyl::after{
+  content:"";position:absolute;inset:0;border-radius:9999px;
+  background:conic-gradient(from 20deg,rgba(255,255,255,0) 0 8%,rgba(255,255,255,.3) 14%,rgba(255,255,255,0) 22% 55%,rgba(255,255,255,.22) 62%,rgba(255,255,255,0) 70% 100%);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.island-body{
+  position:relative;z-index:3;flex:1 1 auto;min-width:0;
+  display:flex;align-items:center;gap:.65rem;padding:0 .35rem 0 1rem;
+  opacity:0;transform:translateX(16px) scale(.96);transform-origin:right center;
+  transition:opacity .25s ease,transform .5s cubic-bezier(.22,.75,.25,1);
+  pointer-events:none;
+}
+.island-wrap[data-open="true"] .island-body{opacity:1;transform:none;transition-delay:.12s;pointer-events:auto}
+
+/* Flowing sine waves — HQ: seamless 2-tile loop, geometric-precision strokes */
+.wave{
+  position:relative;flex:1 1 auto;min-width:0;height:26px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+}
+.wave-layer{position:absolute;inset:0;transform:scaleY(.06);transform-origin:center}
+.wave-layer svg{position:absolute;left:0;top:0;width:200%;height:100%;display:block;shape-rendering:geometricPrecision}
+.wave-layer path{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.island-wrap[data-playing="true"] .wave-layer{animation:amp var(--ad,1.6s) ease-in-out var(--al,0s) infinite}
+.island-wrap[data-playing="true"] .wave-layer svg{animation:flow var(--fd,3s) linear infinite}
+@keyframes flow{to{transform:translateX(-50%)}}
+@keyframes amp{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+
+.island-btn{
+  width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:9999px;
+  background:#fff;color:#000;border:0;cursor:pointer;font-size:.68rem;
+  transition:transform .2s ease;
+}
+.island-vol{width:48px;flex:0 0 48px;height:14px;accent-color:#a78bfa;cursor:pointer}
+@media (max-width:380px){.island-vol{display:none}}
+
+/* Skip rendering of off-screen sections until they are near the viewport */
+.defer-render{content-visibility:auto;contain-intrinsic-size:1px 700px}
+
+@media (prefers-reduced-motion:reduce){
+  .island,.island-body{transition:none !important}
+  .wave-layer,.wave-layer svg,.vinyl-spin,.music-burst i{animation:none !important}
+  .tilt-logo,.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
+    transition:none !important;animation:none !important;transform:none !important;
+  }
+  *,*:before,*:after{scroll-behavior:auto !important}
+}
+
+/* ===== PERFECT-CIRCLE LOGOS (the only layout change; placed last so it wins) =====
+   Cause of the ovals: `max-width:100%` + flex shrinking squeezed the width while
+   the height stayed fixed. This locks every logo to a true 1:1 circle. */
+#splash-screen video,#main-content nav video,#hero-logo{
+  aspect-ratio:1/1;flex:none;max-width:none;
+  border-radius:50%;object-fit:cover;overflow:hidden;
+}
+#splash-screen video{width:clamp(14rem,38vmin,22rem);height:clamp(14rem,38vmin,22rem);max-width:none;max-height:none}
+#main-content nav video{width:40px;height:40px}
+.tilt-stage{width:min(100%,19rem)}
+#hero-logo{display:block;width:100%;height:auto;max-width:15rem;margin:0 auto}
+@media (max-width:640px){#hero-logo{max-width:11rem}#splash-screen video{width:min(72vw,16rem);height:min(72vw,16rem)}}
+
+/* ===== FORGE ACTIVITY: cards stay inside their panels =====
+   Cause: the hover zoom (scale 1.055-1.065) was applied to the whole #updates-list wrapper and to
+   every card, and `content-visibility:auto` on the section clips anything that grows past it,
+   so cards visibly spilled out of / got cut off by the panels. */
+#recent{contain:none;content-visibility:visible}
+#recent .grid>*{min-width:0}
+#recent .panel-zoom{overflow:hidden;position:relative}
+#recent #projects-list>*,#recent #recent-hackathons>*{
+  position:relative;min-width:0;max-width:100%;
+  overflow-wrap:anywhere;word-break:normal;
+  transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .3s ease,background-color .3s ease;
+}
+#recent #projects-list>*:hover,#recent #recent-hackathons>*:hover{z-index:2}
+@media (hover:hover) and (pointer:fine){
+  #recent #projects-list>*:hover,
+  #recent #recent-hackathons>*:hover,
+  #recent #recent-hackathons>.card-lift:hover{
+    transform:translate3d(0,-3px,0) scale(1.015);
+    border-color:rgba(220,38,38,.55);
+    background-color:rgba(0,0,0,.7);
+  }
+}
+#recent a{max-width:100%}
+@media (max-width:420px){#recent #recent-hackathons .grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body class="bg-black text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-  <!-- FULL-SCREEN SPLASH LOADING OVERLAY -->
-  <div id="splash-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
-    <div class="flex flex-col items-center space-y-4">
-      <video 
-        src="logo.mp4" 
-        autoplay 
-        loop 
-        muted 
-        playsinline 
-        class="h-36 w-36 rounded-full border-2 border-red-600/60 object-cover shadow-[0_0_50px_rgba(220,38,38,0.5)]">
-      </video>
-      <span class="text-2xl font-extrabold tracking-widest text-white uppercase">
-        NeNoX Forge
-      </span>
+<!-- SPLASH: logo animation plays ~2.75s, then the site is revealed -->
+<div id="splash-screen">
+  <div class="splash-inner">
+    <video src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-hidden="true"
+      class="h-32 w-32 rounded-full border-2 border-red-600/60 object-cover"></video>
+    <span class="splash-title">NeNoX Forge</span>
+  </div>
+</div>
+
+<div id="main-content" class="min-h-screen flex flex-col justify-between relative">
+
+  <!-- NAVBAR -->
+  <nav class="sticky top-0 z-50 bg-black/95 border-b border-red-900/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="intro.html" class="flex items-center space-x-3" aria-label="NeNoX Forge Home">
+        <video src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-hidden="true"
+          class="pointer-events-none h-10 w-10 rounded-full border border-red-600/60 object-cover"></video>
+        <span class="font-bold text-lg sm:text-xl tracking-wider text-white">NeNoX Forge</span>
+      </a>
+      <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer" id="main-discord-link"
+        aria-label="Join Discord" class="action-link flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg">
+        <i class="fa-brands fa-discord text-lg"></i>
+        <span class="hidden min-[400px]:inline">Join Discord</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="hero-section" class="relative lg:min-h-[calc(100svh-72px)] flex items-center justify-center px-4 sm:px-6 py-10 sm:py-12 overflow-hidden">
+
+    <video id="bg-video" data-src="bg-video.mp4" preload="none" autoplay loop muted playsinline disablepictureinpicture
+      class="absolute inset-0 w-full h-full object-cover z-0"></video>
+
+    <div class="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-red-950/70 z-0"></div>
+
+    <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+      <!-- LEFT: ABOUT -->
+      <div class="order-1 lg:order-1 lg:col-span-5 text-left space-y-4 bg-black/70 p-5 sm:p-6 rounded-2xl border border-red-900/30">
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">NeNoX Forge</h1>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          We are building a dedicated team of students to compete—and win—in hackathons all year long. We won't micro-manage you, push you to care, or chase you for updates. We want self-driven builders who want to be here, collaborate, and execute on their own initiative.
+        </p>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed pt-2 border-t border-red-900/40">
+          Here's the deal: When you hit a wall or face a tough technical challenge, we've got your back with guidance and support. But the fire to show up and build has to come from you.
+        </p>
+        <p class="text-red-500 font-semibold text-xs sm:text-sm tracking-wide uppercase pt-1">
+          Caution :- we work aggressively ( Hyper Fast )
+        </p>
+      </div>
+
+      <!-- CENTER: LOGO -->
+      <div class="order-2 lg:order-2 lg:col-span-3 flex justify-center items-center py-0 lg:py-6">
+        <div id="logo-stage" class="tilt-stage">
+          <video id="hero-logo" src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-label="NeNoX Forge logo animation"
+            class="tilt-logo h-44 w-44 sm:h-60 sm:w-60 lg:h-72 lg:w-72 rounded-full object-cover border-2 border-red-600/80"></video>
+        </div>
+      </div>
+
+      <!-- RIGHT: ACTION LINKS -->
+      <div class="order-3 lg:order-3 lg:col-span-4 flex flex-col justify-center space-y-4 sm:space-y-6 pl-0 lg:pl-6">
+
+        <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer"
+          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
+          <div class="w-12 h-12 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl">
+            <i class="fa-brands fa-discord"></i>
+          </div>
+          <span class="text-lg sm:text-xl font-bold text-white">NeNoX Forge Server</span>
+        </a>
+
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer"
+          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
+          <div class="w-12 h-12 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center text-2xl">
+            <i class="fa-solid fa-paper-plane"></i>
+          </div>
+          <span class="text-lg sm:text-xl font-bold text-white">Application Link</span>
+        </a>
+
+        <a href="#roles"
+          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
+          <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-2xl">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <span class="text-lg sm:text-xl font-bold text-white">Team Details</span>
+        </a>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ROLES -->
+  <section id="roles" class="defer-render max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 border-t border-red-900/30 w-full">
+    <div class="text-center mb-10 sm:mb-16">
+      <h2 class="text-2xl sm:text-5xl font-extrabold text-white">Team Details &amp; Open Roles</h2>
+      <p class="text-red-400/80 mt-3 text-base sm:text-lg">Detailed breakdown of specialized roles for our hackathon lineup</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+
+      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Ethical Hacker / Security Specialist</h3>
+          <p class="text-slate-300 text-xs leading-relaxed mb-4">
+            <span class="font-bold text-red-400">Tech Stack:</span> Linux, Bash, Nmap, Metasploit, Wireshark, Burp Suite, Network Security.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            You are the team's defensive shield and offensive strategist, securing endpoints, handling cloud deployments, and running exploit scripts under time constraints.
+          </p>
+        </div>
+        <a href="ethical-hacker.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
+          <span>View Role Details</span>
+          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+        </a>
+      </div>
+
+      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Frontend Developer</h3>
+          <p class="text-slate-300 text-xs leading-relaxed mb-4">
+            <span class="font-bold text-red-400">Tech Stack:</span> React.js, Next.js, TypeScript, Tailwind CSS, WebSockets, State Management.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            You own client-side execution, translating raw prototypes into dynamic, production-ready web apps built for speed and live demonstrations.
+          </p>
+        </div>
+        <a href="frontend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
+          <span>View Role Details</span>
+          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+        </a>
+      </div>
+
+      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
+            <i class="fa-solid fa-server"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Backend Developer</h3>
+          <p class="text-slate-300 text-xs leading-relaxed mb-4">
+            <span class="font-bold text-red-400">Tech Stack:</span> Python (FastAPI), Node.js, PostgreSQL, MongoDB, Redis, LLM Integration.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            You design server architectures, manage database schemas, connect machine learning pipelines, and ensure lightning-fast backend responses.
+          </p>
+        </div>
+        <a href="backend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
+          <span>View Role Details</span>
+          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+        </a>
+      </div>
+
+      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
+            <i class="fa-solid fa-diagram-project"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Research, Strategy &amp; PM</h3>
+          <p class="text-slate-300 text-xs leading-relaxed mb-4">
+            <span class="font-bold text-red-400">Tech Stack:</span> Agile, Problem Framing, Market Research, Pitch Strategy, Notion/Jira.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            You validate problem statements, align execution with competition rubrics, manage MVP sprint timelines, and sculpt winning pitch decks.
+          </p>
+        </div>
+        <a href="research-pm.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
+          <span>View Role Details</span>
+          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+        </a>
+      </div>
+
+      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
+        <div>
+          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">UI/UX Designer &amp; Product Lead</h3>
+          <p class="text-slate-300 text-xs leading-relaxed mb-4">
+            <span class="font-bold text-red-400">Tech Stack:</span> Figma, Interactive Prototyping, Design Systems, Motion Graphics, Wireframing.
+          </p>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+            You craft high-fidelity prototypes, build design systems early in sprints, and design striking visual presentation slides that hook judges.
+          </p>
+        </div>
+        <a href="uiux-designer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
+          <span>View Role Details</span>
+          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RECENT PROJECTS + UPDATES -->
+  <section id="recent" class="defer-render max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 border-t border-red-900/30 w-full">
+
+    <div class="text-center mb-10 sm:mb-14">
+      <p class="text-red-500 text-base sm:text-lg font-bold tracking-[0.3em] uppercase mb-8">Forge Activity</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
+
+      <!-- RECENT PROJECTS -->
+      <div class="h-fit">
+        <div class="panel-zoom bg-red-950/30 p-6 sm:p-7 rounded-2xl border border-red-900/40 flex flex-col">
+
+          <div class="flex items-center justify-between mb-7">
+            <div>
+              <p class="text-red-500 text-xs font-bold tracking-[0.2em] uppercase">01 / Projects</p>
+              <h3 class="text-2xl font-bold text-white mt-2">Recent Projects</h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-xl"><i class="fa-solid fa-code"></i></div>
+          </div>
+
+          <div id="projects-list" class="space-y-4">
+
+            <div class="p-4 rounded-xl bg-black/50 border border-red-900/30">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h4 class="font-bold text-white text-base sm:text-lg">NeNoX Forge Website</h4>
+                  <p class="text-slate-400 text-sm leading-relaxed mt-2">The collective's main digital platform for projects, activities, team roles, student opportunities and community updates.</p>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap">Active</span>
+              </div>
+              <div class="mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500">
+                <span class="px-2 py-1 rounded bg-white/5">WEB</span>
+                <span class="px-2 py-1 rounded bg-white/5">UI/UX</span>
+                <span class="px-2 py-1 rounded bg-white/5">COMMUNITY</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-black/50 border border-red-900/30">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h4 class="font-bold text-white text-base sm:text-lg">AI-Assisted Cybersecurity Toolkit</h4>
+                  <p class="text-slate-400 text-sm leading-relaxed mt-2">A student project exploring how AI can work alongside authorized Linux security tools such as Nmap to organize reconnaissance, explain results and improve security workflows.</p>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 whitespace-nowrap">In Dev</span>
+              </div>
+              <div class="mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500">
+                <span class="px-2 py-1 rounded bg-white/5">AI</span>
+                <span class="px-2 py-1 rounded bg-white/5">CYBERSECURITY</span>
+                <span class="px-2 py-1 rounded bg-white/5">LINUX</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT UPDATES -->
+      <div class="h-fit">
+        <div class="panel-zoom bg-red-950/30 p-6 sm:p-7 rounded-2xl border border-red-900/40 flex flex-col">
+
+          <div class="flex items-center justify-between mb-7">
+            <div>
+              <p class="text-red-500 text-xs font-bold tracking-[0.2em] uppercase">02 / Updates</p>
+              <h3 class="text-2xl font-bold text-white mt-2">Recent Updates</h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-xl"><i class="fa-solid fa-calendar-check"></i></div>
+          </div>
+
+          <div id="updates-list">
+            <div id="recent-hackathons" class="space-y-4" aria-live="polite">
+              <p class="text-slate-500 text-xs py-4 text-center">Loading updates...</p>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-red-900/30 flex items-center justify-between gap-4">
+              <p class="text-[10px] text-slate-500">New opportunities are published here after verification.</p>
+              <span class="shrink-0 flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- APPLY -->
+  <section id="apply" class="defer-render max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 border-t border-red-900/30 w-full text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold text-white">Apply for NeNoX Forge</h2>
+    <p class="text-slate-400 mt-3 text-base sm:text-lg mb-8">Ready to execute? Fill out our application form and join our Discord community.</p>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="action-link inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl text-lg">
+      <i class="fa-solid fa-paper-plane mr-3"></i>Open Application Form
+    </a>
+  </section>
+
+  <footer class="border-t border-red-900/30 bg-black/80 py-8 text-center text-slate-500 text-sm space-y-3">
+    <p class="text-slate-300 italic text-sm max-w-2xl mx-auto px-4">
+      &ldquo;The strength of the team is each individual member. The strength of each member is the team.&rdquo;
+      <span class="not-italic text-red-400 font-medium">— Phil Jackson</span>
+    </p>
+    <p>© 2026 Team NeNoX Forge • Built for University Hackathons</p>
+    <p class="text-red-500/80 uppercase text-xs tracking-widest font-semibold">Build on NeNoX Heart to ace competition</p>
+  </footer>
+
+</div>
+
+<!-- DYNAMIC-ISLAND MUSIC PLAYER
+     Tap the note to expand, tap play to start. Tap anywhere else to minimize.
+     Put your audio file next to this page as "ambient.mp3". -->
+<div class="island-wrap" id="island" data-open="false" data-playing="false">
+  <div class="island">
+    <button class="island-icon" id="island-toggle" aria-label="Open music player" aria-expanded="false">
+      <i class="fa-solid fa-music" id="island-note"></i>
+      <span class="music-burst" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i><i>♫</i><i>♬</i></span>
+      <span class="vinyl" aria-hidden="true"><span class="vinyl-spin"></span></span>
+    </button>
+    <div class="island-body">
+      <div class="wave" id="island-wave" aria-hidden="true"></div>
+      <input type="range" class="island-vol" id="island-vol" min="0" max="100" value="40" aria-label="Volume">
+      <button class="island-btn" id="island-play" aria-label="Play or pause music">
+        <i class="fa-solid fa-play" id="island-play-icon"></i>
+      </button>
     </div>
   </div>
+</div>
+<audio id="island-audio" loop preload="none">
+  <source src="ambient.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- MAIN WEBSITE CONTENT -->
-  <div id="main-content" class="min-h-screen flex flex-col justify-between relative">
-    
-    <!-- NAVBAR -->
-    <nav class="sticky top-0 z-50 backdrop-blur-md bg-black/80 border-b border-red-900/40">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
-        <!-- Navbar Logo -->
-        <a href="intro.html" class="flex items-center space-x-3">
-          <video 
-            src="logo.mp4" 
-            autoplay 
-            loop 
-            muted 
-            playsinline 
-            class="h-10 w-10 rounded-full border border-red-600/60 object-cover shadow-sm">
-          </video>
-          <span class="font-bold text-xl tracking-wider text-white">NeNoX Forge</span>
-        </a>
+<script>
+/* ---------- SPLASH: ~2.75-second brand intro, then reveals the site ---------- */
+(function(){
+  const splash=document.getElementById('splash-screen');
+  if(!splash)return;
+  const t0=performance.now();
+  const SHOW=2750, CAP=12000;
+  let hidden=false, loaded=document.readyState==='complete';
+  function hide(){
+    if(hidden)return;
+    hidden=true;
+    splash.style.opacity='0';
+    splash.style.visibility='hidden';
+    setTimeout(()=>splash.remove(),650);
+  }
+  function maybeHide(){
+    if(!hidden&&loaded&&performance.now()-t0>=SHOW)hide();
+  }
+  window.addEventListener('load',()=>{loaded=true;maybeHide();});
+  setTimeout(maybeHide,SHOW);
+  setTimeout(hide,CAP);
+})();
+</script>
 
-        <!-- Discord Button -->
-        <a 
-          href="https://discord.gg/tYzSBzRZGE" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/30">
-          <i class="fa-brands fa-discord text-lg"></i>
-          <span>Join Discord</span>
-        </a>
+<script>
+/* ---------- HERO LOGO TILT: pointer on desktop, gentle auto-sway on touch ---------- */
+(function(){
+  const stage=document.getElementById('logo-stage');
+  const logo=document.getElementById('hero-logo');
+  if(!stage||!logo)return;
+  if(!matchMedia('(hover: hover) and (pointer: fine)').matches)return;
 
-      </div>
-    </nav>
+  stage.addEventListener('pointermove',e=>{
+    if(e.pointerType!=='mouse'&&e.pointerType!=='pen')return;
+    const r=stage.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    logo.classList.add('is-tilting');
+    logo.style.transform='rotateX('+(-y*14).toFixed(2)+'deg) rotateY('+(x*14).toFixed(2)+'deg)';
+  },{passive:true});
+  stage.addEventListener('pointerleave',()=>{
+    logo.classList.remove('is-tilting');
+    logo.style.transform='';
+  },{passive:true});
+})();
+</script>
 
-    <!-- HERO SECTION -->
-    <header class="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 overflow-hidden">
-      
-      <!-- BACKGROUND VIDEO WITH RED TINT OVERLAY -->
-      <video 
-        src="bg-video.mp4" 
-        autoplay 
-        loop 
-        muted 
-        playsinline 
-        class="absolute inset-0 w-full h-full object-cover z-0 opacity-60 filter blur-[1px]">
-      </video>
+<script>
+/* ---------- DYNAMIC-ISLAND MUSIC PLAYER ----------
+   Note icon: expands / collapses the pill. Play button: starts / pauses.
+   Tapping / clicking ANYWHERE outside the player minimizes it (music keeps playing). */
+(function(){
+  const wrap=document.getElementById('island');
+  const toggle=document.getElementById('island-toggle');
+  const playBtn=document.getElementById('island-play');
+  const playIcon=document.getElementById('island-play-icon');
+  const vol=document.getElementById('island-vol');
+  const audio=document.getElementById('island-audio');
+  const waveBox=document.getElementById('island-wave');
+  if(!wrap||!toggle||!playBtn||!audio||!waveBox)return;
 
-      <!-- Crimson Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-red-950/40 z-0"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.15)_0%,transparent_70%)] z-0"></div>
+  /* Music-icon glow: scrolling DOWN fades the white glow in slowly and smoothly;
+     scrolling back UP eases it back to the initial state. The scroll position only sets a
+     TARGET (0..1) - the visible glow value chases it with time-based easing and a speed cap,
+     so even a fast flick of the wheel can never make the glow jump or flash. */
+  const GLOW_DIST=700;      /* px of scroll for the full glow */
+  const GLOW_IN=1.1;        /* seconds-ish: slow, smooth fade-in while scrolling down */
+  const GLOW_OUT=0.7;       /* seconds-ish: calm return when scrolling up */
+  const GLOW_MAX_SPEED=0.45;/* max change per second (full glow takes >= ~2.2s) */
+  const calmMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let glowTarget=0,glowNow=0,glowRaf=0,glowLast=0;
+  const paintGlow=()=>{
+    const e=glowNow*glowNow*(3-2*glowNow);            /* smoothstep: soft start and end */
+    wrap.style.setProperty('--scroll-finish',e.toFixed(4));
+  };
+  const glowStep=t=>{
+    const dt=Math.min(.05,Math.max(.001,(t-glowLast)/1000));
+    glowLast=t;
+    const diff=glowTarget-glowNow;
+    const tau=diff>0?GLOW_IN:GLOW_OUT;
+    let move=diff*(1-Math.exp(-dt/tau));              /* exponential ease toward target */
+    const cap=GLOW_MAX_SPEED*dt;
+    if(Math.abs(move)>cap)move=Math.sign(move)*cap;   /* never faster than the cap */
+    glowNow+=move;
+    if(Math.abs(glowTarget-glowNow)<.0008)glowNow=glowTarget;
+    paintGlow();
+    if(glowNow!==glowTarget)glowRaf=requestAnimationFrame(glowStep);
+    else glowRaf=0;
+  };
+  const syncScrollFinish=()=>{
+    glowTarget=Math.max(0,Math.min(1,window.scrollY/GLOW_DIST));
+    if(calmMotion){glowNow=glowTarget;paintGlow();return;}
+    if(!glowRaf){glowLast=performance.now();glowRaf=requestAnimationFrame(glowStep);}
+  };
+  syncScrollFinish();
+  window.addEventListener('scroll',syncScrollFinish,{passive:true});
 
-      <!-- 3-COLUMN REFERENCE GRID -->
-      <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        
-        <!-- LEFT COLUMN: ABOUT / MISSION TEXT -->
-        <div class="lg:col-span-5 text-left space-y-4 bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-red-900/30 shadow-2xl">
-          <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-            NeNoX Forge
-          </h1>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            We are building a dedicated team of students to compete—and win—in hackathons all year long. We won't micro-manage you, push you to care, or chase you for updates. We want self-driven builders who want to be here, collaborate, and execute on their own initiative.
-          </p>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed pt-2 border-t border-red-900/40">
-            Here's the deal: When you hit a wall or face a tough technical challenge, we've got your back with guidance and support. But the fire to show up and build has to come from you.
-          </p>
-          <p class="text-red-500 font-semibold text-xs sm:text-sm tracking-wide uppercase pt-1">
-            Caution :- we work aggressively ( Hyper Fast )
-          </p>
-        </div>
+  /* ----- HQ sine waves -----
+     Each path holds TWO identical tiles side by side, and the <svg> is 200% wide
+     and slides exactly -50% (= one tile), so the loop is perfectly seamless.
+     Waves mix two harmonics and use fine 3px steps for a smooth, studio-like curve. */
+  const SVGNS='http://www.w3.org/2000/svg';
+  function makeLayer(color,opacity,width,cycles,amp,phase,vars){
+    const TILE=600,W=TILE*2,H=32,mid=H/2;
+    let d='';
+    for(let x=0;x<=W;x+=3){
+      const t=(x%TILE)/TILE*Math.PI*2;               /* identical in both tiles */
+      const y=mid+amp*(.78*Math.sin(t*cycles+phase)+.22*Math.sin(t*cycles*2+phase*1.7));
+      d+=(x?' L':'M')+x+' '+y.toFixed(2);
+    }
+    const layer=document.createElement('div');
+    layer.className='wave-layer';
+    for(const k in vars)layer.style.setProperty(k,vars[k]);
+    const svg=document.createElementNS(SVGNS,'svg');
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('preserveAspectRatio','none');
+    const p=document.createElementNS(SVGNS,'path');
+    p.setAttribute('d',d);
+    p.setAttribute('stroke',color);
+    p.setAttribute('stroke-width',width);
+    p.setAttribute('opacity',opacity);
+    svg.appendChild(p);
+    layer.appendChild(svg);
+    return layer;
+  }
+  waveBox.append(
+    makeLayer('#22d3ee','1',2.5,3,10,0,{'--ad':'1.25s','--fd':'2.8s','--al':'0s'}),
+    makeLayer('#a78bfa','.9',2.1,2,8.5,1.1,{'--ad':'1.05s','--fd':'2.4s','--al':'.2s'}),
+    makeLayer('#fb7185','.82',1.8,4,6.5,2.3,{'--ad':'1.45s','--fd':'3.4s','--al':'.4s'}),
+    makeLayer('#fbbf24','.78',1.5,1,11,3.4,{'--ad':'1.7s','--fd':'4s','--al':'.6s'}),
+    makeLayer('#a3e635','.68',1.3,5,5.5,2.7,{'--ad':'1.35s','--fd':'3.1s','--al':'.8s'})
+  );
 
-        <!-- CENTER COLUMN: HERO LOGO VIDEO -->
-        <div class="lg:col-span-3 flex justify-center items-center py-6">
-          <div class="relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-rose-700 rounded-full blur-xl opacity-50 group-hover:opacity-80 transition duration-1000"></div>
-            <video 
-              src="logo.mp4" 
-              autoplay 
-              loop 
-              muted 
-              playsinline 
-              class="relative h-64 w-64 sm:h-72 sm:w-72 rounded-full object-cover border-2 border-red-600/80 shadow-2xl shadow-red-900/50">
-            </video>
-          </div>
-        </div>
+  /* ----- open / minimize ----- */
+  function setOpen(open){
+    wrap.dataset.open=String(open);
+    toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open?'Close music player':'Open music player');
+  }
+  toggle.addEventListener('click',()=>setOpen(wrap.dataset.open!=='true'));
 
-        <!-- RIGHT COLUMN: ACTION LINKS & COMMUNITY -->
-        <div class="lg:col-span-4 flex flex-col justify-center space-y-6 pl-0 lg:pl-6">
-          
-          <!-- Discord Server Link -->
-          <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
-            <div class="w-12 h-12 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-              <i class="fa-brands fa-discord"></i>
-            </div>
-            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
-              NeNoX Forge Server
-            </span>
-          </a>
-
-          <!-- Application Link -->
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
-            <div class="w-12 h-12 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-paper-plane"></i>
-            </div>
-            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
-              Application Link
-            </span>
-          </a>
-
-          <!-- Team Details Link -->
-          <a href="#roles" class="group flex items-center space-x-4 bg-slate-900/80 hover:bg-red-950/60 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg hover:border-red-600/60 backdrop-blur-sm">
-            <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
-            <span class="text-xl font-bold text-white group-hover:text-red-400 transition-colors">
-              Team Details
-            </span>
-          </a>
-
-        </div>
-
-      </div>
-    </header>
-
-    <!-- ROLES SECTION -->
-    <section id="roles" class="max-w-7xl mx-auto px-6 py-24 border-t border-red-900/30 w-full">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-white">Team Details & Open Roles</h2>
-        <p class="text-red-400/80 mt-3 text-lg">Detailed breakdown of specialized roles for our hackathon lineup</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        
-        <!-- ROLE 1: Ethical Hacker -->
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
-          <div>
-            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-user-shield"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Ethical Hacker / Security Specialist</h3>
-            <p class="text-slate-300 text-xs leading-relaxed mb-4">
-              <span class="font-bold text-red-400">Tech Stack:</span> Linux, Bash, Nmap, Metasploit, Wireshark, Burp Suite, Network Security.
-            </p>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">
-              You are the team's defensive shield and offensive strategist, securing endpoints, handling cloud deployments, and running exploit scripts under time constraints.
-            </p>
-          </div>
-          <!-- Sub-page Link for Role 1 -->
-          <a href="ethical-hacker.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
-            <span>View Role Details</span>
-            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-          </a>
-        </div>
-
-        <!-- ROLE 2: Frontend Developer -->
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
-          <div>
-            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-code"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Frontend Developer</h3>
-            <p class="text-slate-300 text-xs leading-relaxed mb-4">
-              <span class="font-bold text-red-400">Tech Stack:</span> React.js, Next.js, TypeScript, Tailwind CSS, WebSockets, State Management.
-            </p>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">
-              You own client-side execution, translating raw prototypes into dynamic, production-ready web apps built for speed and live demonstrations.
-            </p>
-          </div>
-          <!-- Sub-page Link for Role 2 -->
-          <a href="frontend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
-            <span>View Role Details</span>
-            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-          </a>
-        </div>
-
-        <!-- ROLE 3: Backend Developer -->
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
-          <div>
-            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-server"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Backend Developer</h3>
-            <p class="text-slate-300 text-xs leading-relaxed mb-4">
-              <span class="font-bold text-red-400">Tech Stack:</span> Python (FastAPI), Node.js, PostgreSQL, MongoDB, Redis, LLM Integration.
-            </p>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">
-              You design server architectures, manage database schemas, connect machine learning pipelines, and ensure lightning-fast backend responses.
-            </p>
-          </div>
-          <!-- Sub-page Link for Role 3 -->
-          <a href="backend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
-            <span>View Role Details</span>
-            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-          </a>
-        </div>
-
-        <!-- ROLE 4: Research, Strategy & PM -->
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
-          <div>
-            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-diagram-project"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">Research, Strategy & PM</h3>
-            <p class="text-slate-300 text-xs leading-relaxed mb-4">
-              <span class="font-bold text-red-400">Tech Stack:</span> Agile, Problem Framing, Market Research, Pitch Strategy, Notion/Jira.
-            </p>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">
-              You validate problem statements, align execution with competition rubrics, manage MVP sprint timelines, and sculpt winning pitch decks.
-            </p>
-          </div>
-          <!-- Sub-page Link for Role 4 -->
-          <a href="research-pm.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
-            <span>View Role Details</span>
-            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-          </a>
-        </div>
-
-        <!-- ROLE 5: UI/UX Designer & Product Lead -->
-        <div class="bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
-          <div>
-            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-palette"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">UI/UX Designer & Product Lead</h3>
-            <p class="text-slate-300 text-xs leading-relaxed mb-4">
-              <span class="font-bold text-red-400">Tech Stack:</span> Figma, Interactive Prototyping, Design Systems, Motion Graphics, Wireframing.
-            </p>
-            <p class="text-slate-400 text-sm leading-relaxed mb-6">
-              You craft high-fidelity prototypes, build design systems early in sprints, and design striking visual presentation slides that hook judges.
-            </p>
-          </div>
-          <!-- Sub-page Link for Role 5 -->
-          <a href="uiux-designer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
-            <span>View Role Details</span>
-            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-          </a>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- FORGE ACTIVITY SECTION -->
-    <section id="activity" class="max-w-7xl mx-auto px-6 py-16 border-t border-red-900/30 w-full">
-      <div class="text-center mb-12">
-        <h2 class="text-xs sm:text-sm font-extrabold tracking-[0.35em] text-red-500 uppercase">Forge Activity</h2>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-7 items-start">
-        <div class="rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">01 / Projects</p>
-              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Projects</h3>
-            </div>
-            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
-              <i class="fa-solid fa-code"></i>
-            </div>
-          </div>
-          <div id="projects-list" class="space-y-3" aria-live="polite">
-            <p class="text-sm text-slate-400">Loading projects…</p>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">02 / Updates</p>
-              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Updates</h3>
-            </div>
-            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
-              <i class="fa-solid fa-calendar-check"></i>
-            </div>
-          </div>
-          <div id="updates-list" class="space-y-3" aria-live="polite">
-            <p class="text-sm text-slate-400">Loading updates…</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- APPLICATION SECTION -->
-    <section id="apply" class="max-w-3xl mx-auto px-6 py-20 border-t border-red-900/30 w-full text-center">
-      <h2 class="text-3xl sm:text-4xl font-bold text-white">Apply for NeNoX Forge</h2>
-      <p class="text-slate-400 mt-3 text-lg mb-8">Ready to execute? Fill out our application form and join our Discord community.</p>
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg shadow-red-600/30 text-lg">
-        <i class="fa-solid fa-paper-plane mrhttps://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header-3"></i> Open Application Form
-      </a>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-red-900/30 bg-black/80 py-8 text-center text-slate-500 text-sm space-y-3">
-      <p class="text-slate-300 italic text-sm max-w-2xl mx-auto px-4">
-        &ldquo;The strength of the team is each individual member. The strength of each member is the team.&rdquo; <span class="not-italic text-red-400 font-medium">— Phil Jackson</span>
-      </p>
-      <p>© 2026 Team NeNoX Forge • Built for University Hackathons</p>
-      <p class="text-red-500/80 uppercase text-xs tracking-widest font-semibold">Build on NeNoX Heart to ace competition</p>
-    </footer>
-
-  </div>
-
-  <!-- FLOATING MUSIC TOGGLE BUTTON -->
-  <button 
-    id="music-toggle" 
-    aria-label="Toggle Background Music"
-    class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-red-950/80 border border-red-900/60 text-slate-400 hover:text-white hover:bg-red-900/90 hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.3)] transition-all duration-300 backdrop-blur-md group">
-    <i id="music-icon" class="fa-solid fa-music text-lg group-hover:rotate-12 transition-transform"></i>
-  </button>
-
-  <!-- AMBIENT AUDIO ELEMENT -->
-  <audio id="bg-music" loop preload="auto">
-    <source src="ambient.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- SCRIPTS -->
-  <script>
-    // Splash Screen Control
-    window.addEventListener('load', () => {
-      const splashScreen = document.getElementById('splash-screen');
-      setTimeout(() => {
-        splashScreen.style.opacity = '0';
-        splashScreen.style.visibility = 'hidden';
-      }, 1500);
+  /* Clean, single-pass note burst on hover/focus; avoid forced layout/reflow,
+     which could make the notes flicker or glitch when the pointer moves. */
+  let noteTimer;
+  let noteFrame=0;
+  function burstNotes(){
+    if(wrap.dataset.playing==='true')return;
+    cancelAnimationFrame(noteFrame);
+    clearTimeout(noteTimer);
+    toggle.classList.remove('notes-active');
+    noteFrame=requestAnimationFrame(()=>{
+      if(wrap.dataset.playing==='true')return;
+      toggle.classList.add('notes-active');
+      noteTimer=setTimeout(()=>toggle.classList.remove('notes-active'),1450);
     });
+  }
+  toggle.addEventListener('pointerenter',burstNotes,{passive:true});
+  toggle.addEventListener('focus',()=>{ if(!toggle.matches(':hover')) burstNotes(); });
 
-    // Background Audio Control
-    document.addEventListener('DOMContentLoaded', () => {
-      const music = document.getElementById('bg-music');
-      const musicBtn = document.getElementById('music-toggle');
-      const musicIcon = document.getElementById('music-icon');
+  /* tap/click anywhere outside the player → minimize */
+  document.addEventListener('pointerdown',e=>{
+    if(wrap.dataset.open!=='true')return;
+    if(wrap.contains(e.target))return;
+    setOpen(false);
+  },{passive:true});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&wrap.dataset.open==='true')setOpen(false);
+  });
 
-      function parseMarkdownCards(markdown) {
-        return markdown.split(/^##\s+/m).slice(1).map(section => {
-          const lines = section.split(/\r?\n/);
-          const card = { title: lines[0].trim(), fields: {} };
+  /* ----- audio ----- */
+  audio.volume=(parseInt(vol.value,10)||40)/100;
+  vol.addEventListener('input',()=>{audio.volume=(parseInt(vol.value,10)||0)/100;});
 
-          lines.slice(1).forEach(line => {
-            const field = line.match(/^\s*-\s+\*\*([^*]+):\*\*\s*(.*)$/);
-            if (!field) return;
-            const key = field[1].trim().toLowerCase();
-            if (!card.fields[key]) card.fields[key] = [];
-            card.fields[key].push(field[2].trim());
-          });
+  let wantPlay=false;
+  function setPlaying(on){
+    wrap.dataset.playing=String(on);
+    playIcon.className=on?'fa-solid fa-pause':'fa-solid fa-play';
+    playBtn.setAttribute('aria-label',on?'Pause music':'Play music');
+  }
+  playBtn.addEventListener('click',()=>{
+    if(audio.paused){
+      wantPlay=true;
+      audio.play().then(()=>setPlaying(true)).catch(()=>{
+        wantPlay=false;setPlaying(false);
+      });
+    }else{
+      wantPlay=false;
+      audio.pause();
+      setPlaying(false);
+    }
+  });
+  audio.addEventListener('error',()=>{if(wantPlay){wantPlay=false;setPlaying(false);}});
+})();
+</script>
 
-          return card;
-        }).filter(card => card.title);
+<script>
+/* ---------- DEFERRED BACKGROUND VIDEO ---------- */
+document.addEventListener('DOMContentLoaded',()=>{
+  const bg=document.getElementById('bg-video');
+  const saveData=navigator.connection&&navigator.connection.saveData;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!bg)return;
+  if(saveData||reduced){bg.remove();return;}
+
+  const kick=()=>{
+    if(!bg.isConnected||bg.src)return;
+    bg.src=bg.dataset.src;
+    bg.load();
+    bg.play().catch(()=>{});
+  };
+  if(document.readyState==='complete')setTimeout(kick,1200);
+  else window.addEventListener('load',()=>setTimeout(kick,1200));
+
+  new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(!bg.isConnected)return;
+    if(e.isIntersecting)bg.play().catch(()=>{});else bg.pause();
+  }),{threshold:.05}).observe(bg);
+});
+</script>
+
+<!-- Zoom effects are hover-only; no click or scroll animations. -->
+
+<!-- PROJECTS + UPDATES: read projects.md and updates.md from this same folder.
+     Keep these files beside index.html. If fetch is unavailable (e.g. opening via file://),
+     the built-in fallback content below is shown instead. -->
+<script>
+(function(){
+  const projectsTarget=document.getElementById('projects-list');
+  const updatesTarget=document.getElementById('recent-hackathons');
+  if(!projectsTarget||!updatesTarget)return;
+
+  const fallbackProjects=[
+    {title:'NeNoX Forge Website',status:'Active',description:"The collective's main digital platform for projects, activities, team roles, student opportunities and community updates.",tags:['WEB','UI/UX','COMMUNITY','HTML']},
+    {title:'NeNoX Forge Discord Server',status:'Under Development',description:'A Python-powered project for developing and supporting the NeNoX Forge Discord server.',tags:['DISCORD','UNDERDEVELOPMENT','PYTHON']},
+    {title:'AI-Assisted Cybersecurity Toolkit',status:'In Dev',description:'A student project exploring how AI can work alongside authorized Linux security tools such as Nmap to organize reconnaissance, explain results and improve security workflows.',tags:['AI','CYBERSECURITY','LINUX']}
+  ];
+  const fallbackUpdates=[
+    {title:'CRSU Hackathon 2026',type:'Event',date:'ONLINE · 05–18 OCT 2026',badge:'OPEN TO ALL',description:'A fully online two-stage hackathon. No specific college, degree or discipline is required, so participants can join from anywhere.',details:['TEAM: 1–3 | MODE: ONLINE','30 TEAMS → FINAL | DEADLINE: 05 OCT'],link:'https://events.romeojuliet.love/crsu-hackathon-2026',linkLabel:'Open Website'},
+    {title:'FirstHack 2026',type:'Event',date:'ONLINE · 22 OCT – 04 NOV 2026',badge:'STUDENT EVENT',description:'Open across branches and years for students in India, including CS, ECE, Mechanical, Commerce and Arts. Solo participation is allowed.',details:['TEAM: 1–4 | SOLO: YES','FEE: ₹400 | REG. CLOSES: 19 OCT'],link:'https://hackathon.firsthack.in/',linkLabel:'Open Website'},
+    {title:"HypneXis '26",type:'Event',date:'OFFLINE · 24–25 OCT 2026',badge:'APTITUDE TEST TONIGHT',description:'A 36-hour hackathon at Manipal University Jaipur with a ₹10L+ prize pool. Entry requires a 60-minute online aptitude challenge on Oct 16 from 6:00–11:59 PM; results are expected tomorrow. Open to UG and PG students from any stream.',details:['TEAM: 1–4 | MODE: OFFLINE','OVERNIGHT HACK: 24 OCT | GRAND FINALE: 25 OCT'],link:'https://unstop.com/competitions/hypnexis-2026-manipal-university-mu-jaipur-1711890',linkLabel:'Register and take the test'},
+    {title:'HackX 3.0',type:'Event',date:'OFFLINE · 30–31 OCT 2026',badge:'REGISTRATION CLOSED',description:'A 36-hour national hackathon at Manipal University Jaipur, with a ₹5L+ prize pool across 10 tracks, including AI/ML, cybersecurity and blockchain. Registrations closed Oct 12; check the event page in case they reopen.',details:['10 TRACKS | 2,000+ BUILDERS','50+ UNIVERSITIES | REG. CLOSED: 12 OCT'],link:'https://internshala.com/competitions/hackx-3-0/',linkLabel:'Check HackX 3.0'}
+  ];
+
+  function parseMarkdown(text){
+    const normalized=text.replace(/\r/g,'');
+    const sections=[];
+    let current=null;
+    normalized.split('\n').forEach(line=>{
+      const heading=line.match(/^##\s+(.+?)\s*$/);
+      if(heading){current={title:heading[1].trim(),fields:{}};sections.push(current);return;}
+      if(!current)return;
+      const field=line.match(/^\s*-\s*\*\*(.+?):\*\*\s*(.*?)\s*$/);
+      if(field){
+        const key=field[1].trim().toLowerCase();
+        (current.fields[key]||(current.fields[key]=[])).push(field[2].trim());
       }
-
-      function field(card, name) {
-        return card.fields[name] || [];
-      }
-
-      function element(tag, className, text) {
-        const node = document.createElement(tag);
-        node.className = className;
-        if (text) node.textContent = text;
-        return node;
-      }
-
-      function renderProjects(cards, container) {
-        container.replaceChildren();
-        if (!cards.length) {
-          container.append(element('p', 'text-sm text-slate-400', 'No projects have been listed yet.'));
-          return;
-        }
-
-        cards.forEach(card => {
-          const item = element('article', 'rounded-xl border border-red-950 bg-black/60 p-4');
-          const header = element('div', 'flex items-start justify-between gap-3');
-          header.append(element('h4', 'text-base sm:text-lg font-bold text-white', card.title));
-
-          const status = field(card, 'status')[0];
-          if (status) {
-            header.append(element('span', 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400', status));
-          }
-          item.append(header);
-
-          const description = field(card, 'description')[0];
-          if (description) item.append(element('p', 'mt-2 text-sm leading-relaxed text-slate-400', description));
-
-          const tags = field(card, 'tags').flatMap(value => value.split(',')).map(tag => tag.trim()).filter(Boolean);
-          if (tags.length) {
-            const tagList = element('div', 'mt-3 flex flex-wrap gap-2');
-            tags.forEach(tag => tagList.append(element('span', 'rounded bg-white/5 px-2 py-1 text-[10px] font-semibold text-slate-400', tag)));
-            item.append(tagList);
-          }
-
-          container.append(item);
-        });
-      }
-
-      function renderUpdates(cards, container) {
-        container.replaceChildren();
-        if (!cards.length) {
-          container.append(element('p', 'text-sm text-slate-400', 'No updates have been listed yet.'));
-          return;
-        }
-
-        cards.forEach(card => {
-          const isPolicy = field(card, 'type')[0]?.toLowerCase() === 'policy';
-          const item = element('article', 'rounded-xl border border-red-950 bg-black/60 p-4');
-
-          if (isPolicy) {
-            const heading = element('div', 'flex items-center gap-2');
-            heading.append(element('span', 'h-2 w-2 rounded-full bg-yellow-400'));
-            heading.append(element('p', 'text-[10px] font-extrabold tracking-[0.18em] text-yellow-400 uppercase', field(card, 'label')[0] || 'Policy'));
-            item.append(heading);
-            item.append(element('h4', 'mt-2 text-sm font-bold text-white', card.title));
-            const description = field(card, 'description')[0];
-            if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
-            container.append(item);
-            return;
-          }
-
-          const header = element('div', 'flex items-start justify-between gap-3');
-          header.append(element('p', 'text-[10px] font-extrabold tracking-[0.16em] text-red-500 uppercase', field(card, 'date')[0] || 'Update'));
-          const badge = field(card, 'badge')[0];
-          if (badge) {
-            const badgeClass = /student/i.test(badge)
-              ? 'shrink-0 rounded-full border border-yellow-900/70 bg-yellow-950/50 px-2.5 py-1 text-[10px] font-bold text-yellow-400'
-              : 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400';
-            header.append(element('span', badgeClass, badge));
-          }
-          item.append(header);
-          item.append(element('h4', 'mt-1 text-base font-bold text-white', card.title));
-
-          const description = field(card, 'description')[0];
-          if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
-
-          const details = field(card, 'details');
-          if (details.length) {
-            const detailList = element('div', 'mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2');
-            details.forEach(detail => detail.split('|').map(value => value.trim()).filter(Boolean).forEach(value => {
-              detailList.append(element('p', 'text-[9px] font-medium uppercase tracking-wide text-slate-500', value));
-            }));
-            item.append(detailList);
-          }
-
-          const link = field(card, 'link')[0];
-          if (link) {
-            try {
-              const url = new URL(link);
-              if (url.protocol === 'https:' || url.protocol === 'http:') {
-                const anchor = element('a', 'mt-3 flex w-full items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-red-700', field(card, 'link label')[0] || 'Learn more ↗');
-                anchor.href = url.href;
-                anchor.target = '_blank';
-                anchor.rel = 'noopener noreferrer';
-                item.append(anchor);
-              }
-            } catch (error) {
-              console.error(`Invalid update link in "${card.title}".`, error);
-            }
-          }
-
-          container.append(item);
-        });
-      }
-
-      async function loadMarkdown(file, container, render) {
-        try {
-          const response = await fetch(file);
-          if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
-          render(parseMarkdownCards(await response.text()), container);
-        } catch (error) {
-          console.error(`Unable to load ${file}.`, error);
-          container.replaceChildren(element('p', 'text-sm text-red-400', `Unable to fetch source file: ${file}.`));
-        }
-      }
-
-      loadMarkdown('project.md', document.getElementById('projects-list'), renderProjects);
-      loadMarkdown('updates.md', document.getElementById('updates-list'), renderUpdates);
-
-      music.volume = 0.3;
-      let isPlaying = false;
-
-      function toggleMusic() {
-        if (isPlaying) {
-          music.pause();
-          musicIcon.className = 'fa-solid fa-music text-lg text-slate-400';
-        } else {
-          music.play().then(() => {
-            musicIcon.className = 'fa-solid fa-compact-disc text-lg text-red-400 animate-spin';
-          }).catch(err => {
-            console.log("Autoplay prevented:", err);
-          });
-        }
-        isPlaying = !isPlaying;
-      }
-
-      musicBtn.addEventListener('click', toggleMusic);
     });
-  </script>
+    return sections;
+  }
+  function first(fields,key){return (fields[key]||[])[0]||'';}
+  function parseProjects(text){
+    return parseMarkdown(text).map(section=>({
+      title:section.title,
+      status:first(section.fields,'status'),
+      description:first(section.fields,'description'),
+      tags:(first(section.fields,'tags')||'').split(',').map(t=>t.trim()).filter(Boolean)
+    })).filter(p=>p.status&&p.description&&!/^example\s*:/i.test(p.title));
+  }
+  function parseUpdates(text){
+    return parseMarkdown(text).map(section=>{
+      const f=section.fields;
+      let link=first(f,'link');
+      const mdLink=link.match(/\[[^\]]*\]\((https?:\/\/[^)]+)\)/i);
+      if(mdLink)link=mdLink[1];
+      else {
+        const rawUrl=link.match(/https?:\/\/\S+/i);
+        link=rawUrl?rawUrl[0].replace(/[)>]+$/,''):'';
+      }
+      return {title:section.title,type:first(f,'type'),date:first(f,'date'),badge:first(f,'badge'),label:first(f,'label'),description:first(f,'description'),details:f.details||[],link,linkLabel:first(f,'link label')||'Open Website'};
+    }).filter(u=>u.type&&u.description&&!/^example\s*:/i.test(u.title));
+  }
+  function node(tag,className,text){
+    const n=document.createElement(tag);
+    if(className)n.className=className;
+    if(text!==undefined&&text!==null)n.textContent=text;
+    return n;
+  }
+  function renderProjects(items){
+    const frag=document.createDocumentFragment();
+    items.forEach(project=>{
+      const card=node('article','p-4 rounded-xl bg-black/50 border border-red-900/30');
+      const top=node('div','flex items-start justify-between gap-4');
+      const content=node('div','min-w-0');
+      content.append(node('h4','font-bold text-white text-base sm:text-lg',project.title));
+      content.append(node('p','text-slate-400 text-sm leading-relaxed mt-2',project.description));
+      const status=(project.status||'In Dev').trim();
+      const statusLower=status.toLowerCase();
+      const statusClass=statusLower==='active'
+        ?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+        :(statusLower.includes('dev')?'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20':'bg-slate-500/10 text-slate-300 border border-slate-500/20');
+      const badge=node('span','text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap '+statusClass,status);
+      top.append(content,badge);card.append(top);
+      if(project.tags&&project.tags.length){
+        const tags=node('div','mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500');
+        project.tags.forEach(tag=>tags.append(node('span','px-2 py-1 rounded bg-white/5',tag)));
+        card.append(tags);
+      }
+      frag.append(card);
+    });
+    projectsTarget.replaceChildren(frag);
+  }
+  function renderUpdates(items){
+    const frag=document.createDocumentFragment();
+    items.forEach(update=>{
+      const card=node('article','card-lift p-4 rounded-xl bg-black/50 border border-red-900/30');
+      const top=node('div','flex items-start justify-between gap-3');
+      const heading=node('div','min-w-0');
+      const metaWrap=node('div','flex items-center gap-2');
+      metaWrap.append(node('span','w-2 h-2 rounded-full shrink-0 '+(/policy/i.test(update.type)?'bg-amber-400':'bg-blue-500')));
+      metaWrap.append(node('p','text-red-500 text-[10px] font-bold tracking-[0.15em] uppercase',update.date||update.label||update.type||'UPDATE'));
+      heading.append(metaWrap,node('h4','font-bold text-white mt-1',update.title));
+      top.append(heading);
+      const badgeText=update.badge||update.label;
+      if(badgeText){
+        const closed=/closed/i.test(badgeText);
+        top.append(node('span','shrink-0 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap '+(closed?'bg-red-500/10 text-red-400 border border-red-500/20':'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'),badgeText));
+      }
+      card.append(top,node('p','text-slate-400 text-xs leading-relaxed mt-2',update.description));
+      const detailParts=(update.details||[]).flatMap(value=>value.split('|').map(part=>part.trim())).filter(Boolean);
+      if(detailParts.length){
+        const details=node('div','grid grid-cols-2 gap-2 mt-3 text-[10px] text-slate-500');
+        detailParts.forEach(detail=>details.append(node('span','',detail)));
+        card.append(details);
+      }
+      if(update.link&&/^https?:\/\//i.test(update.link)){
+        const link=node('a','mt-3 inline-flex w-full justify-center px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors duration-150',((update.linkLabel||'Open Website')+' ↗'));
+        link.href=update.link;link.target='_blank';link.rel='noopener noreferrer';card.append(link);
+      }
+      frag.append(card);
+    });
+    updatesTarget.replaceChildren(frag);
+  }
+
+  // Render instantly, then replace with the latest Markdown content when hosted.
+  renderProjects(fallbackProjects);
+  renderUpdates(fallbackUpdates);
+  Promise.allSettled([
+    fetch('projects.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('projects.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseProjects(text);if(items.length)renderProjects(items);}),
+    fetch('updates.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('updates.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseUpdates(text);if(items.length)renderUpdates(items);})
+  ]).then(results=>{
+    results.forEach((result,index)=>{if(result.status==='rejected')console.info((index===0?'projects.md':'updates.md')+' could not be loaded; using built-in fallback content.',result.reason);});
+  });
+})();
+</script>
+
+<!-- Tailwind Play CDN loads LAST so it can never delay the splash / logo first paint -->
+<script src="https://cdn.tailwindcss.com"></script>
 
 </body>
 </html>
