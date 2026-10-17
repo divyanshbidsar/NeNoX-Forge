@@ -71,22 +71,31 @@ img,video,canvas{max-width:100%}
   .card-lift:hover{transform:translate3d(0,-4px,0) scale(1.065)}
   .panel-zoom:hover{transform:translate3d(0,-2px,0) scale(1.025)}
 }
+/* MOBILE: no hover on touch, so links/cards/panels zoom as they cross the middle
+   of the screen instead (JS toggles .is-active). Same GPU-friendly transform zoom. */
 @media (hover:none),(pointer:coarse){
+  .action-link.is-active{transform:translate3d(0,-2px,0) scale(1.06)}
+  .card-lift.is-active{transform:translate3d(0,-4px,0) scale(1.05)}
+  .panel-zoom.is-active{transform:translate3d(0,-2px,0) scale(1.03)}
+  #projects-list>.is-active,#recent-hackathons>.is-active{transform:translate3d(0,-2px,0) scale(1.02)}
 }
+/* Instant smooth feedback the moment a finger/mouse presses down. */
+.action-link.is-pressed,.card-lift.is-pressed,.panel-zoom.is-pressed,
+#projects-list>.is-pressed,#recent-hackathons>.is-pressed{transform:translate3d(0,-2px,0) scale(1.04);transition-duration:.15s}
 /* ---------- Dynamic-Island music player ---------- */
 .island-wrap{
   position:fixed;z-index:60;
   right:1.5rem;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
-  width:46px;height:46px;overflow:visible;
+  width:38px;height:38px;overflow:visible;
 }
 .island{
   position:absolute;right:0;top:0;z-index:1;
   display:flex;flex-direction:row-reverse;align-items:center;
-  width:46px;height:46px;overflow:visible;isolation:isolate;
+  width:38px;height:38px;overflow:visible;isolation:isolate;
   border-radius:9999px;
   background:#000;
   box-shadow:0 0 0 1px rgba(255,255,255,.025),inset 0 1px 0 rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.7);
-  transition:width .6s cubic-bezier(.34,1.35,.45,1),transform .28s cubic-bezier(.2,.8,.2,1);
+  transition:width .6s cubic-bezier(.22,1,.36,1);
   will-change:width,transform;
   transform:scale(1);transform-origin:bottom right;
 }
@@ -97,7 +106,7 @@ img,video,canvas{max-width:100%}
 }
 .island::after{
   content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0) 48%);
+  background:linear-gradient(180deg,rgba(239,68,68,.20),rgba(239,68,68,0) 48%);
   opacity:.28;
   transition:opacity 2.8s cubic-bezier(.22,1,.36,1);
 }
@@ -107,60 +116,70 @@ img,video,canvas{max-width:100%}
    and retreats progressively when scrolling back up (not a delayed on/off transition). */
 .island-wrap{--scroll-finish:0;}
 .island-wrap .island{
-  box-shadow:0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .22)),
-    inset 0 1px 0 rgba(255,255,255,calc(var(--scroll-finish) * .24)),
-    inset 0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .035)),
+  /* Red finish (site red #dc2626 / #ef4444). The glow lives INSIDE the island: a hairline ring plus an
+     inner red light that grows slowly with the eased scroll value (--scroll-finish). Nothing spills outside. */
+  box-shadow:
+    0 0 0 1px rgba(220,38,38,calc(.30 + var(--scroll-finish) * .22)),
+    inset 0 1px 0 rgba(248,113,113,calc(.10 + var(--scroll-finish) * .16)),
+    inset 0 0 calc(4px + var(--scroll-finish) * 14px) rgba(239,68,68,calc(var(--scroll-finish) * .40)),
     0 10px 24px rgba(0,0,0,.7);
-  transition:width .6s cubic-bezier(.34,1.35,.45,1),transform .28s cubic-bezier(.2,.8,.2,1);
+  transition:width .6s cubic-bezier(.22,1,.36,1);
 }
 .island-wrap .island-icon{
-  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--scroll-finish) * .24)),
-    0 0 0 1px rgba(255,255,255,calc(var(--scroll-finish) * .2));
-  transition:transform 1.8s cubic-bezier(.22,1,.36,1),color 2.6s ease-in-out,background 2.6s ease-in-out;
-  transform-origin:center;
+  color:#ef4444;
+  box-shadow:inset 0 1px 0 rgba(248,113,113,calc(.12 + var(--scroll-finish) * .2)),
+    inset 0 0 calc(3px + var(--scroll-finish) * 9px) rgba(239,68,68,calc(var(--scroll-finish) * .48)),
+    0 0 0 1px rgba(220,38,38,calc(.35 + var(--scroll-finish) * .20));
+  transition:transform .35s cubic-bezier(.22,1,.36,1),color .4s ease,background .4s ease;
+  transform-origin:center;touch-action:manipulation;
 }
-.island-wrap .island::after{opacity:calc(.28 + var(--scroll-finish) * .72);transition:none;}
+.island-wrap .island::after{opacity:calc(.25 + var(--scroll-finish) * .45);transition:none;}
 
 /* External expanding ripple rings removed; keep the in-island music waves. */
 
 /* Icon: round chip + animated note */
 .island-icon{
-  position:relative;z-index:3;flex:0 0 40px;width:40px;height:40px;margin-right:3px;
+  position:relative;z-index:3;flex:0 0 32px;width:32px;height:32px;margin-right:3px;
   display:grid;place-items:center;border:0;cursor:pointer;border-radius:9999px;
-  color:#f8fafc;font-size:1.1rem;
+  color:#f8fafc;font-size:.92rem;
   background:#000;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 0 0 1px rgba(255,255,255,.025);
   transition:transform 1.8s cubic-bezier(.22,1,.36,1),color 2.6s ease-in-out,background 2.6s ease-in-out,box-shadow 3s cubic-bezier(.22,1,.36,1);
   -webkit-tap-highlight-color:transparent;
 }
 .island-icon i.fa-music{display:block;transition:opacity .25s ease,transform .35s cubic-bezier(.34,1.4,.5,1)}
-.island-wrap[data-playing="true"] .island-icon{color:#fb7185;background:#000}
-.island-wrap[data-playing="true"] .island-icon i.fa-music{opacity:0;transform:scale(.3) rotate(-90deg)}
+.island-wrap[data-playing="true"] .island-icon{color:#ef4444;background:#000}
+.island-wrap[data-playing="true"] .island-icon i.fa-music{opacity:0;transform:none}
+/* Music icon: smooth 10° rotation when the mouse reaches it (desktop hover only).
+   The note's transform already eases on a spring curve, so the turn glides in
+   and back out. Scoped to the paused state so it never fights the vinyl transition. */
+@media (hover:hover) and (pointer:fine){
+  .island-wrap:not([data-playing="true"]) .island-icon:hover i.fa-music{transform:rotate(10deg)}
+}
+/* Smooth press feedback on the icon chip (touch + mouse). */
+.island-wrap .island-icon:active{transform:scale(.92)}
 /* Musical notes briefly burst outward when the pointer reaches the icon. */
 .island-icon{overflow:visible;isolation:isolate}
 .music-burst{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:visible}
-.music-burst i{position:absolute;left:50%;top:50%;display:block;white-space:nowrap;line-height:1;font-style:normal;font-size:12px;font-weight:700;opacity:0;color:#fff;text-shadow:0 0 6px rgba(34,211,238,.45);will-change:transform,opacity;backface-visibility:hidden}
-.island-wrap[data-playing="false"] .island-icon.notes-active .music-burst i{animation:noteBurst 1.25s cubic-bezier(.16,.7,.25,1) both}
-.island-wrap[data-playing="true"] .music-burst i{animation:none !important;opacity:0}
-.music-burst i:nth-child(1){--dx:-23px;--dy:-20px;--tone:#22d3ee;animation-delay:0s}
-.music-burst i:nth-child(2){--dx:24px;--dy:-19px;--tone:#c084fc;animation-delay:.06s}
-.music-burst i:nth-child(3){--dx:-25px;--dy:13px;--tone:#f9a8d4;animation-delay:.12s}
-.music-burst i:nth-child(4){--dx:23px;--dy:15px;--tone:#fbbf24;animation-delay:.18s}
-.music-burst i:nth-child(5){--dx:0px;--dy:-29px;--tone:#a3e635;animation-delay:.08s}
+.music-burst i{position:absolute;left:50%;top:50%;display:block;white-space:nowrap;line-height:1;font-style:normal;font-size:12px;font-weight:700;opacity:0;color:#fff;text-shadow:0 0 6px rgba(220,38,38,.55);will-change:transform,opacity;backface-visibility:hidden}
+.island-icon.notes-active .music-burst i{animation:noteBurst 1.25s cubic-bezier(.16,.7,.25,1) both}
+.music-burst i:nth-child(1){--dx:-23px;--dy:-20px;--tone:#ef4444;animation-delay:0s}
+.music-burst i:nth-child(2){--dx:24px;--dy:-19px;--tone:#f87171;animation-delay:.06s}
+.music-burst i:nth-child(3){--dx:-25px;--dy:13px;--tone:#dc2626;animation-delay:.12s}
+.music-burst i:nth-child(4){--dx:23px;--dy:15px;--tone:#fca5a5;animation-delay:.18s}
+.music-burst i:nth-child(5){--dx:0px;--dy:-29px;--tone:#b91c1c;animation-delay:.08s}
 .music-burst i{color:var(--tone,#fff)}
 @keyframes noteBurst{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.55) rotate(-12deg)}15%{opacity:1}68%{opacity:1}100%{opacity:0;transform:translate3d(calc(-50% + var(--dx)),calc(-50% + var(--dy)),0) scale(1) rotate(12deg)}}
-@media (hover:hover) and (pointer:fine){.island-icon:hover{transform:rotate(10deg)}}
-.island-icon:active{transform:rotate(10deg) !important;transition-duration:1.8s}
-.island-icon:focus-visible{outline:2px solid #e5e7eb;outline-offset:3px}
+.island-icon:focus-visible{outline:2px solid #ef4444;outline-offset:3px}
 
 
 /* Realistic vinyl disc: shows (and spins) only while the song plays */
 .vinyl{
   position:absolute;inset:1px;border-radius:9999px;pointer-events:none;
-  opacity:0;transform:scale(.4);
-  transition:opacity .3s ease,transform .5s cubic-bezier(.34,1.4,.5,1);
+  opacity:0;transform:none;
+  transition:opacity .35s ease;
 }
-.island-wrap[data-playing="true"] .vinyl{opacity:1;transform:scale(1)}
+.island-wrap[data-playing="true"] .vinyl{opacity:1}
 .vinyl-spin{
   position:absolute;inset:0;border-radius:9999px;
   background:
@@ -189,26 +208,37 @@ img,video,canvas{max-width:100%}
 }
 .island-wrap[data-open="true"] .island-body{opacity:1;transform:none;transition-delay:.12s;pointer-events:auto}
 
-/* Flowing sine waves — HQ: seamless 2-tile loop, geometric-precision strokes */
+/* Audio-waveform bars (reference style): thin rounded white bars, tall burst on the left that
+   decays to a quiet tail, with a soft red halo. Only transform is animated (GPU-friendly). */
 .wave{
-  position:relative;flex:1 1 auto;min-width:0;height:26px;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+  --bar:#fff;
+  position:relative;flex:1 1 auto;min-width:0;height:24px;overflow:hidden;
+  display:flex;align-items:center;justify-content:space-between;gap:2px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
 }
-.wave-layer{position:absolute;inset:0;transform:scaleY(.06);transform-origin:center}
-.wave-layer svg{position:absolute;left:0;top:0;width:200%;height:100%;display:block;shape-rendering:geometricPrecision}
-.wave-layer path{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.island-wrap[data-playing="true"] .wave-layer{animation:amp var(--ad,1.6s) ease-in-out var(--al,0s) infinite}
-.island-wrap[data-playing="true"] .wave-layer svg{animation:flow var(--fd,3s) linear infinite}
-@keyframes flow{to{transform:translateX(-50%)}}
-@keyframes amp{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+.wave i{
+  display:block;flex:1 1 0;min-width:1.5px;max-width:3px;height:var(--h,50%);
+  border-radius:9999px;background:var(--bar);
+  box-shadow:0 0 5px rgba(255,255,255,.45);
+  transform:scaleY(.14);transform-origin:center;will-change:transform;
+  transition:transform .5s ease;
+}
+.island-wrap[data-playing="true"] .wave:not(.live) i{
+  animation:bar var(--d,1.2s) ease-in-out var(--l,0s) infinite alternate;
+}
+.wave.live i{transition:none}
+@keyframes bar{from{transform:scaleY(.18)}to{transform:scaleY(1)}}
 
 .island-btn{
-  width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:9999px;
-  background:#fff;color:#000;border:0;cursor:pointer;font-size:.68rem;
-  transition:transform .2s ease;
+  width:26px;height:26px;flex:0 0 26px;display:grid;place-items:center;border-radius:9999px;
+  background:#dc2626;color:#fff;border:0;cursor:pointer;font-size:.6rem;
+  box-shadow:0 0 0 1px rgba(248,113,113,.35),0 4px 10px rgba(220,38,38,.35);
+  transition:background-color .2s ease;
 }
-.island-vol{width:48px;flex:0 0 48px;height:14px;accent-color:#a78bfa;cursor:pointer}
+.island-btn:hover{background:#ef4444}
+.island-btn:focus-visible{outline:2px solid #fca5a5;outline-offset:2px}
+.island-vol{width:48px;flex:0 0 48px;height:12px;accent-color:#dc2626;cursor:pointer}
 @media (max-width:380px){.island-vol{display:none}}
 
 /* Skip rendering of off-screen sections until they are near the viewport */
@@ -216,7 +246,7 @@ img,video,canvas{max-width:100%}
 
 @media (prefers-reduced-motion:reduce){
   .island,.island-body{transition:none !important}
-  .wave-layer,.wave-layer svg,.vinyl-spin,.music-burst i{animation:none !important}
+  .wave i,.vinyl-spin,.music-burst i{animation:none !important}
   .tilt-logo,.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
     transition:none !important;animation:none !important;transform:none !important;
   }
@@ -687,73 +717,122 @@ img,video,canvas{max-width:100%}
   syncScrollFinish();
   window.addEventListener('scroll',syncScrollFinish,{passive:true});
 
-  /* ----- HQ sine waves -----
-     Each path holds TWO identical tiles side by side, and the <svg> is 200% wide
-     and slides exactly -50% (= one tile), so the loop is perfectly seamless.
-     Waves mix two harmonics and use fine 3px steps for a smooth, studio-like curve. */
-  const SVGNS='http://www.w3.org/2000/svg';
-  function makeLayer(color,opacity,width,cycles,amp,phase,vars){
-    const TILE=600,W=TILE*2,H=32,mid=H/2;
-    let d='';
-    for(let x=0;x<=W;x+=3){
-      const t=(x%TILE)/TILE*Math.PI*2;               /* identical in both tiles */
-      const y=mid+amp*(.78*Math.sin(t*cycles+phase)+.22*Math.sin(t*cycles*2+phase*1.7));
-      d+=(x?' L':'M')+x+' '+y.toFixed(2);
-    }
-    const layer=document.createElement('div');
-    layer.className='wave-layer';
-    for(const k in vars)layer.style.setProperty(k,vars[k]);
-    const svg=document.createElementNS(SVGNS,'svg');
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);
-    svg.setAttribute('preserveAspectRatio','none');
-    const p=document.createElementNS(SVGNS,'path');
-    p.setAttribute('d',d);
-    p.setAttribute('stroke',color);
-    p.setAttribute('stroke-width',width);
-    p.setAttribute('opacity',opacity);
-    svg.appendChild(p);
-    layer.appendChild(svg);
-    return layer;
+  /* ----- Waveform bars -----
+     Envelope copies the reference picture: a big burst near the left, a smaller second swell,
+     one sharp spike, then a low tail of small bars. Each bar bounces with its own timing and a
+     small phase offset, so a ripple travels along the wave while the song plays. */
+  const BARS=38;
+  const rnd=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
+  const g=(x,c,w)=>Math.exp(-Math.pow((x-c)/w,2));
+  const frag=document.createDocumentFragment();
+  for(let i=0;i<BARS;i++){
+    const x=i/(BARS-1);
+    let h=1.0*g(x,.20,.11)+.58*g(x,.43,.09)+.95*g(x,.585,.022)+.30*g(x,.74,.12)+.22*(1-x)+.10*rnd(i+1);
+    h=Math.max(.16,Math.min(1,h));
+    if(i>0&&i<BARS-1&&i%3===0)h=Math.min(1,h*(.8+.5*rnd(i+9)));  /* uneven, organic heights */
+    const b=document.createElement('i');
+    b.dataset.h=(h*100).toFixed(1)+'%';b.style.setProperty('--h',b.dataset.h);
+    b.style.setProperty('--d',(.85+rnd(i+4)*.7).toFixed(2)+'s');
+    b.style.setProperty('--l',(-(i*.06+rnd(i+7)*.35)).toFixed(2)+'s');
+    frag.append(b);
   }
-  waveBox.append(
-    makeLayer('#22d3ee','1',2.5,3,10,0,{'--ad':'1.25s','--fd':'2.8s','--al':'0s'}),
-    makeLayer('#a78bfa','.9',2.1,2,8.5,1.1,{'--ad':'1.05s','--fd':'2.4s','--al':'.2s'}),
-    makeLayer('#fb7185','.82',1.8,4,6.5,2.3,{'--ad':'1.45s','--fd':'3.4s','--al':'.4s'}),
-    makeLayer('#fbbf24','.78',1.5,1,11,3.4,{'--ad':'1.7s','--fd':'4s','--al':'.6s'}),
-    makeLayer('#a3e635','.68',1.3,5,5.5,2.7,{'--ad':'1.35s','--fd':'3.1s','--al':'.8s'})
-  );
+  waveBox.append(frag);
+  const barEls=[...waveBox.children];
+
+  /* ----- Live audio analysis: bars follow the actual music (bass on the left -> treble on the right).
+     Needs the page served over http(s) with ambient.mp3 on the same origin; on file:// (or if the
+     analyser can't start) the built-in CSS bounce is used instead, so audio is never muted. ----- */
+  let actx=null,analyser=null,freq=null,liveRaf=0,levels=new Float32Array(BARS);
+  function initAnalyser(){
+    if(actx||!/^https?:$/.test(location.protocol))return !!actx;
+    try{
+      const u=audio.currentSrc||(audio.querySelector('source')||{}).src||'';
+      if(u&&new URL(u,location.href).origin!==location.origin)return false;
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return false;
+      actx=new AC();
+      const src=actx.createMediaElementSource(audio);
+      analyser=actx.createAnalyser();
+      analyser.fftSize=256;                 /* 128 frequency bins */
+      analyser.smoothingTimeConstant=.72;
+      src.connect(analyser);analyser.connect(actx.destination);
+      freq=new Uint8Array(analyser.frequencyBinCount);
+      return true;
+    }catch(err){actx=null;analyser=null;return false;}
+  }
+  function liveFrame(){
+    analyser.getByteFrequencyData(freq);
+    const usable=Math.floor(freq.length*.62);           /* ignore the empty top end */
+    for(let i=0;i<BARS;i++){
+      const x=i/(BARS-1);
+      const bin=Math.min(usable-1,Math.floor(Math.pow(x,1.35)*usable));
+      let v=freq[bin]/255;
+      v=Math.pow(v,1.15)*(1+x*.9);                       /* lift the quieter highs */
+      v=Math.max(.14,Math.min(1,v));
+      levels[i]+=(v-levels[i])*(v>levels[i]?.55:.14);    /* fast attack, soft release */
+      barEls[i].style.transform='scaleY('+levels[i].toFixed(3)+')';
+    }
+    liveRaf=requestAnimationFrame(liveFrame);
+  }
+  function startLive(){
+    if(calmMotion||!initAnalyser())return;
+    if(actx.state==='suspended')actx.resume();
+    waveBox.classList.add('live');
+    barEls.forEach((b,i)=>{b.style.setProperty('--h','100%');levels[i]=.14;});
+    cancelAnimationFrame(liveRaf);liveRaf=requestAnimationFrame(liveFrame);
+  }
+  function stopLive(){
+    cancelAnimationFrame(liveRaf);liveRaf=0;
+    waveBox.classList.remove('live');
+    barEls.forEach(b=>{b.style.transform='';b.style.setProperty('--h',b.dataset.h);});
+  }
 
   /* ----- open / minimize ----- */
+  let openedAtY=0;
   function setOpen(open){
+    if(open)openedAtY=window.scrollY;
     wrap.dataset.open=String(open);
     toggle.setAttribute('aria-expanded',String(open));
     toggle.setAttribute('aria-label',open?'Close music player':'Open music player');
   }
-  toggle.addEventListener('click',()=>setOpen(wrap.dataset.open!=='true'));
+  let burstLockUntil=0;   /* the layout shifts while the island opens/closes and can re-fire pointerenter */
+  const touchUI=matchMedia('(hover: none), (pointer: coarse)').matches;
+  toggle.addEventListener('click',()=>{
+    burstLockUntil=performance.now()+900;
+    cancelAnimationFrame(noteFrame);clearTimeout(noteTimer);toggle.classList.remove('notes-active');  /* no note burst mid-click */
+    if(touchUI){burstLockUntil=0;burstNotes();}  /* touch has no hover: burst the notes on every tap */
+    setOpen(wrap.dataset.open!=='true');
+  });
 
   /* Clean, single-pass note burst on hover/focus; avoid forced layout/reflow,
      which could make the notes flicker or glitch when the pointer moves. */
   let noteTimer;
   let noteFrame=0;
   function burstNotes(){
-    if(wrap.dataset.playing==='true')return;
+    if(performance.now()<burstLockUntil)return;
     cancelAnimationFrame(noteFrame);
     clearTimeout(noteTimer);
     toggle.classList.remove('notes-active');
     noteFrame=requestAnimationFrame(()=>{
-      if(wrap.dataset.playing==='true')return;
       toggle.classList.add('notes-active');
       noteTimer=setTimeout(()=>toggle.classList.remove('notes-active'),1450);
     });
   }
-  toggle.addEventListener('pointerenter',burstNotes,{passive:true});
-  toggle.addEventListener('focus',()=>{ if(!toggle.matches(':hover')) burstNotes(); });
+
+  toggle.addEventListener('pointerenter',e=>{ if(e.pointerType==='mouse'||e.pointerType==='pen')burstNotes(); },{passive:true});
+  toggle.addEventListener('focus',()=>{ if(toggle.matches(':focus-visible')&&!toggle.matches(':hover'))burstNotes(); });  /* keyboard only */
 
   /* tap/click anywhere outside the player → minimize */
   document.addEventListener('pointerdown',e=>{
     if(wrap.dataset.open!=='true')return;
     if(wrap.contains(e.target))return;
     setOpen(false);
+  },{passive:true});
+  /* Scrolling tucks the island back inside on EVERY device (music keeps playing).
+     The width eases shut slowly so the collapse feels extra smooth. */
+  window.addEventListener('scroll',()=>{
+    if(wrap.dataset.open!=='true')return;
+    if(Math.abs(window.scrollY-openedAtY)>12)setOpen(false);
   },{passive:true});
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'&&wrap.dataset.open==='true')setOpen(false);
@@ -768,6 +847,7 @@ img,video,canvas{max-width:100%}
     wrap.dataset.playing=String(on);
     playIcon.className=on?'fa-solid fa-pause':'fa-solid fa-play';
     playBtn.setAttribute('aria-label',on?'Pause music':'Play music');
+    if(on)startLive();else stopLive();
   }
   playBtn.addEventListener('click',()=>{
     if(audio.paused){
@@ -810,7 +890,36 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<!-- Zoom effects are hover-only; no click or scroll animations. -->
+<!-- MOBILE ZOOM: on touch devices links/cards/panels zoom as they scroll through
+     the middle of the screen (desktop keeps hover zoom). Tap gives instant feedback. -->
+<script>
+(function(){
+  const SEL='.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*';
+  const isTouch=matchMedia('(hover: none), (pointer: coarse)').matches;
+  if(isTouch){
+    const zoomObs=new IntersectionObserver(
+      entries=>entries.forEach(e=>e.target.classList.toggle('is-active',e.isIntersecting)),
+      {rootMargin:'-30% 0px -30% 0px',threshold:0}
+    );
+    window.registerZoom=function(){
+      document.querySelectorAll(SEL).forEach(el=>{
+        if(el.dataset.zoomReg)return;
+        el.dataset.zoomReg='1';
+        zoomObs.observe(el);
+      });
+    };
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',window.registerZoom);
+    else window.registerZoom();
+  }
+  function clearPressed(){document.querySelectorAll('.is-pressed').forEach(el=>el.classList.remove('is-pressed'));}
+  document.addEventListener('pointerdown',e=>{
+    const el=e.target.closest&&e.target.closest(SEL);
+    if(el)el.classList.add('is-pressed');
+  },{passive:true});
+  ['pointerup','pointercancel','pointerleave','dragstart'].forEach(ev=>document.addEventListener(ev,clearPressed,{passive:true}));
+  window.addEventListener('blur',clearPressed);
+})();
+</script>
 
 <!-- PROJECTS + UPDATES: read projects.md and updates.md from this same folder.
      Keep these files beside index.html. If fetch is unavailable (e.g. opening via file://),
@@ -829,7 +938,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const fallbackUpdates=[
     {title:'CRSU Hackathon 2026',type:'Event',date:'ONLINE · 05–18 OCT 2026',badge:'OPEN TO ALL',description:'A fully online two-stage hackathon. No specific college, degree or discipline is required, so participants can join from anywhere.',details:['TEAM: 1–3 | MODE: ONLINE','30 TEAMS → FINAL | DEADLINE: 05 OCT'],link:'https://events.romeojuliet.love/crsu-hackathon-2026',linkLabel:'Open Website'},
     {title:'FirstHack 2026',type:'Event',date:'ONLINE · 22 OCT – 04 NOV 2026',badge:'STUDENT EVENT',description:'Open across branches and years for students in India, including CS, ECE, Mechanical, Commerce and Arts. Solo participation is allowed.',details:['TEAM: 1–4 | SOLO: YES','FEE: ₹400 | REG. CLOSES: 19 OCT'],link:'https://hackathon.firsthack.in/',linkLabel:'Open Website'},
-    {title:"HypneXis '26",type:'Event',date:'OFFLINE · 24–25 OCT 2026',badge:'APTITUDE TEST TONIGHT',description:'A 36-hour hackathon at Manipal University Jaipur with a ₹10L+ prize pool. Entry requires a 60-minute online aptitude challenge on Oct 16 from 6:00–11:59 PM; results are expected tomorrow. Open to UG and PG students from any stream.',details:['TEAM: 1–4 | MODE: OFFLINE','OVERNIGHT HACK: 24 OCT | GRAND FINALE: 25 OCT'],link:'https://unstop.com/competitions/hypnexis-2026-manipal-university-mu-jaipur-1711890',linkLabel:'Register and take the test'},
+    {title:"HypneXis '26",type:'Event',date:'OFFLINE · 24–25 OCT 2026',badge:'APTITUDE TEST TONIGHT',description:'A 36-hour hackathon at Manipal University Jaipur with a ₹10L+ prize pool. Entry requires a 60-minute online aptitude challenge on Oct 16 from 6:00–11:59 PM; results are expected tomorrow. Open to UG and PG students from any stream.',details:['TEAM: 1–4 | SOLO: YES','FEE: ₹400 | REG. CLOSES: 19 OCT'],link:'https://unstop.com/competitions/hypnexis-2026-manipal-university-mu-jaipur-1711890',linkLabel:'Register and take the test'},
     {title:'HackX 3.0',type:'Event',date:'OFFLINE · 30–31 OCT 2026',badge:'REGISTRATION CLOSED',description:'A 36-hour national hackathon at Manipal University Jaipur, with a ₹5L+ prize pool across 10 tracks, including AI/ML, cybersecurity and blockchain. Registrations closed Oct 12; check the event page in case they reopen.',details:['10 TRACKS | 2,000+ BUILDERS','50+ UNIVERSITIES | REG. CLOSED: 12 OCT'],link:'https://internshala.com/competitions/hackx-3-0/',linkLabel:'Check HackX 3.0'}
   ];
 
@@ -900,6 +1009,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       frag.append(card);
     });
     projectsTarget.replaceChildren(frag);
+    if(window.registerZoom)window.registerZoom();
   }
   function renderUpdates(items){
     const frag=document.createDocumentFragment();
@@ -931,6 +1041,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       frag.append(card);
     });
     updatesTarget.replaceChildren(frag);
+    if(window.registerZoom)window.registerZoom();
   }
 
   // Render instantly, then replace with the latest Markdown content when hosted.
