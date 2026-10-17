@@ -171,6 +171,9 @@ img,video,canvas{max-width:100%}
 .music-burst i{color:var(--tone,#fff)}
 @keyframes noteBurst{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.55) rotate(-12deg)}15%{opacity:1}68%{opacity:1}100%{opacity:0;transform:translate3d(calc(-50% + var(--dx)),calc(-50% + var(--dy)),0) scale(1) rotate(12deg)}}
 .island-icon:focus-visible{outline:2px solid #ef4444;outline-offset:3px}
+/* Visible cue when ambient.mp3 is missing: the island shakes its head. */
+@keyframes islandShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.island-wrap.audio-missing .island{animation:islandShake .45s ease}
 
 
 /* Realistic vinyl disc: shows (and spins) only while the song plays */
@@ -235,9 +238,11 @@ img,video,canvas{max-width:100%}
   width:26px;height:26px;flex:0 0 26px;display:grid;place-items:center;border-radius:9999px;
   background:#dc2626;color:#fff;border:0;cursor:pointer;font-size:.6rem;
   box-shadow:0 0 0 1px rgba(248,113,113,.35),0 4px 10px rgba(220,38,38,.35);
-  transition:background-color .2s ease;
+  transition:background-color .2s ease,transform .15s ease;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .island-btn:hover{background:#ef4444}
+.island-btn:active{transform:scale(.88)}
 .island-btn:focus-visible{outline:2px solid #fca5a5;outline-offset:2px}
 .island-vol{width:48px;flex:0 0 48px;height:12px;accent-color:#dc2626;cursor:pointer}
 
@@ -246,7 +251,7 @@ img,video,canvas{max-width:100%}
 
 @media (prefers-reduced-motion:reduce){
   .island,.island-body{transition:none !important}
-  .wave i,.vinyl-spin,.music-burst i{animation:none !important}
+  .wave i,.vinyl-spin,.music-burst i,.island-wrap.audio-missing .island{animation:none !important}
   .tilt-logo,.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
     transition:none !important;animation:none !important;transform:none !important;
   }
@@ -265,6 +270,8 @@ img,video,canvas{max-width:100%}
 .tilt-stage{width:min(100%,19rem)}
 #hero-logo{display:block;width:100%;height:auto;max-width:15rem;margin:0 auto}
 @media (max-width:640px){#hero-logo{max-width:11rem}#splash-screen video{width:min(72vw,16rem);height:min(72vw,16rem)}}
+/* Desktop only: hero logo at a true 18rem (mobile stays 11rem). */
+@media (min-width:1024px){#hero-logo{width:18rem;max-width:18rem}}
 
 /* ===== FORGE ACTIVITY: cards stay inside their panels =====
    Cause: the hover zoom (scale 1.055-1.065) was applied to the whole #updates-list wrapper and to
@@ -616,9 +623,27 @@ img,video,canvas{max-width:100%}
     </div>
   </div>
 </div>
-<audio id="island-audio" loop preload="none">
+<audio id="island-audio" loop preload="auto">
   <source src="ambient.mp3" type="audio/mpeg">
 </audio>
+
+<script>
+/* ---------- LOGO VIDEOS: play the instant data is ready (no autoplay lag) ----------
+   The autoplay attribute asks the browser to play, but on mobile it can start lazily.
+   This nudges every logo.mp4 video the exact millisecond it can play. */
+(function(){
+  const kick=v=>{try{const p=v.play();if(p&&typeof p.catch==='function')p.catch(()=>{});}catch(_){}};
+  const arm=()=>{
+    document.querySelectorAll('video[src="logo.mp4"]').forEach(v=>{
+      if(v.readyState>=2)kick(v);
+      else v.addEventListener('canplay',()=>kick(v),{once:true});
+    });
+  };
+  arm();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm);
+  window.addEventListener('load',arm);
+})();
+</script>
 
 <script>
 /* ---------- SPLASH: ~2.75-second brand intro, then reveals the site ---------- */
@@ -802,6 +827,21 @@ img,video,canvas{max-width:100%}
     cancelAnimationFrame(noteFrame);clearTimeout(noteTimer);toggle.classList.remove('notes-active');  /* no note burst mid-click */
     if(touchUI){burstLockUntil=0;burstNotes();}  /* touch has no hover: burst the notes on every tap */
     setOpen(wrap.dataset.open!=='true');
+    /* Start buffering the moment the player opens — but only if the browser hasn't
+       started on its own. Never restart a fetch that's already in progress. */
+    if(audio.paused&&audio.readyState===0){try{audio.load();}catch(_){}}
+    /* Warm the decoder inside this tap gesture so the later play() starts instantly.
+       Muted, so it's silent; skipped cleanly if the user already hit play. */
+    if(!warmed&&audio.paused&&audio.readyState>=2){
+      warmed=true;
+      const wasMuted=audio.muted;
+      audio.muted=true;
+      try{
+        const w=audio.play();
+        if(w&&typeof w.then==='function')w.then(()=>{if(!wantPlay){audio.pause();audio.currentTime=0;}audio.muted=wasMuted;}).catch(()=>{audio.muted=wasMuted;});
+        else audio.muted=wasMuted;
+      }catch(_){audio.muted=wasMuted;}
+    }
   });
 
   /* Clean, single-pass note burst on hover/focus; avoid forced layout/reflow,
@@ -843,25 +883,37 @@ img,video,canvas{max-width:100%}
   vol.addEventListener('input',()=>{audio.volume=(parseInt(vol.value,10)||0)/100;});
 
   let wantPlay=false;
+  let warmed=false;   /* decoder warm-up runs once, on the first island open */
   function setPlaying(on){
     wrap.dataset.playing=String(on);
     playIcon.className=on?'fa-solid fa-pause':'fa-solid fa-play';
     playBtn.setAttribute('aria-label',on?'Pause music':'Play music');
     if(on)startLive();else stopLive();
   }
+  /* Instant response: the button, icon and vinyl update the moment you tap —
+     the audio pipeline catches up right after. If play() fails, it flips back. */
   playBtn.addEventListener('click',()=>{
     if(audio.paused){
       wantPlay=true;
-      audio.play().then(()=>setPlaying(true)).catch(()=>{
-        wantPlay=false;setPlaying(false);
-      });
+      setPlaying(true);
+      try{
+        const pr=audio.play();
+        if(pr&&typeof pr.catch==='function')pr.catch(()=>{wantPlay=false;setPlaying(false);});
+      }catch(_){wantPlay=false;setPlaying(false);}
     }else{
       wantPlay=false;
       audio.pause();
       setPlaying(false);
     }
   });
-  audio.addEventListener('error',()=>{if(wantPlay){wantPlay=false;setPlaying(false);}});
+  audio.addEventListener('error',()=>{
+    if(wantPlay){wantPlay=false;setPlaying(false);}
+    /* visible cue that ambient.mp3 is missing: the island shakes its head */
+    wrap.classList.remove('audio-missing');
+    void wrap.offsetWidth;
+    wrap.classList.add('audio-missing');
+    setTimeout(()=>wrap.classList.remove('audio-missing'),500);
+  });
 })();
 </script>
 
@@ -921,7 +973,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 
-<!-- PROJECTS + UPDATES: read projects.md and updates.md from this same folder.
+<!-- PROJECTS + UPDATES: read project.md and updates.md from this same folder.
      Keep these files beside index.html. If fetch is unavailable (e.g. opening via file://),
      the built-in fallback content below is shown instead. -->
 <script>
@@ -1048,10 +1100,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderProjects(fallbackProjects);
   renderUpdates(fallbackUpdates);
   Promise.allSettled([
-    fetch('projects.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('projects.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseProjects(text);if(items.length)renderProjects(items);}),
+    fetch('project.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('project.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseProjects(text);if(items.length)renderProjects(items);}),
     fetch('updates.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('updates.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseUpdates(text);if(items.length)renderUpdates(items);})
   ]).then(results=>{
-    results.forEach((result,index)=>{if(result.status==='rejected')console.info((index===0?'projects.md':'updates.md')+' could not be loaded; using built-in fallback content.',result.reason);});
+    results.forEach((result,index)=>{if(result.status==='rejected')console.info((index===0?'project.md':'updates.md')+' could not be loaded; using built-in fallback content.',result.reason);});
   });
 })();
 </script>
