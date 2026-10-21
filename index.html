@@ -24,10 +24,52 @@
 html{background:#000;-webkit-text-size-adjust:100%}
 img,video,canvas{max-width:100%}
 #splash-screen{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out,visibility .6s ease-out}
-#splash-screen .splash-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem}
-#splash-screen video{width:clamp(14rem,38vmin,22rem);height:clamp(14rem,38vmin,22rem);border-radius:9999px;border:2px solid rgba(220,38,38,.6);background:radial-gradient(circle at 50% 35%,#3a0d0d 0%,#140404 55%,#000 100%);box-shadow:0 0 50px rgba(220,38,38,.5);animation:splashPulse 1.6s ease-in-out infinite}
-#splash-screen .splash-title{font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:.2em;color:#fff;text-transform:uppercase}
-@keyframes splashPulse{0%,100%{box-shadow:0 0 25px rgba(220,38,38,.35)}50%{box-shadow:0 0 60px rgba(220,38,38,.75)}}
+#splash-screen .splash-inner{display:flex;flex-direction:column;align-items:center;gap:1.1rem;width:100%;padding:1rem;box-sizing:border-box}
+#splash-screen video{width:clamp(9rem,24vmin,15rem);height:clamp(9rem,24vmin,15rem);flex:none;max-width:none;max-height:none;aspect-ratio:1/1;object-fit:cover;border-radius:50%;border:2px solid rgba(220,38,38,.65);background:#080808;box-shadow:0 0 30px rgba(220,38,38,.25);animation:splashPulse 2.2s ease-in-out infinite}
+#splash-screen .splash-title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(1.6rem,4.2vw,2.7rem);font-weight:850;letter-spacing:clamp(.09em,.8vw,.18em);line-height:1.2;text-align:center;white-space:nowrap;color:#fff;text-transform:uppercase;text-shadow:0 0 14px rgba(220,38,38,.22)}
+@keyframes splashPulse{0%,100%{box-shadow:0 0 20px rgba(220,38,38,.2)}50%{box-shadow:0 0 34px rgba(220,38,38,.4)}}
+@media(max-width:480px){#splash-screen .splash-inner{gap:1rem}#splash-screen video{width:min(36vw,9rem);height:min(36vw,9rem)}#splash-screen .splash-title{font-size:clamp(1.35rem,5.8vw,1.9rem);letter-spacing:.09em}}
+
+/* ===== Desktop hero layout correction: match the intended three-column design ===== */
+@media (min-width:1024px){
+  #hero-section{min-height:min(calc(100svh - 82px), 680px);}
+  #hero-section > .relative.z-10.max-w-7xl{
+    display:grid !important;
+    grid-template-columns:minmax(0, 5fr) minmax(0, 3.5fr) minmax(0, 4fr) !important;
+    gap:2rem !important;
+    align-items:center !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div{
+    min-width:0;
+    grid-column:auto !important;
+    grid-row:auto !important;
+    order:initial !important;
+  }
+  #hero-section #logo-stage{
+    width:100%;max-width:100%;margin:0 auto;left:-1rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #hero-section #hero-logo{
+    display:block;width:min(100%,20rem);height:auto;aspect-ratio:1/1;
+    max-width:20rem;max-height:20rem;flex:none;object-fit:cover;
+    border-radius:50%;opacity:1;visibility:visible;
+    transform:none !important;animation:none !important;transition:none !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child{padding-left:0;}
+  /* Shorter, more refined action cards without disturbing the centered logo */
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link{
+    width:88%;
+    max-width:34rem;
+    align-self:center;
+    box-sizing:border-box;
+  }
+}
+@media (max-width:1023px){
+  #hero-section > .relative.z-10.max-w-7xl{display:grid;grid-template-columns:minmax(0,1fr);}
+  #hero-section #logo-stage{left:0;margin-inline:auto;}
+  #hero-section #hero-logo{width:min(72vw,18rem);height:auto;aspect-ratio:1/1;}
+}
+
 </style>
 
 <style>
@@ -39,24 +81,9 @@ img,video,canvas{max-width:100%}
 /* ---------- Logo videos: always perfect circles ---------- */
 #hero-logo,#splash-screen video{aspect-ratio:1/1}
 
-/* ---------- Logo tilt (no glow) ---------- */
-.tilt-stage{perspective:800px;padding:1.5rem;touch-action:pan-y}
-.tilt-logo{
-  transform:rotateX(0deg) rotateY(0deg);
-  transition:transform .3s cubic-bezier(.2,.75,.25,1);
-  will-change:transform;
-  backface-visibility:hidden;
-  box-shadow:none !important;
-  filter:none !important;
-}
-.tilt-logo.is-tilting{transition:transform .08s linear}
-@keyframes sway{
-  0%,100%{transform:rotateX(0deg) rotateY(-8deg)}
-  50%{transform:rotateX(5deg) rotateY(8deg)}
-}
-@media (hover:none),(pointer:coarse){
-  .tilt-logo{animation:sway 6s ease-in-out infinite}
-}
+/* ---------- Main hero logo: centered, stable, and without tilt animation ---------- */
+.tilt-stage{padding:0;touch-action:pan-y;display:flex;align-items:center;justify-content:center;width:min(100%,22rem);margin-inline:auto}
+.tilt-logo{transform:none !important;transition:none !important;animation:none !important;will-change:auto;backface-visibility:hidden;box-shadow:none !important;filter:none !important}
 
 /* ---------- Enhanced zoom in / zoom out (GPU-friendly, no glow) ---------- */
 .action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
@@ -71,17 +98,22 @@ img,video,canvas{max-width:100%}
   .card-lift:hover{transform:translate3d(0,-4px,0) scale(1.065)}
   .panel-zoom:hover{transform:translate3d(0,-2px,0) scale(1.025)}
 }
-/* MOBILE: no hover on touch, so links/cards/panels zoom as they cross the middle
-   of the screen instead (JS toggles .is-active). Same GPU-friendly transform zoom. */
+/* CLICK/TAP ZOOM REMOVED (user request): tapping or clicking a card/link no longer
+   scales it. Desktop keeps a subtle hover lift; touch devices get a simple
+   background tint on :active instead of any zoom. */
 @media (hover:none),(pointer:coarse){
-  .action-link.is-active{transform:translate3d(0,-2px,0) scale(1.06)}
-  .card-lift.is-active{transform:translate3d(0,-4px,0) scale(1.05)}
-  .panel-zoom.is-active{transform:translate3d(0,-2px,0) scale(1.03)}
-  #projects-list>.is-active,#recent-hackathons>.is-active{transform:translate3d(0,-2px,0) scale(1.02)}
+  .action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{transform:none !important}
+  .action-link:active{background-color:rgba(255,255,255,.06)}
+  .card-lift:active{background-color:rgba(220,38,38,.10)}
+  .panel-zoom:active{background-color:rgba(220,38,38,.06)}
 }
-/* Instant smooth feedback the moment a finger/mouse presses down. */
+/* Any leftover JS-added zoom classes are neutralized. */
+.action-link.is-active,.card-lift.is-active,.panel-zoom.is-active,
+#projects-list>.is-active,#recent-hackathons>.is-active,
 .action-link.is-pressed,.card-lift.is-pressed,.panel-zoom.is-pressed,
-#projects-list>.is-pressed,#recent-hackathons>.is-pressed{transform:translate3d(0,-2px,0) scale(1.04);transition-duration:.15s}
+#projects-list>.is-pressed,#recent-hackathons>.is-pressed{
+  transform:none !important;transition:none !important;animation:none !important;
+}
 /* ---------- Dynamic-Island music player ---------- */
 .island-wrap{
   position:fixed;z-index:60;
@@ -157,7 +189,7 @@ img,video,canvas{max-width:100%}
   .island-wrap:not([data-playing="true"]) .island-icon:hover i.fa-music{transform:rotate(10deg)}
 }
 /* Smooth press feedback on the icon chip (touch + mouse). */
-.island-wrap .island-icon:active{transform:scale(.92)}
+.island-wrap .island-icon:active{transform:none !important;transition:none !important}
 /* Musical notes briefly burst outward when the pointer reaches the icon. */
 .island-icon{overflow:visible;isolation:isolate}
 .music-burst{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:visible}
@@ -242,7 +274,7 @@ img,video,canvas{max-width:100%}
   touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .island-btn:hover{background:#ef4444}
-.island-btn:active{transform:scale(.88)}
+.island-btn:active{transform:none !important;transition:none !important}
 .island-btn:focus-visible{outline:2px solid #fca5a5;outline-offset:2px}
 .island-vol{width:48px;flex:0 0 48px;height:12px;accent-color:#dc2626;cursor:pointer}
 
@@ -252,7 +284,7 @@ img,video,canvas{max-width:100%}
 @media (prefers-reduced-motion:reduce){
   .island,.island-body{transition:none !important}
   .wave i,.vinyl-spin,.music-burst i,.island-wrap.audio-missing .island{animation:none !important}
-  .tilt-logo,.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
+  .action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
     transition:none !important;animation:none !important;transform:none !important;
   }
   *,*:before,*:after{scroll-behavior:auto !important}
@@ -267,11 +299,16 @@ img,video,canvas{max-width:100%}
 }
 #splash-screen video{width:clamp(14rem,38vmin,22rem);height:clamp(14rem,38vmin,22rem);max-width:none;max-height:none}
 #main-content nav video{width:40px;height:40px}
-.tilt-stage{width:min(100%,19rem)}
-#hero-logo{display:block;width:100%;height:auto;max-width:15rem;margin:0 auto}
-@media (max-width:640px){#hero-logo{max-width:11rem}#splash-screen video{width:min(72vw,16rem);height:min(72vw,16rem)}}
-/* Desktop only: hero logo at a true 18rem (mobile stays 11rem). */
-@media (min-width:1024px){#hero-logo{width:18rem;max-width:18rem}}
+#hero-logo{display:block;width:100%;height:auto;max-width:12rem;margin:0 auto;position:relative;left:0}
+@media (max-width:640px){#hero-logo{max-width:12rem}#splash-screen video{width:min(72vw,16rem);height:min(72vw,16rem)}}
+/* Larger main-page logo, centered precisely in its grid column. */
+@media (min-width:1024px){
+  #hero-logo{width:20rem;max-width:20rem}
+  /* Shift only the main-page logo slightly left so it sits closer to screen center. */
+  #logo-stage{position:relative;left:-3.5rem}
+}
+@media (min-width:1024px) and (max-width:1200px){#logo-stage{left:-2rem}}
+@media (max-width:1023px){#logo-stage{left:0}}
 
 /* ===== FORGE ACTIVITY: cards stay inside their panels =====
    Cause: the hover zoom (scale 1.055-1.065) was applied to the whole #updates-list wrapper and to
@@ -297,6 +334,606 @@ img,video,canvas{max-width:100%}
 }
 #recent a{max-width:100%}
 @media (max-width:420px){#recent #recent-hackathons .grid{grid-template-columns:1fr}}
+</style>
+
+<style id="professional-width-alignment">
+/* Consistent, wider page frame: removes oversized side gutters without stretching text. */
+html, body { width:100%; max-width:100%; margin:0; }
+body { overflow-x:clip; }
+nav > div.max-w-7xl,
+#hero-section > .relative.z-10.max-w-7xl,
+#roles,
+#recent {
+  width: min(100% - clamp(2rem, 5.2vw, 5.5rem), 1680px) !important;
+  max-width: 1680px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+/* The hero already has its own outer padding; let its inner frame use the available width. */
+#hero-section > .relative.z-10.max-w-7xl {
+  width: min(100%, 1680px) !important;
+}
+#roles, #recent { padding-left: clamp(1rem, 2vw, 2rem) !important; padding-right: clamp(1rem, 2vw, 2rem) !important; }
+#apply { width: min(100% - 2rem, 1100px) !important; max-width:1100px !important; box-sizing:border-box; }
+@media (min-width:1024px) {
+  #hero-section { padding-left:clamp(1.25rem, 2.6vw, 2.75rem); padding-right:clamp(1.25rem, 2.6vw, 2.75rem); }
+  #hero-section > .relative.z-10.max-w-7xl { gap:clamp(1.25rem, 2vw, 2rem) !important; }
+}
+@media (max-width:1023px) {
+  #hero-section > .relative.z-10.max-w-7xl { width:100% !important; }
+  #roles, #recent { width:100% !important; }
+}
+</style>
+
+
+<style id="final-professional-layout-fix">
+/* Final alignment pass: balanced side panels and a true viewport-centred logo. */
+@media (min-width: 1024px) {
+  #hero-section {
+    min-height: clamp(520px, calc(100svh - 82px), 760px) !important;
+    padding-top: clamp(1.5rem, 3.2vh, 2.75rem) !important;
+    padding-bottom: clamp(1.5rem, 3.2vh, 2.75rem) !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl {
+    width: min(100%, 1580px) !important;
+    margin-inline: auto !important;
+    display: grid !important;
+    /* Equal outer tracks ensure the logo's center is the viewport's center. */
+    grid-template-columns: minmax(0, 1fr) minmax(220px, min(24vw, 320px)) minmax(0, 1fr) !important;
+    column-gap: clamp(1.5rem, 3vw, 3.25rem) !important;
+    align-items: center !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width: 100%; min-width: 0; box-sizing: border-box;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child {
+    padding: clamp(1.25rem, 1.8vw, 1.8rem) !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    padding-left: 0 !important;
+  }
+  #hero-section #logo-stage {
+    position: relative !important;
+    inset-inline: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    /* Tiny 0.4 cm nudge toward the action cards on desktop. */
+    transform: translateX(15px) !important;
+  }
+  #hero-section #hero-logo {
+    width: min(100%, 320px) !important;
+    height: auto !important;
+    max-width: 320px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 auto !important;
+    position: static !important;
+    left: auto !important;
+    flex: 0 0 auto !important;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1250px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 250px) minmax(0, 1fr) !important;
+    column-gap: 1.5rem !important;
+  }
+  #hero-section #hero-logo { width: min(100%, 250px) !important; max-width: 250px !important; }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child { padding: 1.15rem !important; }
+}
+@media (max-width: 1023px) {
+  #hero-section { min-height: auto !important; padding-block: clamp(2rem, 6vh, 3.5rem) !important; }
+  #hero-section > .relative.z-10.max-w-7xl {
+    width: min(100%, 720px) !important;
+    margin-inline: auto !important;
+    row-gap: clamp(1.25rem, 3.5vh, 2rem) !important;
+  }
+  #hero-section #logo-stage { left: auto !important; right: auto !important; margin-inline: auto !important; }
+  #hero-section #hero-logo { position: static !important; margin-inline: auto !important; }
+}
+/* Keep all page sections on one consistent responsive grid. */
+#main-content nav > div.max-w-7xl,
+#roles, #recent {
+  margin-inline: auto !important;
+}
+#roles, #recent { max-width: 1580px !important; }
+@media (max-width: 767px) {
+  #roles, #recent { padding-inline: 1rem !important; }
+}
+</style>
+
+
+<style id="compact-professional-spacing">
+/* Compact, intentional spacing across the page without shifting the centered logo. */
+html, body { margin: 0; width: 100%; max-width: 100%; }
+body { overflow-x: clip; }
+#main-content { justify-content: flex-start !important; }
+
+/* Main hero: reduce dead space on every edge while keeping the middle logo centered. */
+#hero-section {
+  min-height: auto !important;
+  padding: clamp(0.75rem, 2vh, 1.25rem) clamp(0.75rem, 1.8vw, 1.75rem) !important;
+  box-sizing: border-box;
+}
+#hero-section > .relative.z-10.max-w-7xl {
+  width: 100% !important;
+  max-width: 1580px !important;
+  margin-inline: auto !important;
+  box-sizing: border-box;
+}
+@media (min-width: 1024px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, min(22vw, 300px)) minmax(0, 1fr) !important;
+    column-gap: clamp(1rem, 2vw, 2rem) !important;
+  }
+  #hero-section #logo-stage { max-width: 300px !important; }
+  #hero-section #hero-logo { width: min(100%, 300px) !important; max-width: 300px !important; }
+}
+@media (max-width: 1023px) {
+  #hero-section { padding: 1.25rem clamp(0.75rem, 3vw, 1.5rem) !important; }
+  #hero-section > .relative.z-10.max-w-7xl { row-gap: 1.25rem !important; }
+}
+@media (max-width: 640px) {
+  #hero-section { padding: 1rem 0.75rem !important; }
+  #hero-section > .relative.z-10.max-w-7xl { row-gap: 1rem !important; }
+}
+
+/* Use consistent, modest side gutters across the remaining sections. */
+#roles, #recent, #apply {
+  width: calc(100% - clamp(1.5rem, 3.6vw, 3.5rem)) !important;
+  max-width: 1580px !important;
+  margin-inline: auto !important;
+  box-sizing: border-box;
+}
+#roles, #recent { padding-inline: clamp(0.75rem, 1.5vw, 1.5rem) !important; }
+#apply { max-width: 1100px !important; padding-inline: clamp(0.75rem, 1.5vw, 1.5rem) !important; }
+@media (max-width: 767px) {
+  #roles, #recent, #apply { width: calc(100% - 1.25rem) !important; padding-inline: 0.5rem !important; }
+}
+</style>
+
+
+<style id="professional-balanced-spacing">
+/* Balanced breathing room: intentional margins, never edge-to-edge or overly empty. */
+#hero-section {
+  box-sizing: border-box;
+  /* Keep a deliberate amount of breathing room without making the hero feel empty. */
+  min-height: clamp(500px, calc(100svh - 150px), 640px) !important;
+  padding: clamp(1.5rem, 3.4vh, 2.6rem) clamp(1.25rem, 3.6vw, 3.5rem) !important;
+}
+#hero-section > .relative.z-10.max-w-7xl {
+  width: min(100%, 1380px) !important;
+  margin-inline: auto !important;
+  gap: clamp(1.25rem, 2.4vw, 2.25rem) !important;
+}
+@media (min-width: 1024px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1.08fr) minmax(250px, .78fr) minmax(0, .92fr) !important;
+    align-items: center !important;
+  }
+  #hero-section #logo-stage {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 300px !important;
+    margin-inline: auto !important;
+    justify-self: center !important;
+  }
+  #hero-section #hero-logo {
+    width: min(100%, 300px) !important;
+    max-width: 300px !important;
+    margin-inline: auto !important;
+  }
+}
+/* Give all page sections a consistent, polished content rail with modest side margins. */
+#main-content nav > div.max-w-7xl,
+#roles,
+#recent,
+#apply,
+footer > * {
+  box-sizing: border-box;
+}
+#roles, #recent {
+  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 1380px) !important;
+  margin-inline: auto !important;
+}
+#apply {
+  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 900px) !important;
+  margin-inline: auto !important;
+}
+#main-content nav > div.max-w-7xl {
+  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 1380px) !important;
+  margin-inline: auto !important;
+}
+@media (max-width: 1023px) {
+  #hero-section {
+    min-height: auto !important;
+    padding: clamp(1.5rem, 3.5vh, 2.5rem) 1.25rem !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl {
+    width: 100% !important;
+    gap: 1.5rem !important;
+  }
+}
+@media (max-width: 640px) {
+  #hero-section { padding: 1.5rem 1rem !important; }
+  #hero-section > .relative.z-10.max-w-7xl { gap: 1.15rem !important; }
+  #roles, #recent, #apply,
+  #main-content nav > div.max-w-7xl {
+    width: calc(100% - 2rem) !important;
+  }
+}
+</style>
+
+
+<style id="final-subtle-spacing-tune">
+/* Small final spacing reduction: retain polished breathing room on every edge. */
+#hero-section {
+  padding-top: clamp(0.6rem, 1.6vh, 1rem) !important;
+  padding-bottom: clamp(0.6rem, 1.6vh, 1rem) !important;
+  padding-left: clamp(0.6rem, 1.4vw, 1.35rem) !important;
+  padding-right: clamp(0.6rem, 1.4vw, 1.35rem) !important;
+}
+#hero-section > .relative.z-10.max-w-7xl {
+  width: 100% !important;
+  max-width: 1580px !important;
+  margin-inline: auto !important;
+}
+#roles, #recent, #apply {
+  width: calc(100% - clamp(1.25rem, 3vw, 3rem)) !important;
+  margin-inline: auto !important;
+}
+#roles, #recent, #apply { box-sizing: border-box; }
+@media (max-width: 767px) {
+  #hero-section { padding: 0.85rem 0.65rem !important; }
+  #roles, #recent, #apply { width: calc(100% - 1rem) !important; }
+}
+</style>
+
+
+<style id="compact-hero-action-cards">
+/* Shorter horizontal action cards: compact, aligned, and responsive. */
+@media (min-width: 1024px) {
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width: 100% !important;
+    max-width: 440px !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    padding-left: 0 !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width: min(100%, 560px) !important;
+    margin-inline: auto !important;
+  }
+}
+@media (max-width: 767px) {
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+</style>
+
+
+<!-- Click/tap zoom removed site-wide; links, controls, and music playback untouched.
+     (Musical-notes burst and vinyl/wave animations are preserved.) -->
+<style id="disable-click-animations">
+  .action-link.is-pressed,
+  .card-lift.is-pressed,
+  .panel-zoom.is-pressed,
+  #projects-list > .is-pressed,
+  #recent-hackathons > .is-pressed,
+  .is-pressed {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .action-link.is-active,
+  .card-lift.is-active,
+  .panel-zoom.is-active,
+  #projects-list > .is-active,
+  #recent-hackathons > .is-active {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+</style>
+<style>
+/* Header brand: add a little more breathing room between the circular logo and title. */
+#main-content nav a[aria-label="NeNoX Forge Home"] {
+  gap: 1rem !important;
+}
+@media (max-width: 480px) {
+  #main-content nav a[aria-label="NeNoX Forge Home"] {
+    gap: 0.8rem !important;
+  }
+}
+</style>
+<style id="polished-hero-logo-scale">
+/* Slightly larger hero logo with tighter, balanced side panels; no overlap. */
+@media (min-width: 1251px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 350px) minmax(0, 1fr) !important;
+    column-gap: clamp(1rem, 1.6vw, 1.6rem) !important;
+  }
+  #hero-section #logo-stage { max-width: 350px !important; }
+  #hero-section #hero-logo {
+    width: min(100%, 350px) !important;
+    max-width: 350px !important;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1250px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 280px) minmax(0, 1fr) !important;
+    column-gap: clamp(.85rem, 1.3vw, 1.2rem) !important;
+  }
+  #hero-section #logo-stage { max-width: 280px !important; }
+  #hero-section #hero-logo {
+    width: min(100%, 280px) !important;
+    max-width: 280px !important;
+  }
+}
+@media (max-width: 1023px) {
+  #hero-section #logo-stage { max-width: min(82vw, 340px) !important; }
+  #hero-section #hero-logo {
+    width: min(82vw, 340px) !important;
+    max-width: 340px !important;
+  }
+}
+
+
+/* Final logo shape + tighter hero composition: true circle, side panels closer, no overlap. */
+@media (min-width: 1024px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, min(27vw, 350px)) minmax(0, 1fr) !important;
+    column-gap: clamp(.65rem, 1.15vw, 1.15rem) !important;
+  }
+  #hero-section #logo-stage {
+    width: 100% !important;
+    max-width: 350px !important;
+    min-width: 0 !important;
+    margin-inline: auto !important;
+    left: auto !important;
+    right: auto !important;
+    justify-self: center !important;
+  }
+  #hero-section #hero-logo {
+    display: block !important;
+    width: min(100%, 350px) !important;
+    max-width: 350px !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+    flex: 0 0 auto !important;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1250px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 285px) minmax(0, 1fr) !important;
+    column-gap: .65rem !important;
+  }
+  #hero-section #logo-stage { max-width: 285px !important; }
+  #hero-section #hero-logo { width: min(100%, 285px) !important; max-width: 285px !important; }
+}
+</style>
+<style id="final-logo-polish">
+/* Polished hero logo: larger, perfectly circular, and nudged subtly toward the action cards. */
+@media (min-width: 1400px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(350px, 380px) minmax(0, 1fr) !important;
+    column-gap: clamp(.6rem, 1vw, 1rem) !important;
+  }
+  #hero-section #logo-stage { max-width: 380px !important; transform: translateX(8px) !important; }
+  #hero-section #hero-logo {
+    width: min(100%, 380px) !important; max-width: 380px !important;
+    height: auto !important; aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important; object-fit: cover !important;
+  }
+}
+@media (min-width: 1251px) and (max-width: 1399px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 350px) minmax(0, 1fr) !important;
+    column-gap: .75rem !important;
+  }
+  #hero-section #logo-stage { max-width: 350px !important; transform: translateX(6px) !important; }
+  #hero-section #hero-logo { width: min(100%, 350px) !important; max-width: 350px !important; aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
+}
+@media (min-width: 1024px) and (max-width: 1250px) {
+  #hero-section #logo-stage { transform: translateX(4px) !important; }
+  #hero-section #hero-logo { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
+}
+@media (max-width: 1023px) {
+  #hero-section #logo-stage { transform: none !important; }
+  #hero-section #hero-logo { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
+}
+</style>
+<style id="absolute-circular-logo-fix">
+/* Enforce a true circle on the main logo and its clipping stage at every breakpoint. */
+#hero-section #logo-stage {
+  width: min(100%, 380px) !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex: 0 0 auto !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+}
+#hero-section #hero-logo {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  object-fit: cover !important;
+  overflow: hidden !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 1023px) {
+  #hero-section #logo-stage { width: min(72vw, 18rem) !important; }
+}
+</style>
+<style>
+@media (min-width:1024px){
+  #hero-section #logo-stage{left:auto;transform:translateX(38px);}
+}
+@media (max-width:1023px){
+  #hero-section #logo-stage{transform:none;}
+}
+</style>
+<style>
+@media (min-width:1024px){
+  #hero-section #logo-stage{transform:translateX(30px) !important;}
+}
+@media (max-width:1023px){
+  #hero-section #logo-stage{transform:none !important;}
+}
+</style>
+<style>
+@media (min-width:1024px){
+  #hero-section #logo-stage{transform:translateX(12px) !important;}
+}
+@media (max-width:1023px){
+  #hero-section #logo-stage{transform:none !important;}
+}
+</style>
+<style id="centered-hero-composition">
+@media (min-width: 1024px) {
+  #hero-section {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl {
+    width: min(100%, 1700px) !important;
+    max-width: 1700px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr) minmax(0, 1fr) !important;
+    column-gap: clamp(1.25rem, 2.2vw, 2.5rem) !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-inline: 0 !important;
+    justify-self: stretch !important;
+  }
+  #hero-section #logo-stage {
+    width: 100% !important;
+    max-width: min(100%, 420px) !important;
+    margin-inline: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    justify-self: center !important;
+  }
+  #hero-section #hero-logo {
+    width: min(100%, 420px) !important;
+    max-width: 420px !important;
+    margin-inline: auto !important;
+    position: static !important;
+    left: auto !important;
+  }
+}
+@media (max-width: 1023px) {
+  #hero-section > .relative.z-10.max-w-7xl {
+    margin-inline: auto !important;
+  }
+  #hero-section #logo-stage { transform: none !important; }
+}
+</style>
+<style id="hero-action-cards-right-trim">
+/* Slightly shorten the right-side hero cards from their right edge (about 0.5 cm). */
+@media (min-width: 1024px) {
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
+    width: calc(100% - 19px) !important;
+    max-width: calc(100% - 19px) !important;
+    margin-right: 19px !important;
+    box-sizing: border-box !important;
+  }
+}
+</style>
+<style id="mobile-pro-polish">
+/* ===== MOBILE PROFESSIONAL POLISH (phones) — no zoom on tap, clean rhythm ===== */
+@media (max-width:767px){
+  html{-webkit-text-size-adjust:100%}
+  body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  /* Nav: compact, never crowded */
+  #main-content nav .max-w-7xl{padding-left:1rem !important;padding-right:1rem !important}
+  #main-content nav a[aria-label="NeNoX Forge Home"] span{font-size:1.05rem !important;letter-spacing:.04em !important}
+  #main-discord-link{padding:.62rem .95rem !important;font-size:.9rem !important;min-height:44px;border-radius:.7rem !important}
+  /* Hero: clear vertical rhythm, about -> logo -> links */
+  #hero-section{padding:1.5rem 1rem 2rem !important}
+  #hero-section > .relative.z-10.max-w-7xl{gap:1.4rem !important;max-width:32rem !important}
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important}
+  #hero-section h1{font-size:clamp(2rem,9.5vw,2.9rem) !important;line-height:1.08 !important;letter-spacing:-.01em !important}
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child p{font-size:.98rem !important;line-height:1.7 !important}
+  #hero-section #logo-stage{width:min(62vw,15rem) !important;margin:.25rem auto !important}
+  /* Action cards: generous touch targets, tint on tap instead of zoom */
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child{gap:.75rem !important}
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link{
+    padding:1rem 1.05rem !important;border-radius:.95rem !important;min-height:60px;
+    transform:none !important;transition:background-color .2s ease,border-color .2s ease !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link:active{background-color:rgba(255,255,255,.07) !important}
+  #hero-section .action-link > div:first-child{width:2.9rem !important;height:2.9rem !important;font-size:1.35rem !important;flex:none}
+  #hero-section .action-link span:last-child{font-size:1.06rem !important}
+  /* Roles: even, breathable cards */
+  #roles{padding-top:3rem !important;padding-bottom:3rem !important}
+  #roles h2{font-size:1.65rem !important;line-height:1.2 !important}
+  #roles .grid{gap:1rem !important}
+  #roles .card-lift{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important;transform:none !important;transition:border-color .25s ease,background-color .25s ease !important}
+  #roles .card-lift h3{font-size:1.3rem !important}
+  /* Recent: stacked panels with calm spacing */
+  #recent{padding-top:3rem !important;padding-bottom:3rem !important}
+  #recent .grid{gap:1.25rem !important}
+  #recent .panel-zoom{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important;transform:none !important}
+  #recent-hackathons .card-lift{transform:none !important}
+  /* Apply: thumb-friendly button */
+  #apply{padding:3rem 1rem !important}
+  #apply h2{font-size:1.7rem !important}
+  #apply p{font-size:1rem !important}
+  #apply .action-link{width:100% !important;max-width:22rem !important;margin-inline:auto !important;min-height:56px;transform:none !important}
+  /* Footer */
+  footer{padding:2rem 1rem !important;font-size:.82rem !important}
+  footer p:first-child{font-size:.9rem !important;line-height:1.6 !important}
+}
+/* Very small phones */
+@media (max-width:380px){
+  #hero-section{padding:1.1rem .8rem 1.75rem !important}
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child{padding:1.1rem 1rem !important}
+  #roles .card-lift,#recent .panel-zoom{padding:1.15rem 1rem !important}
+}
+/* Tablets: comfortable two-column roles */
+@media (min-width:768px) and (max-width:1023px){
+  #hero-section{padding:2.25rem 1.5rem !important}
+  #hero-section > .relative.z-10.max-w-7xl{max-width:44rem !important;gap:1.6rem !important}
+  #roles .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+}
 </style>
 </head>
 <body class="bg-black text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
@@ -329,7 +966,7 @@ img,video,canvas{max-width:100%}
   </nav>
 
   <!-- HERO -->
-  <header id="hero-section" class="relative lg:min-h-[calc(100svh-72px)] flex items-center justify-center px-4 sm:px-6 py-10 sm:py-12 overflow-hidden">
+  <header id="hero-section" class="relative lg:min-h-[calc(100svh-82px)] flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8 overflow-hidden">
 
     <video id="bg-video" data-src="bg-video.mp4" preload="none" autoplay loop muted playsinline disablepictureinpicture
       class="absolute inset-0 w-full h-full object-cover z-0"></video>
@@ -353,7 +990,7 @@ img,video,canvas{max-width:100%}
       </div>
 
       <!-- CENTER: LOGO -->
-      <div class="order-2 lg:order-2 lg:col-span-3 flex justify-center items-center py-0 lg:py-6">
+      <div class="order-2 lg:order-2 lg:col-span-4 flex justify-center items-center py-0 lg:py-6">
         <div id="logo-stage" class="tilt-stage">
           <video id="hero-logo" src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-label="NeNoX Forge logo animation"
             class="tilt-logo h-44 w-44 sm:h-60 sm:w-60 lg:h-72 lg:w-72 rounded-full object-cover border-2 border-red-600/80"></video>
@@ -572,10 +1209,6 @@ img,video,canvas{max-width:100%}
               <p class="text-slate-500 text-xs py-4 text-center">Loading updates...</p>
             </div>
 
-            <div class="mt-5 pt-4 border-t border-red-900/30 flex items-center justify-between gap-4">
-              <p class="text-[10px] text-slate-500">New opportunities are published here after verification.</p>
-              <span class="shrink-0 flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></span>
-            </div>
           </div>
 
         </div>
@@ -603,29 +1236,6 @@ img,video,canvas{max-width:100%}
   </footer>
 
 </div>
-
-<!-- DYNAMIC-ISLAND MUSIC PLAYER
-     Tap the note to expand, tap play to start. Tap anywhere else to minimize.
-     Put your audio file next to this page as "ambient.mp3". -->
-<div class="island-wrap" id="island" data-open="false" data-playing="false">
-  <div class="island">
-    <button class="island-icon" id="island-toggle" aria-label="Open music player" aria-expanded="false">
-      <i class="fa-solid fa-music" id="island-note"></i>
-      <span class="music-burst" aria-hidden="true"><i>♪</i><i>♫</i><i>♪</i><i>♫</i><i>♬</i></span>
-      <span class="vinyl" aria-hidden="true"><span class="vinyl-spin"></span></span>
-    </button>
-    <div class="island-body">
-      <div class="wave" id="island-wave" aria-hidden="true"></div>
-      <input type="range" class="island-vol" id="island-vol" min="0" max="100" value="40" aria-label="Volume">
-      <button class="island-btn" id="island-play" aria-label="Play or pause music">
-        <i class="fa-solid fa-play" id="island-play-icon"></i>
-      </button>
-    </div>
-  </div>
-</div>
-<audio id="island-audio" loop preload="auto">
-  <source src="ambient.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 /* ---------- LOGO VIDEOS: play the instant data is ready (no autoplay lag) ----------
@@ -669,253 +1279,9 @@ img,video,canvas{max-width:100%}
 })();
 </script>
 
-<script>
-/* ---------- HERO LOGO TILT: pointer on desktop, gentle auto-sway on touch ---------- */
-(function(){
-  const stage=document.getElementById('logo-stage');
-  const logo=document.getElementById('hero-logo');
-  if(!stage||!logo)return;
-  if(!matchMedia('(hover: hover) and (pointer: fine)').matches)return;
 
-  stage.addEventListener('pointermove',e=>{
-    if(e.pointerType!=='mouse'&&e.pointerType!=='pen')return;
-    const r=stage.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5;
-    const y=(e.clientY-r.top)/r.height-.5;
-    logo.classList.add('is-tilting');
-    logo.style.transform='rotateX('+(-y*14).toFixed(2)+'deg) rotateY('+(x*14).toFixed(2)+'deg)';
-  },{passive:true});
-  stage.addEventListener('pointerleave',()=>{
-    logo.classList.remove('is-tilting');
-    logo.style.transform='';
-  },{passive:true});
-})();
-</script>
 
-<script>
-/* ---------- DYNAMIC-ISLAND MUSIC PLAYER ----------
-   Note icon: expands / collapses the pill. Play button: starts / pauses.
-   Tapping / clicking ANYWHERE outside the player minimizes it (music keeps playing). */
-(function(){
-  const wrap=document.getElementById('island');
-  const toggle=document.getElementById('island-toggle');
-  const playBtn=document.getElementById('island-play');
-  const playIcon=document.getElementById('island-play-icon');
-  const vol=document.getElementById('island-vol');
-  const audio=document.getElementById('island-audio');
-  const waveBox=document.getElementById('island-wave');
-  if(!wrap||!toggle||!playBtn||!audio||!waveBox)return;
 
-  /* Music-icon glow: scrolling DOWN fades the white glow in slowly and smoothly;
-     scrolling back UP eases it back to the initial state. The scroll position only sets a
-     TARGET (0..1) - the visible glow value chases it with time-based easing and a speed cap,
-     so even a fast flick of the wheel can never make the glow jump or flash. */
-  const GLOW_DIST=700;      /* px of scroll for the full glow */
-  const GLOW_IN=1.1;        /* seconds-ish: slow, smooth fade-in while scrolling down */
-  const GLOW_OUT=0.7;       /* seconds-ish: calm return when scrolling up */
-  const GLOW_MAX_SPEED=0.45;/* max change per second (full glow takes >= ~2.2s) */
-  const calmMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let glowTarget=0,glowNow=0,glowRaf=0,glowLast=0;
-  const paintGlow=()=>{
-    const e=glowNow*glowNow*(3-2*glowNow);            /* smoothstep: soft start and end */
-    wrap.style.setProperty('--scroll-finish',e.toFixed(4));
-  };
-  const glowStep=t=>{
-    const dt=Math.min(.05,Math.max(.001,(t-glowLast)/1000));
-    glowLast=t;
-    const diff=glowTarget-glowNow;
-    const tau=diff>0?GLOW_IN:GLOW_OUT;
-    let move=diff*(1-Math.exp(-dt/tau));              /* exponential ease toward target */
-    const cap=GLOW_MAX_SPEED*dt;
-    if(Math.abs(move)>cap)move=Math.sign(move)*cap;   /* never faster than the cap */
-    glowNow+=move;
-    if(Math.abs(glowTarget-glowNow)<.0008)glowNow=glowTarget;
-    paintGlow();
-    if(glowNow!==glowTarget)glowRaf=requestAnimationFrame(glowStep);
-    else glowRaf=0;
-  };
-  const syncScrollFinish=()=>{
-    glowTarget=Math.max(0,Math.min(1,window.scrollY/GLOW_DIST));
-    if(calmMotion){glowNow=glowTarget;paintGlow();return;}
-    if(!glowRaf){glowLast=performance.now();glowRaf=requestAnimationFrame(glowStep);}
-  };
-  syncScrollFinish();
-  window.addEventListener('scroll',syncScrollFinish,{passive:true});
-
-  /* ----- Waveform bars -----
-     Envelope copies the reference picture: a big burst near the left, a smaller second swell,
-     one sharp spike, then a low tail of small bars. Each bar bounces with its own timing and a
-     small phase offset, so a ripple travels along the wave while the song plays. */
-  const BARS=38;
-  const rnd=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
-  const g=(x,c,w)=>Math.exp(-Math.pow((x-c)/w,2));
-  const frag=document.createDocumentFragment();
-  for(let i=0;i<BARS;i++){
-    const x=i/(BARS-1);
-    let h=1.0*g(x,.20,.11)+.58*g(x,.43,.09)+.95*g(x,.585,.022)+.30*g(x,.74,.12)+.22*(1-x)+.10*rnd(i+1);
-    h=Math.max(.16,Math.min(1,h));
-    if(i>0&&i<BARS-1&&i%3===0)h=Math.min(1,h*(.8+.5*rnd(i+9)));  /* uneven, organic heights */
-    const b=document.createElement('i');
-    b.dataset.h=(h*100).toFixed(1)+'%';b.style.setProperty('--h',b.dataset.h);
-    b.style.setProperty('--d',(.85+rnd(i+4)*.7).toFixed(2)+'s');
-    b.style.setProperty('--l',(-(i*.06+rnd(i+7)*.35)).toFixed(2)+'s');
-    frag.append(b);
-  }
-  waveBox.append(frag);
-  const barEls=[...waveBox.children];
-
-  /* ----- Live audio analysis: bars follow the actual music (bass on the left -> treble on the right).
-     Needs the page served over http(s) with ambient.mp3 on the same origin; on file:// (or if the
-     analyser can't start) the built-in CSS bounce is used instead, so audio is never muted. ----- */
-  let actx=null,analyser=null,freq=null,liveRaf=0,levels=new Float32Array(BARS);
-  function initAnalyser(){
-    if(actx||!/^https?:$/.test(location.protocol))return !!actx;
-    try{
-      const u=audio.currentSrc||(audio.querySelector('source')||{}).src||'';
-      if(u&&new URL(u,location.href).origin!==location.origin)return false;
-      const AC=window.AudioContext||window.webkitAudioContext;
-      if(!AC)return false;
-      actx=new AC();
-      const src=actx.createMediaElementSource(audio);
-      analyser=actx.createAnalyser();
-      analyser.fftSize=256;                 /* 128 frequency bins */
-      analyser.smoothingTimeConstant=.72;
-      src.connect(analyser);analyser.connect(actx.destination);
-      freq=new Uint8Array(analyser.frequencyBinCount);
-      return true;
-    }catch(err){actx=null;analyser=null;return false;}
-  }
-  function liveFrame(){
-    analyser.getByteFrequencyData(freq);
-    const usable=Math.floor(freq.length*.62);           /* ignore the empty top end */
-    for(let i=0;i<BARS;i++){
-      const x=i/(BARS-1);
-      const bin=Math.min(usable-1,Math.floor(Math.pow(x,1.35)*usable));
-      let v=freq[bin]/255;
-      v=Math.pow(v,1.15)*(1+x*.9);                       /* lift the quieter highs */
-      v=Math.max(.14,Math.min(1,v));
-      levels[i]+=(v-levels[i])*(v>levels[i]?.55:.14);    /* fast attack, soft release */
-      barEls[i].style.transform='scaleY('+levels[i].toFixed(3)+')';
-    }
-    liveRaf=requestAnimationFrame(liveFrame);
-  }
-  function startLive(){
-    if(calmMotion||!initAnalyser())return;
-    if(actx.state==='suspended')actx.resume();
-    waveBox.classList.add('live');
-    barEls.forEach((b,i)=>{b.style.setProperty('--h','100%');levels[i]=.14;});
-    cancelAnimationFrame(liveRaf);liveRaf=requestAnimationFrame(liveFrame);
-  }
-  function stopLive(){
-    cancelAnimationFrame(liveRaf);liveRaf=0;
-    waveBox.classList.remove('live');
-    barEls.forEach(b=>{b.style.transform='';b.style.setProperty('--h',b.dataset.h);});
-  }
-
-  /* ----- open / minimize ----- */
-  let openedAtY=0;
-  function setOpen(open){
-    if(open)openedAtY=window.scrollY;
-    wrap.dataset.open=String(open);
-    toggle.setAttribute('aria-expanded',String(open));
-    toggle.setAttribute('aria-label',open?'Close music player':'Open music player');
-  }
-  let burstLockUntil=0;   /* the layout shifts while the island opens/closes and can re-fire pointerenter */
-  const touchUI=matchMedia('(hover: none), (pointer: coarse)').matches;
-  toggle.addEventListener('click',()=>{
-    burstLockUntil=performance.now()+900;
-    cancelAnimationFrame(noteFrame);clearTimeout(noteTimer);toggle.classList.remove('notes-active');  /* no note burst mid-click */
-    if(touchUI){burstLockUntil=0;burstNotes();}  /* touch has no hover: burst the notes on every tap */
-    setOpen(wrap.dataset.open!=='true');
-    /* Start buffering the moment the player opens — but only if the browser hasn't
-       started on its own. Never restart a fetch that's already in progress. */
-    if(audio.paused&&audio.readyState===0){try{audio.load();}catch(_){}}
-    /* Warm the decoder inside this tap gesture so the later play() starts instantly.
-       Muted, so it's silent; skipped cleanly if the user already hit play. */
-    if(!warmed&&audio.paused&&audio.readyState>=2){
-      warmed=true;
-      const wasMuted=audio.muted;
-      audio.muted=true;
-      try{
-        const w=audio.play();
-        if(w&&typeof w.then==='function')w.then(()=>{if(!wantPlay){audio.pause();audio.currentTime=0;}audio.muted=wasMuted;}).catch(()=>{audio.muted=wasMuted;});
-        else audio.muted=wasMuted;
-      }catch(_){audio.muted=wasMuted;}
-    }
-  });
-
-  /* Clean, single-pass note burst on hover/focus; avoid forced layout/reflow,
-     which could make the notes flicker or glitch when the pointer moves. */
-  let noteTimer;
-  let noteFrame=0;
-  function burstNotes(){
-    if(performance.now()<burstLockUntil)return;
-    cancelAnimationFrame(noteFrame);
-    clearTimeout(noteTimer);
-    toggle.classList.remove('notes-active');
-    noteFrame=requestAnimationFrame(()=>{
-      toggle.classList.add('notes-active');
-      noteTimer=setTimeout(()=>toggle.classList.remove('notes-active'),1450);
-    });
-  }
-
-  toggle.addEventListener('pointerenter',e=>{ if(e.pointerType==='mouse'||e.pointerType==='pen')burstNotes(); },{passive:true});
-  toggle.addEventListener('focus',()=>{ if(toggle.matches(':focus-visible')&&!toggle.matches(':hover'))burstNotes(); });  /* keyboard only */
-
-  /* tap/click anywhere outside the player → minimize */
-  document.addEventListener('pointerdown',e=>{
-    if(wrap.dataset.open!=='true')return;
-    if(wrap.contains(e.target))return;
-    setOpen(false);
-  },{passive:true});
-  /* Scrolling tucks the island back inside on EVERY device (music keeps playing).
-     The width eases shut slowly so the collapse feels extra smooth. */
-  window.addEventListener('scroll',()=>{
-    if(wrap.dataset.open!=='true')return;
-    if(Math.abs(window.scrollY-openedAtY)>12)setOpen(false);
-  },{passive:true});
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'&&wrap.dataset.open==='true')setOpen(false);
-  });
-
-  /* ----- audio ----- */
-  audio.volume=(parseInt(vol.value,10)||40)/100;
-  vol.addEventListener('input',()=>{audio.volume=(parseInt(vol.value,10)||0)/100;});
-
-  let wantPlay=false;
-  let warmed=false;   /* decoder warm-up runs once, on the first island open */
-  function setPlaying(on){
-    wrap.dataset.playing=String(on);
-    playIcon.className=on?'fa-solid fa-pause':'fa-solid fa-play';
-    playBtn.setAttribute('aria-label',on?'Pause music':'Play music');
-    if(on)startLive();else stopLive();
-  }
-  /* Instant response: the button, icon and vinyl update the moment you tap —
-     the audio pipeline catches up right after. If play() fails, it flips back. */
-  playBtn.addEventListener('click',()=>{
-    if(audio.paused){
-      wantPlay=true;
-      setPlaying(true);
-      try{
-        const pr=audio.play();
-        if(pr&&typeof pr.catch==='function')pr.catch(()=>{wantPlay=false;setPlaying(false);});
-      }catch(_){wantPlay=false;setPlaying(false);}
-    }else{
-      wantPlay=false;
-      audio.pause();
-      setPlaying(false);
-    }
-  });
-  audio.addEventListener('error',()=>{
-    if(wantPlay){wantPlay=false;setPlaying(false);}
-    /* visible cue that ambient.mp3 is missing: the island shakes its head */
-    wrap.classList.remove('audio-missing');
-    void wrap.offsetWidth;
-    wrap.classList.add('audio-missing');
-    setTimeout(()=>wrap.classList.remove('audio-missing'),500);
-  });
-})();
-</script>
 
 <script>
 /* ---------- DEFERRED BACKGROUND VIDEO ---------- */
@@ -942,34 +1308,18 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<!-- MOBILE ZOOM: on touch devices links/cards/panels zoom as they scroll through
-     the middle of the screen (desktop keeps hover zoom). Tap gives instant feedback. -->
+<!-- TAP-ZOOM REMOVED: no scale on tap/click or on scroll. This tiny cleanup only
+     strips any stale zoom classes so cards never get stuck scaled. -->
 <script>
 (function(){
-  const SEL='.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*';
-  const isTouch=matchMedia('(hover: none), (pointer: coarse)').matches;
-  if(isTouch){
-    const zoomObs=new IntersectionObserver(
-      entries=>entries.forEach(e=>e.target.classList.toggle('is-active',e.isIntersecting)),
-      {rootMargin:'-30% 0px -30% 0px',threshold:0}
-    );
-    window.registerZoom=function(){
-      document.querySelectorAll(SEL).forEach(el=>{
-        if(el.dataset.zoomReg)return;
-        el.dataset.zoomReg='1';
-        zoomObs.observe(el);
-      });
-    };
-    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',window.registerZoom);
-    else window.registerZoom();
+  function clearZoom(){
+    document.querySelectorAll('.is-active,.is-pressed').forEach(function(el){
+      el.classList.remove('is-active');el.classList.remove('is-pressed');
+    });
   }
-  function clearPressed(){document.querySelectorAll('.is-pressed').forEach(el=>el.classList.remove('is-pressed'));}
-  document.addEventListener('pointerdown',e=>{
-    const el=e.target.closest&&e.target.closest(SEL);
-    if(el)el.classList.add('is-pressed');
-  },{passive:true});
-  ['pointerup','pointercancel','pointerleave','dragstart'].forEach(ev=>document.addEventListener(ev,clearPressed,{passive:true}));
-  window.addEventListener('blur',clearPressed);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clearZoom);
+  else clearZoom();
+  window.addEventListener('load',clearZoom);
 })();
 </script>
 
@@ -1061,7 +1411,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       frag.append(card);
     });
     projectsTarget.replaceChildren(frag);
-    if(window.registerZoom)window.registerZoom();
+    
   }
   function renderUpdates(items){
     const frag=document.createDocumentFragment();
@@ -1093,7 +1443,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       frag.append(card);
     });
     updatesTarget.replaceChildren(frag);
-    if(window.registerZoom)window.registerZoom();
+    
   }
 
   // Render instantly, then replace with the latest Markdown content when hosted.
@@ -1111,5 +1461,257 @@ document.addEventListener('DOMContentLoaded',()=>{
 <!-- Tailwind Play CDN loads LAST so it can never delay the splash / logo first paint -->
 <script src="https://cdn.tailwindcss.com"></script>
 
+<!-- NeNoX Forge site-wide ambient music: no visible player; resumes across HTML pages. -->
+<audio id="nenox-ambient-audio" preload="auto" loop playsinline>
+  <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+<script>
+(function () {
+  const audio = document.getElementById('nenox-ambient-audio');
+  if (!audio) return;
+  const KEY_TIME = 'nenoxAmbientTime';
+  const KEY_WANTED = 'nenoxAmbientWanted';
+  audio.volume = 0.5;
+  try {
+    const savedTime = Number(sessionStorage.getItem(KEY_TIME));
+    if (Number.isFinite(savedTime) && savedTime > 0) {
+      audio.addEventListener('loadedmetadata', function restorePosition() {
+        try {
+          if (Number.isFinite(audio.duration) && audio.duration > 0) {
+            audio.currentTime = savedTime % audio.duration;
+          } else {
+            audio.currentTime = savedTime;
+          }
+        } catch (_) {}
+      }, { once: true });
+    }
+    if (sessionStorage.getItem(KEY_WANTED) !== 'false') sessionStorage.setItem(KEY_WANTED, 'true');
+  } catch (_) {}
+
+  let started = false;
+  function startMusic() {
+    if (started || !audio.paused) return;
+    started = true;
+    audio.play().then(function () {
+      try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
+    }).catch(function () {
+      started = false;
+      // Browsers may block sound autoplay. Start on the first real user interaction instead.
+    });
+  }
+
+  // Try 2 seconds after page load; browsers that block audible autoplay start on first interaction.
+  function scheduleStart() { window.setTimeout(startMusic, 2000); }
+  if (document.readyState === 'complete') scheduleStart();
+  else window.addEventListener('load', scheduleStart, { once: true });
+
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (eventName) {
+    document.addEventListener(eventName, startMusic, { once: true, passive: true });
+  });
+
+  // Preserve the track position between pages in the same tab. Closing the tab ends playback.
+  window.addEventListener('pagehide', function () {
+    try {
+      if (Number.isFinite(audio.currentTime)) sessionStorage.setItem(KEY_TIME, String(audio.currentTime));
+      sessionStorage.setItem(KEY_WANTED, 'true');
+    } catch (_) {}
+  });
+})();
+</script>
+<!-- Mobile-first finishing pass: comfortable phone spacing, readable type, and no sideways overflow. -->
+<style id="professional-phone-layout">
+@media (max-width: 767px) {
+  html, body { width:100%; max-width:100%; overflow-x:clip; }
+  body { min-width:0; }
+  #main-content, main, section, footer, header { min-width:0; max-width:100%; }
+  #main-content nav { padding-left:1rem !important; padding-right:1rem !important; }
+  #hero-section {
+    min-height:auto !important;
+    padding:1.25rem 1rem 2.25rem !important;
+    box-sizing:border-box !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl {
+    width:100% !important;
+    max-width:34rem !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:center !important;
+    gap:1.25rem !important;
+    box-sizing:border-box !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    box-sizing:border-box !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:first-child {
+    order:1 !important;
+  }
+  #hero-section #logo-stage {
+    order:2 !important;
+    width:min(70vw, 17rem) !important;
+    max-width:17rem !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    position:relative !important;
+    inset:auto !important;
+    transform:none !important;
+    box-sizing:border-box !important;
+  }
+  #hero-section #hero-logo {
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    height:auto !important;
+    aspect-ratio:1 / 1 !important;
+    margin:0 auto !important;
+    border-radius:50% !important;
+    object-fit:cover !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
+    order:3 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:.8rem !important;
+  }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:1rem !important;
+    box-sizing:border-box !important;
+  }
+  #hero-section h1 { font-size:clamp(2.1rem, 10vw, 3.3rem) !important; line-height:1.04 !important; overflow-wrap:anywhere; }
+  #hero-section p { font-size:1rem !important; line-height:1.65 !important; overflow-wrap:anywhere; }
+  #hero-section img, #hero-section video, #hero-section canvas { max-width:100%; }
+  .tilt-stage { width:100% !important; max-width:100% !important; }
+  .island-wrap { right:.75rem !important; bottom:calc(.75rem + env(safe-area-inset-bottom, 0px)) !important; }
+  .island-wrap[data-open="true"], .island-wrap[data-open="true"] .island { width:min(320px, calc(100vw - 1.5rem)) !important; }
+  .defer-render { contain-intrinsic-size:1px 500px; }
+  /* Keep grids and cards within the phone viewport. */
+  [class*="grid-cols-"] { min-width:0; }
+  .action-link, .card-lift, .panel-zoom { max-width:100%; box-sizing:border-box; }
+  footer { padding-left:1rem !important; padding-right:1rem !important; }
+}
+@media (max-width: 380px) {
+  #hero-section { padding-left:.75rem !important; padding-right:.75rem !important; }
+  #hero-section > .relative.z-10.max-w-7xl { gap:1rem !important; }
+  #hero-section #logo-stage { width:min(66vw, 14rem) !important; }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link { padding:.85rem !important; }
+}
+@media (min-width:768px) and (max-width:1023px) {
+  #hero-section { padding:2rem 1.5rem !important; }
+  #hero-section > .relative.z-10.max-w-7xl { width:100% !important; max-width:46rem !important; margin-inline:auto !important; gap:1.5rem !important; }
+  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link { width:100% !important; max-width:none !important; margin:0 !important; }
+}
+</style>
+
+
+<script id="nenox-persistent-navigation">
+/* Persistent site navigation: keep the same audio element alive while internal HTML pages change. */
+(function () {
+  if (window.__nenoxPersistentNavigationInstalled) return;
+  window.__nenoxPersistentNavigationInstalled = true;
+  var audio = document.getElementById('nenox-ambient-audio');
+  if (!audio) return;
+  // Keep the media element outside the replaceable page body so navigation never resets it.
+  document.head.appendChild(audio);
+  document.querySelectorAll('head style, head link[rel="stylesheet"]').forEach(function (node) { node.setAttribute('data-nenox-page-style', 'true'); });
+
+  function isLocalHtmlLink(link) {
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return false;
+    var raw = link.getAttribute('href');
+    if (!raw || raw.charAt(0) === '#' || /^(mailto:|tel:|javascript:|data:)/i.test(raw)) return false;
+    var url;
+    try { url = new URL(raw, window.location.href); } catch (_) { return false; }
+    return url.origin === window.location.origin && /\.html?$/i.test(url.pathname) && !url.searchParams.has('fullreload');
+  }
+
+  async function renderPage(url, addHistory) {
+    var response = await fetch(url.href, { credentials: 'same-origin' });
+    if (!response.ok) throw new Error('Page request failed: ' + response.status);
+    var html = await response.text();
+    var nextDoc = new DOMParser().parseFromString(html, 'text/html');
+    if (!nextDoc.body || !nextDoc.body.children.length) throw new Error('Page content was empty');
+
+    var nextAudio = nextDoc.getElementById('nenox-ambient-audio');
+    if (!nextAudio) throw new Error('Persistent audio element missing from destination page');
+
+    if (addHistory) history.pushState({ nenoxPage: true }, '', url.pathname + url.search + url.hash);
+    document.title = nextDoc.title || document.title;
+    document.documentElement.className = nextDoc.documentElement.className || '';
+    document.body.className = nextDoc.body.className || '';
+
+    // Swap page-specific CSS while leaving loaded JavaScript libraries and the audio untouched.
+    document.querySelectorAll('head style[data-nenox-page-style], head link[data-nenox-page-style]').forEach(function (node) { node.remove(); });
+    Array.from(nextDoc.head.querySelectorAll('style, link[rel="stylesheet"]')).forEach(function (node) {
+      var clone = node.cloneNode(true);
+      clone.setAttribute('data-nenox-page-style', 'true');
+      document.head.appendChild(clone);
+    });
+
+    // Keep the original audio element in <head>; only replace visible page content.
+    Array.from(document.body.childNodes).forEach(function (node) { node.remove(); });
+    Array.from(nextDoc.body.childNodes).forEach(function (node) {
+      if (node.nodeType === 1 && (node.id === 'nenox-ambient-audio' || node.id === 'nenox-persistent-navigation')) return;
+      if (node.nodeType === 1 && node.tagName === 'SCRIPT') return;
+      document.body.appendChild(document.importNode(node, true));
+    });
+
+    // Re-run page-local inline scripts, excluding the music initializer and navigation controller.
+    var scripts = Array.from(nextDoc.body.querySelectorAll('script:not([src])'));
+    scripts.forEach(function (oldScript) {
+      var code = oldScript.textContent || '';
+      if (oldScript.id === 'nenox-persistent-navigation' || code.indexOf("getElementById('nenox-ambient-audio')") !== -1 || code.indexOf('getElementById("nenox-ambient-audio")') !== -1) return;
+      var fresh = document.createElement('script');
+      if (oldScript.type) fresh.type = oldScript.type;
+      fresh.textContent = code;
+      document.body.appendChild(fresh);
+      fresh.remove();
+    });
+
+    // Re-fire readiness for page scripts that initialize from DOMContentLoaded.
+    document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.dispatchEvent(new Event('nenox:pagechange'));
+  }
+
+  document.addEventListener('click', function (event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    var link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+    if (!isLocalHtmlLink(link)) return;
+    var url = new URL(link.href, window.location.href);
+    if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
+    event.preventDefault();
+    renderPage(url, true).catch(function (error) {
+      console.warn('NeNoX seamless navigation fallback:', error);
+      window.location.href = url.href;
+    });
+  });
+
+  window.addEventListener('popstate', function () {
+    renderPage(new URL(window.location.href), false).catch(function () { window.location.reload(); });
+  });
+})();
+</script>
 </body>
 </html>
+<!-- Fine alignment: move the complete desktop logo stage another ~0.5 cm toward the action cards (about 38 px total from the previous baseline). -->
+
+
+<!-- Final visual balance: place the logo midway between the left intro and right action cards. -->
+
+
+<!-- Fine alignment: shift the logo 0.2 cm right from the previous position on desktop. -->
+
+
+<!-- Final layout: center the complete hero composition in the viewport, with balanced left/right columns. -->
