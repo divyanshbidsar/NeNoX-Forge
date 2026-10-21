@@ -1554,12 +1554,30 @@ document.addEventListener('DOMContentLoaded',()=>{
         try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
       }).catch(function () {
         trying = false;
-        // Still blocked (no user activation yet, or media not ready):
-        // keep the gesture listeners so the next tap retries.
+        tryMutedAutoplay(); // audible blocked: fall back to muted start + lift
       });
     } else { trying = false; }
   }
-  function onGesture() { tryPlay(); }
+  // Phones block audible autoplay until a tap, but muted autoplay is always
+  // allowed. So: start muted at the 4s mark, then lift the mute shortly after
+  // the sound actually begins. On most Android phones this yields music with
+  // no tap at all; where the browser still insists, the first tap finishes it.
+  function tryMutedAutoplay() {
+    if (unlocked || trying || !audio.paused) return;
+    trying = true;
+    audio.muted = true;
+    let p;
+    try { p = audio.play(); } catch (_) { trying = false; audio.muted = false; return; }
+    Promise.resolve(p).then(function () {
+      window.setTimeout(function () {
+        trying = false;
+        audio.muted = false;
+        // Audibility can't be verified programmatically, so the gesture
+        // listeners stay: the first real tap guarantees sound via tryPlay.
+      }, 700);
+    }).catch(function () { trying = false; audio.muted = false; });
+  }
+  function onGesture() { audio.muted = false; tryPlay(); }
   function onVis() { if (!document.hidden) tryPlay(); }
   GESTURES.forEach(function (n) { document.addEventListener(n, onGesture, { passive: true }); });
   document.addEventListener('visibilitychange', onVis);
