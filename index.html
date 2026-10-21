@@ -1534,26 +1534,43 @@ document.addEventListener('DOMContentLoaded',()=>{
     if (sessionStorage.getItem(KEY_WANTED) !== 'false') sessionStorage.setItem(KEY_WANTED, 'true');
   } catch (_) {}
 
-  let started = false;
-  function startMusic() {
-    if (started || !audio.paused) return;
-    started = true;
-    audio.play().then(function () {
-      try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
-    }).catch(function () {
-      started = false;
-      // Browsers may block sound autoplay. Start on the first real user interaction instead.
-    });
+  let unlocked = false; // true once playback has actually begun
+  let trying = false;   // a play() attempt is currently in flight
+  const GESTURES = ['pointerdown', 'touchstart', 'keydown', 'click'];
+  function detach() {
+    GESTURES.forEach(function (n) { document.removeEventListener(n, onGesture); });
+    document.removeEventListener('visibilitychange', onVis);
   }
+  function tryPlay() {
+    if (unlocked) return;
+    if (!audio.paused) { unlocked = true; detach(); return; }
+    if (trying) return; // a pending play() will resolve/reject on its own; don't pile on
+    trying = true;
+    let p;
+    try { p = audio.play(); } catch (_) { trying = false; return; }
+    if (p && typeof p.then === 'function') {
+      p.then(function () {
+        trying = false; unlocked = true; detach();
+        try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
+      }).catch(function () {
+        trying = false;
+        // Still blocked (no user activation yet, or media not ready):
+        // keep the gesture listeners so the next tap retries.
+      });
+    } else { trying = false; }
+  }
+  function onGesture() { tryPlay(); }
+  function onVis() { if (!document.hidden) tryPlay(); }
+  GESTURES.forEach(function (n) { document.addEventListener(n, onGesture, { passive: true }); });
+  document.addEventListener('visibilitychange', onVis);
+  audio.addEventListener('playing', function () { unlocked = true; trying = false; detach(); });
 
-  // Try 2 seconds after page load; browsers that block audible autoplay start on first interaction.
-  function scheduleStart() { window.setTimeout(startMusic, 2000); }
+  // Nudge playback after load and a couple of times after, in case an early
+  // attempt raced the media fetch (common on mobile networks). Real start
+  // still waits for a user gesture where the browser demands it.
+  function scheduleStart() { [2000, 5000, 10000].forEach(function (ms) { window.setTimeout(tryPlay, ms); }); }
   if (document.readyState === 'complete') scheduleStart();
   else window.addEventListener('load', scheduleStart, { once: true });
-
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (eventName) {
-    document.addEventListener(eventName, startMusic, { once: true, passive: true });
-  });
 
   // Preserve the track position between pages in the same tab. Closing the tab ends playback.
   window.addEventListener('pagehide', function () {
