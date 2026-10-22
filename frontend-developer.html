@@ -6,13 +6,27 @@
   <title>Frontend Developer | NeNoX Forge Role Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .button-animate {
+      transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    }
 
-<!-- Disable click/press animation across the site while preserving normal navigation. -->
-<style>
-.action-link.is-pressed,.card-lift.is-pressed,.panel-zoom.is-pressed,
-#projects-list>.is-pressed,#recent-hackathons>.is-pressed,
-.is-pressed{transform:none !important;transition:none !important;animation:none !important;}
-</style>
+    .button-animate:hover,
+    .button-animate:focus-visible {
+      transform: translateY(-5px) scale(1.04);
+      box-shadow: 0 0 28px rgba(220, 38, 38, 0.45);
+    }
+
+    .button-animate:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .button-animate {
+        transition: none;
+      }
+    }
+  </style>
 </head>
 <body class="bg-black text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
 
@@ -152,7 +166,7 @@
           <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header"
              target="_blank"
              rel="noopener noreferrer"
-             class="flex-1 inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-lg shadow-red-600/30">
+             class="button-animate flex-1 inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-lg shadow-red-600/30">
             <span>Apply for this Role</span>
             <i class="fa-solid fa-paper-plane ml-2"></i>
           </a>
@@ -161,14 +175,14 @@
           <a href="NeNoX team Detail.pdf"
              target="_blank"
              rel="noopener noreferrer"
-             class="inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 border border-red-900/60 text-red-400 hover:text-white font-semibold transition-all">
+             class="button-animate inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 border border-red-900/60 text-red-400 hover:text-white font-semibold transition-all">
             <i class="fa-solid fa-file-pdf mr-2"></i>
             <span>Team Details</span>
           </a>
 
           <!-- VIEW OTHER ROLES BUTTON -->
           <a href="index.html#roles"
-             class="inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold transition-all">
+             class="button-animate inline-flex items-center justify-center py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold transition-all">
             View Other Roles
           </a>
 
@@ -181,150 +195,5 @@
   <footer class="border-t border-red-900/30 bg-black/80 py-6 text-center text-slate-500 text-sm">
     © 2026 Team NeNoX Forge • Built for University Hackathons
   </footer>
-<!-- NeNoX Forge site-wide ambient music: no visible player; resumes across HTML pages. -->
-<audio id="nenox-ambient-audio" preload="auto" loop playsinline>
-  <source src="ambient.mp3" type="audio/mpeg">
-</audio>
-<script>
-(function () {
-  const audio = document.getElementById('nenox-ambient-audio');
-  if (!audio) return;
-  const KEY_TIME = 'nenoxAmbientTime';
-  const KEY_WANTED = 'nenoxAmbientWanted';
-  audio.volume = 0.5;
-  try {
-    const savedTime = Number(sessionStorage.getItem(KEY_TIME));
-    if (Number.isFinite(savedTime) && savedTime > 0) {
-      audio.addEventListener('loadedmetadata', function restorePosition() {
-        try {
-          if (Number.isFinite(audio.duration) && audio.duration > 0) {
-            audio.currentTime = savedTime % audio.duration;
-          } else {
-            audio.currentTime = savedTime;
-          }
-        } catch (_) {}
-      }, { once: true });
-    }
-    if (sessionStorage.getItem(KEY_WANTED) !== 'false') sessionStorage.setItem(KEY_WANTED, 'true');
-  } catch (_) {}
-
-  let started = false;
-  function startMusic() {
-    if (started || !audio.paused) return;
-    started = true;
-    audio.play().then(function () {
-      try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
-    }).catch(function () {
-      started = false;
-      // Browsers may block sound autoplay. Start on the first real user interaction instead.
-    });
-  }
-
-  // Try 2 seconds after page load; browsers that block audible autoplay start on first interaction.
-  function scheduleStart() { window.setTimeout(startMusic, 2000); }
-  if (document.readyState === 'complete') scheduleStart();
-  else window.addEventListener('load', scheduleStart, { once: true });
-
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (eventName) {
-    document.addEventListener(eventName, startMusic, { once: true, passive: true });
-  });
-
-  // Preserve the track position between pages in the same tab. Closing the tab ends playback.
-  window.addEventListener('pagehide', function () {
-    try {
-      if (Number.isFinite(audio.currentTime)) sessionStorage.setItem(KEY_TIME, String(audio.currentTime));
-      sessionStorage.setItem(KEY_WANTED, 'true');
-    } catch (_) {}
-  });
-})();
-</script>
-
-<script id="nenox-persistent-navigation">
-/* Persistent site navigation: keep the same audio element alive while internal HTML pages change. */
-(function () {
-  if (window.__nenoxPersistentNavigationInstalled) return;
-  window.__nenoxPersistentNavigationInstalled = true;
-  var audio = document.getElementById('nenox-ambient-audio');
-  if (!audio) return;
-  // Keep the media element outside the replaceable page body so navigation never resets it.
-  document.head.appendChild(audio);
-  document.querySelectorAll('head style, head link[rel="stylesheet"]').forEach(function (node) { node.setAttribute('data-nenox-page-style', 'true'); });
-
-  function isLocalHtmlLink(link) {
-    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return false;
-    var raw = link.getAttribute('href');
-    if (!raw || raw.charAt(0) === '#' || /^(mailto:|tel:|javascript:|data:)/i.test(raw)) return false;
-    var url;
-    try { url = new URL(raw, window.location.href); } catch (_) { return false; }
-    return url.origin === window.location.origin && /\.html?$/i.test(url.pathname) && !url.searchParams.has('fullreload');
-  }
-
-  async function renderPage(url, addHistory) {
-    var response = await fetch(url.href, { credentials: 'same-origin' });
-    if (!response.ok) throw new Error('Page request failed: ' + response.status);
-    var html = await response.text();
-    var nextDoc = new DOMParser().parseFromString(html, 'text/html');
-    if (!nextDoc.body || !nextDoc.body.children.length) throw new Error('Page content was empty');
-
-    var nextAudio = nextDoc.getElementById('nenox-ambient-audio');
-    if (!nextAudio) throw new Error('Persistent audio element missing from destination page');
-
-    if (addHistory) history.pushState({ nenoxPage: true }, '', url.pathname + url.search + url.hash);
-    document.title = nextDoc.title || document.title;
-    document.documentElement.className = nextDoc.documentElement.className || '';
-    document.body.className = nextDoc.body.className || '';
-
-    // Swap page-specific CSS while leaving loaded JavaScript libraries and the audio untouched.
-    document.querySelectorAll('head style[data-nenox-page-style], head link[data-nenox-page-style]').forEach(function (node) { node.remove(); });
-    Array.from(nextDoc.head.querySelectorAll('style, link[rel="stylesheet"]')).forEach(function (node) {
-      var clone = node.cloneNode(true);
-      clone.setAttribute('data-nenox-page-style', 'true');
-      document.head.appendChild(clone);
-    });
-
-    // Keep the original audio element in <head>; only replace visible page content.
-    Array.from(document.body.childNodes).forEach(function (node) { node.remove(); });
-    Array.from(nextDoc.body.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && (node.id === 'nenox-ambient-audio' || node.id === 'nenox-persistent-navigation')) return;
-      if (node.nodeType === 1 && node.tagName === 'SCRIPT') return;
-      document.body.appendChild(document.importNode(node, true));
-    });
-
-    // Re-run page-local inline scripts, excluding the music initializer and navigation controller.
-    var scripts = Array.from(nextDoc.body.querySelectorAll('script:not([src])'));
-    scripts.forEach(function (oldScript) {
-      var code = oldScript.textContent || '';
-      if (oldScript.id === 'nenox-persistent-navigation' || code.indexOf("getElementById('nenox-ambient-audio')") !== -1 || code.indexOf('getElementById("nenox-ambient-audio")') !== -1) return;
-      var fresh = document.createElement('script');
-      if (oldScript.type) fresh.type = oldScript.type;
-      fresh.textContent = code;
-      document.body.appendChild(fresh);
-      fresh.remove();
-    });
-
-    // Re-fire readiness for page scripts that initialize from DOMContentLoaded.
-    document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    window.dispatchEvent(new Event('nenox:pagechange'));
-  }
-
-  document.addEventListener('click', function (event) {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    var link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
-    if (!isLocalHtmlLink(link)) return;
-    var url = new URL(link.href, window.location.href);
-    if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
-    event.preventDefault();
-    renderPage(url, true).catch(function (error) {
-      console.warn('NeNoX seamless navigation fallback:', error);
-      window.location.href = url.href;
-    });
-  });
-
-  window.addEventListener('popstate', function () {
-    renderPage(new URL(window.location.href), false).catch(function () { window.location.reload(); });
-  });
-})();
-</script>
 </body>
 </html>
