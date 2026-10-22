@@ -1,1863 +1,651 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#000000">
-<title>NeNoX Forge | Hackathon Team Recruitment</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeNoX Forge | Hackathon Team Recruitment</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    #splash-screen {
+      transition: opacity 1s ease-out, visibility 1s ease-out;
+    }
 
-<!-- logo.mp4 FIRST: its download starts before anything else can block parsing,
-     so the first frame is ready the instant the splash paints -->
-<link rel="preload" href="logo.mp4" as="video" type="video/mp4" fetchpriority="high">
+    .button-animate {
+      transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    }
 
-<!-- connect early so the CDNs are ready before they're needed -->
-<link rel="preconnect" href="https://nenox-forge-backend.onrender.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    .button-animate.button-animate:hover,
+    .button-animate.button-animate:focus-visible {
+      transform: translateY(-5px) scale(1.04);
+      box-shadow: 0 0 28px rgba(220, 38, 38, 0.45);
+    }
 
-<!-- font-awesome loads async: icons pop in when ready, never block the splash -->
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    .button-animate.hero-action-button:hover,
+    .button-animate.hero-action-button:focus-visible {
+      background-color: rgba(15, 23, 42, 0.8);
+      border-color: rgba(220, 38, 38, 0.8);
+      box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.45), 0 0 18px rgba(220, 38, 38, 0.35);
+    }
 
-<style>
-/* ===== CRITICAL: instant splash paint (needs no Tailwind) ===== */
-html{background:#000;-webkit-text-size-adjust:100%}
-img,video,canvas{max-width:100%}
-#splash-screen{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out,visibility .6s ease-out}
-#splash-screen .splash-inner{display:flex;flex-direction:column;align-items:center;gap:1.1rem;width:100%;padding:1rem;box-sizing:border-box}
-#splash-screen video{width:clamp(9rem,24vmin,15rem);height:clamp(9rem,24vmin,15rem);flex:none;max-width:none;max-height:none;aspect-ratio:1/1;object-fit:cover;border-radius:50%;border:2px solid rgba(220,38,38,.65);background:#080808;box-shadow:0 0 30px rgba(220,38,38,.25);animation:splashPulse 2.2s ease-in-out infinite}
-#splash-screen .splash-title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:clamp(1.6rem,4.2vw,2.7rem);font-weight:850;letter-spacing:clamp(.09em,.8vw,.18em);line-height:1.2;text-align:center;white-space:nowrap;color:#fff;text-transform:uppercase;text-shadow:0 0 14px rgba(220,38,38,.22)}
-@keyframes splashPulse{0%,100%{box-shadow:0 0 20px rgba(220,38,38,.2)}50%{box-shadow:0 0 34px rgba(220,38,38,.4)}}
-@media(max-width:480px){#splash-screen .splash-inner{gap:1rem}#splash-screen video{width:min(36vw,9rem);height:min(36vw,9rem)}#splash-screen .splash-title{font-size:clamp(1.35rem,5.8vw,1.9rem);letter-spacing:.09em}}
+    .button-animate.hero-action-button.team-details-action-button:hover,
+    .button-animate.hero-action-button.team-details-action-button:focus-visible {
+      border-color: rgba(255, 255, 255, 0.9);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 22px rgba(255, 255, 255, 0.35);
+    }
 
-/* ===== Desktop hero layout correction: match the intended three-column design ===== */
-@media (min-width:1024px){
-  #hero-section{min-height:min(calc(100svh - 82px), 680px);}
-  #hero-section > .relative.z-10.max-w-7xl{
-    display:grid !important;
-    grid-template-columns:minmax(0, 5fr) minmax(0, 3.5fr) minmax(0, 4fr) !important;
-    gap:2rem !important;
-    align-items:center !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div{
-    min-width:0;
-    grid-column:auto !important;
-    grid-row:auto !important;
-    order:initial !important;
-  }
-  #hero-section #logo-stage{
-    width:100%;max-width:100%;margin:0 auto;left:-1rem;
-    display:flex;align-items:center;justify-content:center;
-  }
-  #hero-section #hero-logo{
-    display:block;width:min(100%,20rem);height:auto;aspect-ratio:1/1;
-    max-width:20rem;max-height:20rem;flex:none;object-fit:cover;
-    border-radius:50%;opacity:1;visibility:visible;
-    transform:none !important;animation:none !important;transition:none !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child{padding-left:0;}
-  /* Shorter, more refined action cards without disturbing the centered logo */
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link{
-    width:88%;
-    max-width:34rem;
-    align-self:center;
-    box-sizing:border-box;
-  }
-}
-@media (max-width:1023px){
-  #hero-section > .relative.z-10.max-w-7xl{display:grid;grid-template-columns:minmax(0,1fr);}
-  #hero-section #logo-stage{left:0;margin-inline:auto;}
-  #hero-section #hero-logo{width:min(72vw,18rem);height:auto;aspect-ratio:1/1;}
-}
+    .team-details-icon-box {
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
 
-</style>
+    .team-details-action-button:hover .team-details-icon-box,
+    .team-details-action-button:focus-visible .team-details-icon-box {
+      border-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+    }
 
-<style>
-/* ============ PERFORMANCE-FIRST ANIMATION RULES ============
-   - Only `transform` and `opacity` are animated (GPU-composited, no layout/paint).
-   - No blur filters, no backdrop-blur, no glow/box-shadow animation.
-   - One shared set of classes instead of many overlapping rules. */
+    .button-animate.hero-action-button.application-action-button:hover,
+    .button-animate.hero-action-button.application-action-button:focus-visible {
+      border-color: rgba(34, 197, 94, 0.95);
+      box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.5), 0 0 22px rgba(34, 197, 94, 0.45);
+    }
 
-/* ---------- Logo videos: always perfect circles ---------- */
-#hero-logo,#splash-screen video{aspect-ratio:1/1}
+    .application-action-button .fa-paper-plane {
+      transition: color 200ms ease, filter 200ms ease;
+    }
 
-/* ---------- Main hero logo: centered, stable, and without tilt animation ---------- */
-.tilt-stage{padding:0;touch-action:pan-y;display:flex;align-items:center;justify-content:center;width:min(100%,22rem);margin-inline:auto}
-.tilt-logo{transform:none !important;transition:none !important;animation:none !important;will-change:auto;backface-visibility:hidden;box-shadow:none !important;filter:none !important}
+    .application-action-button:hover .fa-paper-plane,
+    .application-action-button:focus-visible .fa-paper-plane {
+      color: #22c55e;
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+    }
 
-/* ---------- Enhanced zoom in / zoom out (GPU-friendly, no glow) ---------- */
-.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
-  transform:translate3d(0,0,0) scale(1);
-  transform-origin:center center;
-  transition:transform .55s cubic-bezier(.16,1,.3,1);
-  backface-visibility:hidden;
-  -webkit-tap-highlight-color:transparent;
-}
-@media (hover:hover) and (pointer:fine){
-  .action-link:hover{transform:translate3d(0,-2px,0) scale(1.085)}
-  .card-lift:hover{transform:translate3d(0,-4px,0) scale(1.065)}
-  .panel-zoom:hover{transform:translate3d(0,-2px,0) scale(1.025)}
-}
-/* TOUCH: no hover, so cards get a background tint on :active. The zoom itself
-   now happens on scroll (see #mobile-scroll-zoom): cards zoom in as they
-   enter the viewport and back out as they leave. */
-@media (hover:none),(pointer:coarse){
-  .action-link:active{background-color:rgba(255,255,255,.06)}
-  .card-lift:active{background-color:rgba(220,38,38,.10)}
-  .panel-zoom:active{background-color:rgba(220,38,38,.06)}
-}
-/* Any leftover JS-added zoom classes are neutralized. */
-.action-link.is-active,.card-lift.is-active,.panel-zoom.is-active,
-#projects-list>.is-active,#recent-hackathons>.is-active,
-.action-link.is-pressed,.card-lift.is-pressed,.panel-zoom.is-pressed,
-#projects-list>.is-pressed,#recent-hackathons>.is-pressed{
-  transform:none !important;transition:none !important;animation:none !important;
-}
-/* ---------- Dynamic-Island music player ---------- */
-.island-wrap{
-  position:fixed;z-index:60;
-  right:1.5rem;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
-  width:38px;height:38px;overflow:visible;
-}
-.island{
-  position:absolute;right:0;top:0;z-index:1;
-  display:flex;flex-direction:row-reverse;align-items:center;
-  width:38px;height:38px;overflow:visible;isolation:isolate;
-  border-radius:9999px;
-  background:#000;
-  box-shadow:0 0 0 1px rgba(255,255,255,.025),inset 0 1px 0 rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.7);
-  transition:width .6s cubic-bezier(.22,1,.36,1);
-  will-change:width,transform;
-  transform:scale(1);transform-origin:bottom right;
-}
-.island-wrap[data-open="true"],.island-wrap[data-open="true"] .island{width:min(320px,calc(100vw - 3rem))}
-@media (max-width:640px){
-  .island-wrap{right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px))}
-  .island-wrap[data-open="true"],.island-wrap[data-open="true"] .island{width:min(320px,calc(100vw - 2rem))}
-}
-.island::after{
-  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(239,68,68,.20),rgba(239,68,68,0) 48%);
-  opacity:.28;
-  transition:opacity 2.8s cubic-bezier(.22,1,.36,1);
-}
+    .application-action-button:hover .application-icon-box,
+    .application-action-button:focus-visible .application-icon-box {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-color: rgba(34, 197, 94, 0.6);
+    }
 
-/* music icon: hover zoom in/out removed */
-/* Scroll-linked premium white finish: grows progressively with scroll position,
-   and retreats progressively when scrolling back up (not a delayed on/off transition). */
-.island-wrap{--scroll-finish:0;}
-.island-wrap .island{
-  /* Red finish (site red #dc2626 / #ef4444). The glow lives INSIDE the island: a hairline ring plus an
-     inner red light that grows slowly with the eased scroll value (--scroll-finish). Nothing spills outside. */
-  box-shadow:
-    0 0 0 1px rgba(220,38,38,calc(.30 + var(--scroll-finish) * .22)),
-    inset 0 1px 0 rgba(248,113,113,calc(.10 + var(--scroll-finish) * .16)),
-    inset 0 0 calc(4px + var(--scroll-finish) * 14px) rgba(239,68,68,calc(var(--scroll-finish) * .40)),
-    0 10px 24px rgba(0,0,0,.7);
-  transition:width .6s cubic-bezier(.22,1,.36,1);
-}
-.island-wrap .island-icon{
-  color:#ef4444;
-  box-shadow:inset 0 1px 0 rgba(248,113,113,calc(.12 + var(--scroll-finish) * .2)),
-    inset 0 0 calc(3px + var(--scroll-finish) * 9px) rgba(239,68,68,calc(var(--scroll-finish) * .48)),
-    0 0 0 1px rgba(220,38,38,calc(.35 + var(--scroll-finish) * .20));
-  transition:transform .35s cubic-bezier(.22,1,.36,1),color .4s ease,background .4s ease;
-  transform-origin:center;touch-action:manipulation;
-}
-.island-wrap .island::after{opacity:calc(.25 + var(--scroll-finish) * .45);transition:none;}
+    .button-animate:active {
+      transform: translateY(0) scale(0.98);
+    }
 
-/* External expanding ripple rings removed; keep the in-island music waves. */
+    .panel-animate {
+      transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+    }
 
-/* Icon: round chip + animated note */
-.island-icon{
-  position:relative;z-index:3;flex:0 0 32px;width:32px;height:32px;margin-right:3px;
-  display:grid;place-items:center;border:0;cursor:pointer;border-radius:9999px;
-  color:#f8fafc;font-size:.92rem;
-  background:#000;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 0 0 1px rgba(255,255,255,.025);
-  transition:transform 1.8s cubic-bezier(.22,1,.36,1),color 2.6s ease-in-out,background 2.6s ease-in-out,box-shadow 3s cubic-bezier(.22,1,.36,1);
-  -webkit-tap-highlight-color:transparent;
-}
-.island-icon i.fa-music{display:block;will-change:transform,opacity;transition:opacity .3s ease,transform .5s cubic-bezier(.34,1.3,.4,1)}
-.island-wrap[data-playing="true"] .island-icon{color:#ef4444;background:#000}
-.island-wrap[data-playing="true"] .island-icon i.fa-music{opacity:0;transform:scale(.4) rotate(90deg)}
-/* Music icon: smooth 10° rotation when the mouse reaches it (desktop hover only).
-   The note's transform already eases on a spring curve, so the turn glides in
-   and back out. Scoped to the paused state so it never fights the vinyl transition. */
-@media (hover:hover) and (pointer:fine){
-  .island-wrap:not([data-playing="true"]) .island-icon:hover i.fa-music{transform:rotate(10deg)}
-}
-/* Smooth press feedback on the icon chip (touch + mouse). */
-.island-wrap .island-icon:active{transform:none !important;transition:none !important}
-/* Musical notes briefly burst outward when the pointer reaches the icon. */
-.island-icon{overflow:visible;isolation:isolate}
-.music-burst{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:visible}
-.music-burst i{position:absolute;left:50%;top:50%;display:block;white-space:nowrap;line-height:1;font-style:normal;font-size:12px;font-weight:700;opacity:0;color:#fff;text-shadow:0 0 6px rgba(220,38,38,.55);will-change:transform,opacity;backface-visibility:hidden}
-.island-icon.notes-active .music-burst i{animation:noteBurst 1.25s cubic-bezier(.16,.7,.25,1) both}
-.music-burst i:nth-child(1){--dx:-23px;--dy:-20px;--tone:#ef4444;animation-delay:0s}
-.music-burst i:nth-child(2){--dx:24px;--dy:-19px;--tone:#f87171;animation-delay:.06s}
-.music-burst i:nth-child(3){--dx:-25px;--dy:13px;--tone:#dc2626;animation-delay:.12s}
-.music-burst i:nth-child(4){--dx:23px;--dy:15px;--tone:#fca5a5;animation-delay:.18s}
-.music-burst i:nth-child(5){--dx:0px;--dy:-29px;--tone:#b91c1c;animation-delay:.08s}
-.music-burst i{color:var(--tone,#fff)}
-@keyframes noteBurst{0%{opacity:0;transform:translate3d(-50%,-50%,0) scale(.55) rotate(-12deg)}15%{opacity:1}68%{opacity:1}100%{opacity:0;transform:translate3d(calc(-50% + var(--dx)),calc(-50% + var(--dy)),0) scale(1) rotate(12deg)}}
-.island-icon:focus-visible{outline:2px solid #ef4444;outline-offset:3px}
-/* Visible cue when ambient.mp3 is missing: the island shakes its head. */
-@keyframes islandShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-.island-wrap.audio-missing .island{animation:islandShake .45s ease}
+    .panel-animate:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 32px rgba(220, 38, 38, 0.25);
+      border-color: rgba(220, 38, 38, 0.8);
+    }
 
+    .role-panel.role-panel:hover,
+    .role-panel.role-panel:focus-within {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 36px rgba(220, 38, 38, 0.35);
+      border-color: rgba(220, 38, 38, 0.9);
+    }
 
-/* Realistic vinyl disc: shows (and spins) only while the song plays */
-.vinyl{
-  position:absolute;inset:1px;border-radius:9999px;pointer-events:none;
-  opacity:0;transform:scale(.5) rotate(-120deg);
-  transition:opacity .4s ease,transform .55s cubic-bezier(.34,1.3,.4,1);
-  will-change:transform,opacity;
-}
-.island-wrap[data-playing="true"] .vinyl{opacity:1;transform:scale(1) rotate(0deg)}
-.vinyl-spin{
-  position:absolute;inset:0;border-radius:9999px;
-  background:
-    radial-gradient(circle,#050505 0 1.5px,transparent 2px),
-    radial-gradient(circle,#ef4444 0 8px,#991b1b 9.5px,#0a0a0a 10.5px,transparent 11px),
-    repeating-radial-gradient(circle,#0c0c0c 0 1px,#1d1d1d 1.6px,#0c0c0c 2.6px);
-  box-shadow:inset 0 0 0 1px #2a2a2a;
-}
-.island-wrap[data-playing="true"] .vinyl-spin{animation:spin 2.4s linear infinite}
-.vinyl-spin::before{
-  content:"";position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-11px 0 0 -1.5px;
-  border-radius:9999px;background:#fecaca;
-}
-.vinyl::after{
-  content:"";position:absolute;inset:0;border-radius:9999px;
-  background:conic-gradient(from 20deg,rgba(255,255,255,0) 0 8%,rgba(255,255,255,.3) 14%,rgba(255,255,255,0) 22% 55%,rgba(255,255,255,.22) 62%,rgba(255,255,255,0) 70% 100%);
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+    .panel-animate .button-animate {
+      position: relative;
+    }
 
-.island-body{
-  position:relative;z-index:3;flex:1 1 auto;min-width:0;
-  display:flex;align-items:center;gap:.65rem;padding:0 .35rem 0 1rem;
-  opacity:0;transform:translateX(16px) scale(.96);transform-origin:right center;
-  transition:opacity .25s ease,transform .5s cubic-bezier(.22,.75,.25,1);
-  pointer-events:none;
-}
-.island-wrap[data-open="true"] .island-body{opacity:1;transform:none;transition-delay:.12s;pointer-events:auto}
+    .panel-animate .button-animate:hover,
+    .panel-animate .button-animate:focus-visible {
+      z-index: 1;
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 0 26px rgba(220, 38, 38, 0.5);
+    }
 
-/* Audio-waveform bars (reference style): thin rounded white bars, tall burst on the left that
-   decays to a quiet tail, with a soft red halo. Only transform is animated (GPU-friendly). */
-.wave{
-  --bar:#fff;
-  position:relative;flex:1 1 auto;min-width:0;height:24px;overflow:hidden;
-  display:flex;align-items:center;justify-content:space-between;gap:2px;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
-}
-.wave i{
-  display:block;flex:1 1 0;min-width:1.5px;max-width:3px;height:var(--h,50%);
-  border-radius:9999px;background:var(--bar);
-  box-shadow:0 0 5px rgba(255,255,255,.45);
-  transform:scaleY(.14);transform-origin:center;will-change:transform;
-  transition:transform .5s ease;
-}
-.island-wrap[data-playing="true"] .wave:not(.live) i{
-  animation:bar var(--d,1.2s) ease-in-out var(--l,0s) infinite alternate;
-}
-.wave.live i{transition:none}
-@keyframes bar{from{transform:scaleY(.18)}to{transform:scaleY(1)}}
+    .button-animate.discord-button:hover,
+    .button-animate.discord-button:focus-visible {
+      border-color: rgba(88, 101, 242, 0.95);
+      box-shadow: 0 0 30px rgba(88, 101, 242, 0.65);
+    }
 
-.island-btn{
-  width:26px;height:26px;flex:0 0 26px;display:grid;place-items:center;border-radius:9999px;
-  background:#dc2626;color:#fff;border:0;cursor:pointer;font-size:.6rem;
-  box-shadow:0 0 0 1px rgba(248,113,113,.35),0 4px 10px rgba(220,38,38,.35);
-  transition:background-color .2s ease,transform .15s ease;
-  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-}
-.island-btn:hover{background:#ef4444}
-.island-btn:active{transform:none !important;transition:none !important}
-.island-btn:focus-visible{outline:2px solid #fca5a5;outline-offset:2px}
-.island-vol{width:48px;flex:0 0 48px;height:12px;accent-color:#dc2626;cursor:pointer}
+    .button-animate .fa-arrow-right {
+      transition: transform 200ms ease;
+    }
 
-/* Skip rendering of off-screen sections until they are near the viewport */
-.defer-render{content-visibility:auto;contain-intrinsic-size:1px 700px}
+    .button-animate:hover .fa-arrow-right,
+    .button-animate:focus-visible .fa-arrow-right {
+      transform: translateX(4px);
+    }
 
-@media (prefers-reduced-motion:reduce){
-  .island,.island-body{transition:none !important}
-  .wave i,.vinyl-spin,.music-burst i,.island-wrap.audio-missing .island{animation:none !important}
-  .action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*{
-    transition:none !important;animation:none !important;transform:none !important;
-  }
-  *,*:before,*:after{scroll-behavior:auto !important}
-}
+    .button-animate .fa-discord {
+      transition: transform 200ms ease;
+    }
 
-/* ===== PERFECT-CIRCLE LOGOS (the only layout change; placed last so it wins) =====
-   Cause of the ovals: `max-width:100%` + flex shrinking squeezed the width while
-   the height stayed fixed. This locks every logo to a true 1:1 circle. */
-#splash-screen video,#main-content nav video,#hero-logo{
-  aspect-ratio:1/1;flex:none;max-width:none;
-  border-radius:50%;object-fit:cover;overflow:hidden;
-}
-#splash-screen video{width:clamp(14rem,38vmin,22rem);height:clamp(14rem,38vmin,22rem);max-width:none;max-height:none}
-#main-content nav video{width:40px;height:40px}
-#hero-logo{display:block;width:100%;height:auto;max-width:12rem;margin:0 auto;position:relative;left:0}
-@media (max-width:640px){#hero-logo{max-width:12rem}#splash-screen video{width:min(72vw,16rem);height:min(72vw,16rem)}}
-/* Larger main-page logo, centered precisely in its grid column. */
-@media (min-width:1024px){
-  #hero-logo{width:20rem;max-width:20rem}
-  /* Shift only the main-page logo slightly left so it sits closer to screen center. */
-  #logo-stage{position:relative;left:-3.5rem}
-}
-@media (min-width:1024px) and (max-width:1200px){#logo-stage{left:-2rem}}
-@media (max-width:1023px){#logo-stage{left:0}}
+    .button-animate:hover .fa-discord,
+    .button-animate:focus-visible .fa-discord {
+      transform: scale(1.2);
+    }
 
-/* ===== FORGE ACTIVITY: cards stay inside their panels =====
-   Cause: the hover zoom (scale 1.055-1.065) was applied to the whole #updates-list wrapper and to
-   every card, and `content-visibility:auto` on the section clips anything that grows past it,
-   so cards visibly spilled out of / got cut off by the panels. */
-#recent,#roles{contain:none;content-visibility:visible}
-#recent .grid>*{min-width:0}
-#recent .panel-zoom{overflow:hidden;position:relative}
-#recent #projects-list>*,#recent #recent-hackathons>*{
-  position:relative;min-width:0;max-width:100%;
-  overflow-wrap:anywhere;word-break:normal;
-  transition:transform .8s cubic-bezier(.22,1,.36,1) var(--sz-d,0s),border-color .3s ease,background-color .3s ease;
-}
-#recent #projects-list>*:hover,#recent #recent-hackathons>*:hover{z-index:2}
-@media (hover:hover) and (pointer:fine){
-  #recent #projects-list>*:hover,
-  #recent #recent-hackathons>*:hover,
-  #recent #recent-hackathons>.card-lift:hover{
-    transform:translate3d(0,-3px,0) scale(1.015);
-    border-color:rgba(220,38,38,.55);
-    background-color:rgba(0,0,0,.7);
-  }
-}
-#recent a{max-width:100%}
-@media (max-width:420px){#recent #recent-hackathons .grid{grid-template-columns:1fr}}
-</style>
-
-<style id="professional-width-alignment">
-/* Consistent, wider page frame: removes oversized side gutters without stretching text. */
-html, body { width:100%; max-width:100%; margin:0; }
-body { overflow-x:clip; }
-nav > div.max-w-7xl,
-#hero-section > .relative.z-10.max-w-7xl,
-#roles,
-#recent {
-  width: min(100% - clamp(2rem, 5.2vw, 5.5rem), 1680px) !important;
-  max-width: 1680px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-sizing: border-box;
-}
-/* The hero already has its own outer padding; let its inner frame use the available width. */
-#hero-section > .relative.z-10.max-w-7xl {
-  width: min(100%, 1680px) !important;
-}
-#roles, #recent { padding-left: clamp(1rem, 2vw, 2rem) !important; padding-right: clamp(1rem, 2vw, 2rem) !important; }
-#apply { width: min(100% - 2rem, 1100px) !important; max-width:1100px !important; box-sizing:border-box; }
-@media (min-width:1024px) {
-  #hero-section { padding-left:clamp(1.25rem, 2.6vw, 2.75rem); padding-right:clamp(1.25rem, 2.6vw, 2.75rem); }
-  #hero-section > .relative.z-10.max-w-7xl { gap:clamp(1.25rem, 2vw, 2rem) !important; }
-}
-@media (max-width:1023px) {
-  #hero-section > .relative.z-10.max-w-7xl { width:100% !important; }
-  #roles, #recent { width:100% !important; }
-}
-</style>
-
-
-<style id="final-professional-layout-fix">
-/* Final alignment pass: balanced side panels and a true viewport-centred logo. */
-@media (min-width: 1024px) {
-  #hero-section {
-    min-height: clamp(520px, calc(100svh - 82px), 760px) !important;
-    padding-top: clamp(1.5rem, 3.2vh, 2.75rem) !important;
-    padding-bottom: clamp(1.5rem, 3.2vh, 2.75rem) !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl {
-    width: min(100%, 1580px) !important;
-    margin-inline: auto !important;
-    display: grid !important;
-    /* Equal outer tracks ensure the logo's center is the viewport's center. */
-    grid-template-columns: minmax(0, 1fr) minmax(220px, min(24vw, 320px)) minmax(0, 1fr) !important;
-    column-gap: clamp(1.5rem, 3vw, 3.25rem) !important;
-    align-items: center !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width: 100%; min-width: 0; box-sizing: border-box;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child {
-    padding: clamp(1.25rem, 1.8vw, 1.8rem) !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    padding-left: 0 !important;
-  }
-  #hero-section #logo-stage {
-    position: relative !important;
-    inset-inline: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    width: 100% !important;
-    max-width: 320px !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    /* Tiny 0.4 cm nudge toward the action cards on desktop. */
-    transform: translateX(15px) !important;
-  }
-  #hero-section #hero-logo {
-    width: min(100%, 320px) !important;
-    height: auto !important;
-    max-width: 320px !important;
-    aspect-ratio: 1 / 1 !important;
-    margin: 0 auto !important;
-    position: static !important;
-    left: auto !important;
-    flex: 0 0 auto !important;
-  }
-}
-@media (min-width: 1024px) and (max-width: 1250px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(200px, 250px) minmax(0, 1fr) !important;
-    column-gap: 1.5rem !important;
-  }
-  #hero-section #hero-logo { width: min(100%, 250px) !important; max-width: 250px !important; }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child { padding: 1.15rem !important; }
-}
-@media (max-width: 1023px) {
-  #hero-section { min-height: auto !important; padding-block: clamp(2rem, 6vh, 3.5rem) !important; }
-  #hero-section > .relative.z-10.max-w-7xl {
-    width: min(100%, 720px) !important;
-    margin-inline: auto !important;
-    row-gap: clamp(1.25rem, 3.5vh, 2rem) !important;
-  }
-  #hero-section #logo-stage { left: auto !important; right: auto !important; margin-inline: auto !important; }
-  #hero-section #hero-logo { position: static !important; margin-inline: auto !important; }
-}
-/* Keep all page sections on one consistent responsive grid. */
-#main-content nav > div.max-w-7xl,
-#roles, #recent {
-  margin-inline: auto !important;
-}
-#roles, #recent { max-width: 1580px !important; }
-@media (max-width: 767px) {
-  #roles, #recent { padding-inline: 1rem !important; }
-}
-</style>
-
-
-<style id="compact-professional-spacing">
-/* Compact, intentional spacing across the page without shifting the centered logo. */
-html, body { margin: 0; width: 100%; max-width: 100%; }
-body { overflow-x: clip; }
-#main-content { justify-content: flex-start !important; }
-
-/* Main hero: reduce dead space on every edge while keeping the middle logo centered. */
-#hero-section {
-  min-height: auto !important;
-  padding: clamp(0.75rem, 2vh, 1.25rem) clamp(0.75rem, 1.8vw, 1.75rem) !important;
-  box-sizing: border-box;
-}
-#hero-section > .relative.z-10.max-w-7xl {
-  width: 100% !important;
-  max-width: 1580px !important;
-  margin-inline: auto !important;
-  box-sizing: border-box;
-}
-@media (min-width: 1024px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(200px, min(22vw, 300px)) minmax(0, 1fr) !important;
-    column-gap: clamp(1rem, 2vw, 2rem) !important;
-  }
-  #hero-section #logo-stage { max-width: 300px !important; }
-  #hero-section #hero-logo { width: min(100%, 300px) !important; max-width: 300px !important; }
-}
-@media (max-width: 1023px) {
-  #hero-section { padding: 1.25rem clamp(0.75rem, 3vw, 1.5rem) !important; }
-  #hero-section > .relative.z-10.max-w-7xl { row-gap: 1.25rem !important; }
-}
-@media (max-width: 640px) {
-  #hero-section { padding: 1rem 0.75rem !important; }
-  #hero-section > .relative.z-10.max-w-7xl { row-gap: 1rem !important; }
-}
-
-/* Use consistent, modest side gutters across the remaining sections. */
-#roles, #recent, #apply {
-  width: calc(100% - clamp(1.5rem, 3.6vw, 3.5rem)) !important;
-  max-width: 1580px !important;
-  margin-inline: auto !important;
-  box-sizing: border-box;
-}
-#roles, #recent { padding-inline: clamp(0.75rem, 1.5vw, 1.5rem) !important; }
-#apply { max-width: 1100px !important; padding-inline: clamp(0.75rem, 1.5vw, 1.5rem) !important; }
-@media (max-width: 767px) {
-  #roles, #recent, #apply { width: calc(100% - 1.25rem) !important; padding-inline: 0.5rem !important; }
-}
-</style>
-
-
-<style id="professional-balanced-spacing">
-/* Balanced breathing room: intentional margins, never edge-to-edge or overly empty. */
-#hero-section {
-  box-sizing: border-box;
-  /* Keep a deliberate amount of breathing room without making the hero feel empty. */
-  min-height: clamp(500px, calc(100svh - 150px), 640px) !important;
-  padding: clamp(1.5rem, 3.4vh, 2.6rem) clamp(1.25rem, 3.6vw, 3.5rem) !important;
-}
-#hero-section > .relative.z-10.max-w-7xl {
-  width: min(100%, 1380px) !important;
-  margin-inline: auto !important;
-  gap: clamp(1.25rem, 2.4vw, 2.25rem) !important;
-}
-@media (min-width: 1024px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1.08fr) minmax(250px, .78fr) minmax(0, .92fr) !important;
-    align-items: center !important;
-  }
-  #hero-section #logo-stage {
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    max-width: 300px !important;
-    margin-inline: auto !important;
-    justify-self: center !important;
-  }
-  #hero-section #hero-logo {
-    width: min(100%, 300px) !important;
-    max-width: 300px !important;
-    margin-inline: auto !important;
-  }
-}
-/* Give all page sections a consistent, polished content rail with modest side margins. */
-#main-content nav > div.max-w-7xl,
-#roles,
-#recent,
-#apply,
-footer > * {
-  box-sizing: border-box;
-}
-#roles, #recent {
-  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 1380px) !important;
-  margin-inline: auto !important;
-}
-#apply {
-  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 900px) !important;
-  margin-inline: auto !important;
-}
-#main-content nav > div.max-w-7xl {
-  width: min(calc(100% - clamp(2rem, 7vw, 6rem)), 1380px) !important;
-  margin-inline: auto !important;
-}
-@media (max-width: 1023px) {
-  #hero-section {
-    min-height: auto !important;
-    padding: clamp(1.5rem, 3.5vh, 2.5rem) 1.25rem !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl {
-    width: 100% !important;
-    gap: 1.5rem !important;
-  }
-}
-@media (max-width: 640px) {
-  #hero-section { padding: 1.5rem 1rem !important; }
-  #hero-section > .relative.z-10.max-w-7xl { gap: 1.15rem !important; }
-  #roles, #recent, #apply,
-  #main-content nav > div.max-w-7xl {
-    width: calc(100% - 2rem) !important;
-  }
-}
-</style>
-
-
-<style id="final-subtle-spacing-tune">
-/* Small final spacing reduction: retain polished breathing room on every edge. */
-#hero-section {
-  padding-top: clamp(0.6rem, 1.6vh, 1rem) !important;
-  padding-bottom: clamp(0.6rem, 1.6vh, 1rem) !important;
-  padding-left: clamp(0.6rem, 1.4vw, 1.35rem) !important;
-  padding-right: clamp(0.6rem, 1.4vw, 1.35rem) !important;
-}
-#hero-section > .relative.z-10.max-w-7xl {
-  width: 100% !important;
-  max-width: 1580px !important;
-  margin-inline: auto !important;
-}
-#roles, #recent, #apply {
-  width: calc(100% - clamp(1.25rem, 3vw, 3rem)) !important;
-  margin-inline: auto !important;
-}
-#roles, #recent, #apply { box-sizing: border-box; }
-@media (max-width: 767px) {
-  #hero-section { padding: 0.85rem 0.65rem !important; }
-  #roles, #recent, #apply { width: calc(100% - 1rem) !important; }
-}
-</style>
-
-
-<style id="compact-hero-action-cards">
-/* Shorter horizontal action cards: compact, aligned, and responsive. */
-@media (min-width: 1024px) {
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width: 100% !important;
-    max-width: 440px !important;
-    justify-self: center !important;
-    margin-inline: auto !important;
-    padding-left: 0 !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 1023px) {
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width: min(100%, 560px) !important;
-    margin-inline: auto !important;
-  }
-}
-@media (max-width: 767px) {
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-}
-</style>
-
-
-<!-- Click/tap zoom removed site-wide; links, controls, and music playback untouched.
-     (Musical-notes burst and vinyl/wave animations are preserved.) -->
-<style id="disable-click-animations">
-  .action-link.is-pressed,
-  .card-lift.is-pressed,
-  .panel-zoom.is-pressed,
-  #projects-list > .is-pressed,
-  #recent-hackathons > .is-pressed,
-  .is-pressed {
-    transform: none !important;
-    transition: none !important;
-    animation: none !important;
-  }
-  .action-link.is-active,
-  .card-lift.is-active,
-  .panel-zoom.is-active,
-  #projects-list > .is-active,
-  #recent-hackathons > .is-active {
-    transform: none !important;
-    transition: none !important;
-    animation: none !important;
-  }
-</style>
-<style>
-/* Header brand: name sits close to the logo. */
-#main-content nav a[aria-label="NeNoX Forge Home"] {
-  gap: .5rem !important;
-}
-#main-content nav a[aria-label="NeNoX Forge Home"]>*+*{margin-left:0 !important;margin-right:0 !important}
-@media (max-width: 480px) {
-  #main-content nav a[aria-label="NeNoX Forge Home"] {
-    gap: .45rem !important;
-  }
-}
-</style>
-<style id="polished-hero-logo-scale">
-/* Slightly larger hero logo with tighter, balanced side panels; no overlap. */
-@media (min-width: 1251px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 350px) minmax(0, 1fr) !important;
-    column-gap: clamp(1rem, 1.6vw, 1.6rem) !important;
-  }
-  #hero-section #logo-stage { max-width: 350px !important; }
-  #hero-section #hero-logo {
-    width: min(100%, 350px) !important;
-    max-width: 350px !important;
-  }
-}
-@media (min-width: 1024px) and (max-width: 1250px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(250px, 280px) minmax(0, 1fr) !important;
-    column-gap: clamp(.85rem, 1.3vw, 1.2rem) !important;
-  }
-  #hero-section #logo-stage { max-width: 280px !important; }
-  #hero-section #hero-logo {
-    width: min(100%, 280px) !important;
-    max-width: 280px !important;
-  }
-}
-@media (max-width: 1023px) {
-  #hero-section #logo-stage { max-width: min(82vw, 340px) !important; }
-  #hero-section #hero-logo {
-    width: min(82vw, 340px) !important;
-    max-width: 340px !important;
-  }
-}
-
-
-/* Final logo shape + tighter hero composition: true circle, side panels closer, no overlap. */
-@media (min-width: 1024px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, min(27vw, 350px)) minmax(0, 1fr) !important;
-    column-gap: clamp(.65rem, 1.15vw, 1.15rem) !important;
-  }
-  #hero-section #logo-stage {
-    width: 100% !important;
-    max-width: 350px !important;
-    min-width: 0 !important;
-    margin-inline: auto !important;
-    left: auto !important;
-    right: auto !important;
-    justify-self: center !important;
-  }
-  #hero-section #hero-logo {
-    display: block !important;
-    width: min(100%, 350px) !important;
-    max-width: 350px !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important;
-    object-fit: cover !important;
-    overflow: hidden !important;
-    flex: 0 0 auto !important;
-  }
-}
-@media (min-width: 1024px) and (max-width: 1250px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 285px) minmax(0, 1fr) !important;
-    column-gap: .65rem !important;
-  }
-  #hero-section #logo-stage { max-width: 285px !important; }
-  #hero-section #hero-logo { width: min(100%, 285px) !important; max-width: 285px !important; }
-}
-</style>
-<style id="final-logo-polish">
-/* Polished hero logo: larger, perfectly circular, and nudged subtly toward the action cards. */
-@media (min-width: 1400px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(350px, 380px) minmax(0, 1fr) !important;
-    column-gap: clamp(.6rem, 1vw, 1rem) !important;
-  }
-  #hero-section #logo-stage { max-width: 380px !important; transform: translateX(8px) !important; }
-  #hero-section #hero-logo {
-    width: min(100%, 380px) !important; max-width: 380px !important;
-    height: auto !important; aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important; object-fit: cover !important;
-  }
-}
-@media (min-width: 1251px) and (max-width: 1399px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 350px) minmax(0, 1fr) !important;
-    column-gap: .75rem !important;
-  }
-  #hero-section #logo-stage { max-width: 350px !important; transform: translateX(6px) !important; }
-  #hero-section #hero-logo { width: min(100%, 350px) !important; max-width: 350px !important; aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
-}
-@media (min-width: 1024px) and (max-width: 1250px) {
-  #hero-section #logo-stage { transform: translateX(4px) !important; }
-  #hero-section #hero-logo { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
-}
-@media (max-width: 1023px) {
-  #hero-section #logo-stage { transform: none !important; }
-  #hero-section #hero-logo { aspect-ratio: 1 / 1 !important; border-radius: 50% !important; object-fit: cover !important; }
-}
-</style>
-<style id="absolute-circular-logo-fix">
-/* Enforce a true circle on the main logo and its clipping stage at every breakpoint. */
-#hero-section #logo-stage {
-  width: min(100%, 380px) !important;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  flex: 0 0 auto !important;
-  display: grid !important;
-  place-items: center !important;
-  box-sizing: border-box !important;
-}
-#hero-section #hero-logo {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 50% !important;
-  clip-path: circle(50% at 50% 50%) !important;
-  object-fit: cover !important;
-  overflow: hidden !important;
-  flex: 0 0 auto !important;
-  box-sizing: border-box !important;
-}
-@media (max-width: 1023px) {
-  #hero-section #logo-stage { width: min(72vw, 18rem) !important; }
-}
-</style>
-<style>
-@media (min-width:1024px){
-  #hero-section #logo-stage{left:auto;transform:translateX(38px);}
-}
-@media (max-width:1023px){
-  #hero-section #logo-stage{transform:none;}
-}
-</style>
-<style>
-@media (min-width:1024px){
-  #hero-section #logo-stage{transform:translateX(30px) !important;}
-}
-@media (max-width:1023px){
-  #hero-section #logo-stage{transform:none !important;}
-}
-</style>
-<style>
-@media (min-width:1024px){
-  #hero-section #logo-stage{transform:translateX(12px) !important;}
-}
-@media (max-width:1023px){
-  #hero-section #logo-stage{transform:none !important;}
-}
-</style>
-<style id="centered-hero-composition">
-@media (min-width: 1024px) {
-  #hero-section {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl {
-    width: min(100%, 1700px) !important;
-    max-width: 1700px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr) minmax(0, 1fr) !important;
-    column-gap: clamp(1.25rem, 2.2vw, 2.5rem) !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    margin-inline: 0 !important;
-    justify-self: stretch !important;
-  }
-  #hero-section #logo-stage {
-    width: 100% !important;
-    max-width: min(100%, 420px) !important;
-    margin-inline: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-    justify-self: center !important;
-  }
-  #hero-section #hero-logo {
-    width: min(100%, 420px) !important;
-    max-width: 420px !important;
-    margin-inline: auto !important;
-    position: static !important;
-    left: auto !important;
-  }
-}
-@media (max-width: 1023px) {
-  #hero-section > .relative.z-10.max-w-7xl {
-    margin-inline: auto !important;
-  }
-  #hero-section #logo-stage { transform: none !important; }
-}
-</style>
-<style id="hero-action-cards-right-trim">
-/* Slightly shorten the right-side hero cards from their right edge (about 0.5 cm). */
-@media (min-width: 1024px) {
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
-    width: calc(100% - 19px) !important;
-    max-width: calc(100% - 19px) !important;
-    margin-right: 19px !important;
-    box-sizing: border-box !important;
-  }
-}
-</style>
-<style id="mobile-pro-polish">
-/* ===== MOBILE PROFESSIONAL POLISH (phones) — no zoom on tap, clean rhythm ===== */
-@media (max-width:767px){
-  html{-webkit-text-size-adjust:100%}
-  body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-  /* Nav: compact, never crowded */
-  #main-content nav .max-w-7xl{padding-left:1rem !important;padding-right:1rem !important}
-  #main-content nav a[aria-label="NeNoX Forge Home"] span{font-size:1.05rem !important;letter-spacing:.04em !important}
-  #main-discord-link{padding:.62rem .95rem !important;font-size:.9rem !important;min-height:44px;border-radius:.7rem !important}
-  /* Hero: clear vertical rhythm, about -> logo -> links */
-  #hero-section{padding:1.5rem 1rem 2rem !important}
-  #hero-section > .relative.z-10.max-w-7xl{gap:1.4rem !important;max-width:32rem !important}
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important}
-  #hero-section h1{font-size:clamp(2rem,9.5vw,2.9rem) !important;line-height:1.08 !important;letter-spacing:-.01em !important}
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child p{font-size:.98rem !important;line-height:1.7 !important}
-  #hero-section #logo-stage{width:min(62vw,15rem) !important;margin:.25rem auto !important}
-  /* Action cards: generous touch targets, tint on tap + smooth scroll zoom */
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child{gap:.75rem !important}
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link{
-    padding:1rem 1.05rem !important;border-radius:.95rem !important;min-height:60px;
-    transition:transform .8s cubic-bezier(.22,1,.36,1) var(--sz-d,0s),background-color .2s ease,border-color .2s ease !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link:active{background-color:rgba(255,255,255,.07) !important}
-  #hero-section .action-link > div:first-child{width:2.9rem !important;height:2.9rem !important;font-size:1.35rem !important;flex:none}
-  #hero-section .action-link span:last-child{font-size:1.06rem !important}
-  /* Roles: even, breathable cards */
-  #roles{padding-top:3rem !important;padding-bottom:3rem !important}
-  #roles h2{font-size:1.65rem !important;line-height:1.2 !important}
-  #roles .grid{gap:1rem !important}
-  #roles .card-lift{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important;transition:transform .8s cubic-bezier(.22,1,.36,1) var(--sz-d,0s),border-color .25s ease,background-color .25s ease !important}
-  #roles .card-lift h3{font-size:1.3rem !important}
-  /* Recent: stacked panels with calm spacing */
-  #recent{padding-top:3rem !important;padding-bottom:3rem !important}
-  #recent .grid{gap:1.25rem !important}
-  #recent .panel-zoom{padding:1.35rem 1.2rem !important;border-radius:1.1rem !important}
-  /* Apply: thumb-friendly button */
-  #apply{padding:3rem 1rem !important}
-  #apply h2{font-size:1.7rem !important}
-  #apply p{font-size:1rem !important}
-  #apply .action-link{width:100% !important;max-width:22rem !important;margin-inline:auto !important;min-height:56px}
-  /* Footer */
-  footer{padding:2rem 1rem !important;font-size:.82rem !important}
-  footer p:first-child{font-size:.9rem !important;line-height:1.6 !important}
-}
-/* Very small phones */
-@media (max-width:380px){
-  #hero-section{padding:1.1rem .8rem 1.75rem !important}
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child{padding:1.1rem 1rem !important}
-  #roles .card-lift,#recent .panel-zoom{padding:1.15rem 1rem !important}
-}
-/* Tablets: comfortable two-column roles */
-@media (min-width:768px) and (max-width:1023px){
-  #hero-section{padding:2.25rem 1.5rem !important}
-  #hero-section > .relative.z-10.max-w-7xl{max-width:44rem !important;gap:1.6rem !important}
-  #roles .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
-}
-</style>
-<style id="anchor-scroll-offset">
-/* Team Details card (and any # link) lands with the sticky navbar cleared,
-   so the section heading is never hidden underneath it. */
-#roles, #recent, #apply { scroll-margin-top: 88px; }
-@media (max-width:767px){
-  #roles, #recent, #apply { scroll-margin-top: 76px; }
-}
-</style>
-<style id="mobile-scroll-zoom">
-/* ---------- MOBILE SCROLL ZOOM ----------
-   Touch only: every card (including cards nested inside panels and lists,
-   even ones injected later by the projects/updates loader) rests slightly
-   zoomed-out; as it scrolls into view it smoothly zooms to full size, and
-   eases back out as it leaves. Transform-only, GPU-friendly. --sz-d staggers
-   cards that enter together for a cascading feel; the class is added by JS
-   only, so without JS cards simply render at full size. */
-@media (hover:none),(pointer:coarse){
-  .scroll-zoom{transform:scale(var(--sz-s,.9));transition:transform .8s cubic-bezier(.22,1,.36,1) var(--sz-d,0s)}
-  .scroll-zoom.in-view{transform:scale(1)}
-  /* Cards nested inside the update/project lists zoom deeper than their
-     panel, so their own zoom reads clearly, and cascade in after it. */
-  #projects-list>.scroll-zoom,#recent-hackathons>.scroll-zoom{--sz-s:.85}
-}
-@media (prefers-reduced-motion:reduce){
-  .scroll-zoom{transform:none !important;transition:none !important}
-}
-</style>
-<style id="navbar-edge-alignment">
-/* ---------- NAVBAR: brand far left, Discord far right ----------
-   Overrides the centered content-rail rules so the logo + name hug the left
-   edge and the Discord button hugs the right edge, with safe padding. */
-#main-content nav > div.max-w-7xl{
-  width:100% !important;
-  max-width:100% !important;
-  margin-left:0 !important;
-  margin-right:0 !important;
-  padding-left:max(0.25rem, env(safe-area-inset-left, 0px)) !important;
-  padding-right:max(0.375rem, env(safe-area-inset-right, 0px)) !important;
-  box-sizing:border-box !important;
-}
-@media (min-width:641px){
-  #main-content nav > div.max-w-7xl{
-    padding-left:max(1.5rem, env(safe-area-inset-left, 0px)) !important;
-    padding-right:max(1rem, env(safe-area-inset-right, 0px)) !important;
-  }
-}
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      .button-animate,
+      .button-animate .fa-arrow-right,
+      .button-animate .fa-discord,
+      .panel-animate {
+        transition: none;
+      }
+    }
+  </style>
 </head>
 <body class="bg-black text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-<!-- SPLASH: logo animation plays ~2.75s, then the site is revealed -->
-<div id="splash-screen">
-  <div class="splash-inner">
-    <video src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-hidden="true"
-      class="h-32 w-32 rounded-full border-2 border-red-600/60 object-cover"></video>
-    <span class="splash-title">NeNoX Forge</span>
+  <!-- FULL-SCREEN SPLASH LOADING OVERLAY -->
+  <div id="splash-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
+    <div class="relative flex items-center justify-center">
+      <video 
+        src="logo.mp4" 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        preload="auto"
+        aria-hidden="true"
+        class="absolute h-px w-px opacity-0 pointer-events-none">
+      </video>
+      <span class="text-5xl sm:text-7xl font-extrabold tracking-wider text-white">
+        NeNoX Forge
+      </span>
+    </div>
   </div>
-</div>
 
-<div id="main-content" class="min-h-screen flex flex-col justify-between relative">
-
-  <!-- NAVBAR -->
-  <nav class="sticky top-0 z-50 bg-black/95 border-b border-red-900/40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-      <a href="intro.html" class="flex items-center space-x-3" aria-label="NeNoX Forge Home">
-        <video src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-hidden="true"
-          class="pointer-events-none h-10 w-10 rounded-full border border-red-600/60 object-cover"></video>
-        <span class="font-bold text-lg sm:text-xl tracking-wider text-white">NeNoX Forge</span>
-      </a>
-      <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer" id="main-discord-link"
-        aria-label="Join Discord" class="action-link flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 sm:px-4 py-2 rounded-lg">
-        <i class="fa-brands fa-discord text-lg"></i>
-        <span class="hidden min-[400px]:inline">Join Discord</span>
-      </a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <header id="hero-section" class="relative lg:min-h-[calc(100svh-82px)] flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8 overflow-hidden">
-
-    <video id="bg-video" data-src="bg-video.mp4" preload="none" autoplay loop muted playsinline disablepictureinpicture
-      class="absolute inset-0 w-full h-full object-cover z-0"></video>
-
-    <div class="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-red-950/70 z-0"></div>
-
-    <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-
-      <!-- LEFT: ABOUT -->
-      <div class="order-1 lg:order-1 lg:col-span-5 text-left space-y-4 bg-black/70 p-5 sm:p-6 rounded-2xl border border-red-900/30">
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">NeNoX Forge</h1>
-        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-          We are building a dedicated team of students to compete—and win—in hackathons all year long. We won't micro-manage you, push you to care, or chase you for updates. We want self-driven builders who want to be here, collaborate, and execute on their own initiative.
-        </p>
-        <p class="text-slate-300 text-sm sm:text-base leading-relaxed pt-2 border-t border-red-900/40">
-          Here's the deal: When you hit a wall or face a tough technical challenge, we've got your back with guidance and support. But the fire to show up and build has to come from you.
-        </p>
-        <p class="text-red-500 font-semibold text-xs sm:text-sm tracking-wide uppercase pt-1">
-          Caution :- we work aggressively ( Hyper Fast )
-        </p>
-      </div>
-
-      <!-- CENTER: LOGO -->
-      <div class="order-2 lg:order-2 lg:col-span-4 flex justify-center items-center py-0 lg:py-6">
-        <div id="logo-stage" class="tilt-stage">
-          <video id="hero-logo" src="logo.mp4" autoplay loop muted playsinline disablepictureinpicture aria-label="NeNoX Forge logo animation"
-            class="tilt-logo h-44 w-44 sm:h-60 sm:w-60 lg:h-72 lg:w-72 rounded-full object-cover border-2 border-red-600/80"></video>
-        </div>
-      </div>
-
-      <!-- RIGHT: ACTION LINKS -->
-      <div class="order-3 lg:order-3 lg:col-span-4 flex flex-col justify-center space-y-4 sm:space-y-6 pl-0 lg:pl-6">
-
-        <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer"
-          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
-          <div class="w-12 h-12 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl">
-            <i class="fa-brands fa-discord"></i>
-          </div>
-          <span class="text-lg sm:text-xl font-bold text-white">NeNoX Forge Server</span>
-        </a>
-
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer"
-          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
-          <div class="w-12 h-12 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center text-2xl">
-            <i class="fa-solid fa-paper-plane"></i>
-          </div>
-          <span class="text-lg sm:text-xl font-bold text-white">Application Link</span>
-        </a>
-
-        <a href="#roles"
-          class="action-link group flex items-center space-x-4 bg-slate-900/90 border border-red-900/40 p-4 rounded-xl">
-          <div class="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-2xl">
-            <i class="fa-solid fa-file-lines"></i>
-          </div>
-          <span class="text-lg sm:text-xl font-bold text-white">Team Details</span>
-        </a>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- ROLES -->
-  <section id="roles" class="defer-render max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 border-t border-red-900/30 w-full">
-    <div class="text-center mb-10 sm:mb-16">
-      <h2 class="text-2xl sm:text-5xl font-extrabold text-white">Team Details &amp; Open Roles</h2>
-      <p class="text-red-400/80 mt-3 text-base sm:text-lg">Detailed breakdown of specialized roles for our hackathon lineup</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-
-      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
-            <i class="fa-solid fa-user-shield"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Ethical Hacker / Security Specialist</h3>
-          <p class="text-slate-300 text-xs leading-relaxed mb-4">
-            <span class="font-bold text-red-400">Tech Stack:</span> Linux, Bash, Nmap, Metasploit, Wireshark, Burp Suite, Network Security.
-          </p>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
-            You are the team's defensive shield and offensive strategist, securing endpoints, handling cloud deployments, and running exploit scripts under time constraints.
-          </p>
-        </div>
-        <a href="ethical-hacker.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
-          <span>View Role Details</span>
-          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-        </a>
-      </div>
-
-      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
-            <i class="fa-solid fa-code"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Frontend Developer</h3>
-          <p class="text-slate-300 text-xs leading-relaxed mb-4">
-            <span class="font-bold text-red-400">Tech Stack:</span> React.js, Next.js, TypeScript, Tailwind CSS, WebSockets, State Management.
-          </p>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
-            You own client-side execution, translating raw prototypes into dynamic, production-ready web apps built for speed and live demonstrations.
-          </p>
-        </div>
-        <a href="frontend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
-          <span>View Role Details</span>
-          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-        </a>
-      </div>
-
-      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
-            <i class="fa-solid fa-server"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Backend Developer</h3>
-          <p class="text-slate-300 text-xs leading-relaxed mb-4">
-            <span class="font-bold text-red-400">Tech Stack:</span> Python (FastAPI), Node.js, PostgreSQL, MongoDB, Redis, LLM Integration.
-          </p>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
-            You design server architectures, manage database schemas, connect machine learning pipelines, and ensure lightning-fast backend responses.
-          </p>
-        </div>
-        <a href="backend-developer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
-          <span>View Role Details</span>
-          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-        </a>
-      </div>
-
-      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
-            <i class="fa-solid fa-diagram-project"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Research, Strategy &amp; PM</h3>
-          <p class="text-slate-300 text-xs leading-relaxed mb-4">
-            <span class="font-bold text-red-400">Tech Stack:</span> Agile, Problem Framing, Market Research, Pitch Strategy, Notion/Jira.
-          </p>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
-            You validate problem statements, align execution with competition rubrics, manage MVP sprint timelines, and sculpt winning pitch decks.
-          </p>
-        </div>
-        <a href="research-pm.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
-          <span>View Role Details</span>
-          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-        </a>
-      </div>
-
-      <div class="card-lift bg-red-950/30 p-6 sm:p-8 rounded-2xl border border-red-900/40 flex flex-col justify-between">
-        <div>
-          <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6">
-            <i class="fa-solid fa-palette"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">UI/UX Designer &amp; Product Lead</h3>
-          <p class="text-slate-300 text-xs leading-relaxed mb-4">
-            <span class="font-bold text-red-400">Tech Stack:</span> Figma, Interactive Prototyping, Design Systems, Motion Graphics, Wireframing.
-          </p>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
-            You craft high-fidelity prototypes, build design systems early in sprints, and design striking visual presentation slides that hook judges.
-          </p>
-        </div>
-        <a href="uiux-designer.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-colors hover:text-white">
-          <span>View Role Details</span>
-          <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
-        </a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- RECENT PROJECTS + UPDATES -->
-  <section id="recent" class="defer-render max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24 border-t border-red-900/30 w-full">
-
-    <div class="text-center mb-10 sm:mb-14">
-      <p class="text-red-500 text-base sm:text-lg font-bold tracking-[0.3em] uppercase mb-8">Forge Activity</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
-
-      <!-- RECENT PROJECTS -->
-      <div class="h-fit">
-        <div class="panel-zoom bg-red-950/30 p-6 sm:p-7 rounded-2xl border border-red-900/40 flex flex-col">
-
-          <div class="flex items-center justify-between mb-7">
-            <div>
-              <p class="text-red-500 text-xs font-bold tracking-[0.2em] uppercase">01 / Projects</p>
-              <h3 class="text-2xl font-bold text-white mt-2">Recent Projects</h3>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-xl"><i class="fa-solid fa-code"></i></div>
-          </div>
-
-          <div id="projects-list" class="space-y-4">
-
-            <div class="p-4 rounded-xl bg-black/50 border border-red-900/30">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h4 class="font-bold text-white text-base sm:text-lg">NeNoX Forge Website</h4>
-                  <p class="text-slate-400 text-sm leading-relaxed mt-2">The collective's main digital platform for projects, activities, team roles, student opportunities and community updates.</p>
-                </div>
-                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap">Active</span>
-              </div>
-              <div class="mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500">
-                <span class="px-2 py-1 rounded bg-white/5">WEB</span>
-                <span class="px-2 py-1 rounded bg-white/5">UI/UX</span>
-                <span class="px-2 py-1 rounded bg-white/5">COMMUNITY</span>
-              </div>
-            </div>
-
-            <div class="p-4 rounded-xl bg-black/50 border border-red-900/30">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h4 class="font-bold text-white text-base sm:text-lg">AI-Assisted Cybersecurity Toolkit</h4>
-                  <p class="text-slate-400 text-sm leading-relaxed mt-2">A student project exploring how AI can work alongside authorized Linux security tools such as Nmap to organize reconnaissance, explain results and improve security workflows.</p>
-                </div>
-                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 whitespace-nowrap">In Dev</span>
-              </div>
-              <div class="mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500">
-                <span class="px-2 py-1 rounded bg-white/5">AI</span>
-                <span class="px-2 py-1 rounded bg-white/5">CYBERSECURITY</span>
-                <span class="px-2 py-1 rounded bg-white/5">LINUX</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- RECENT UPDATES -->
-      <div class="h-fit">
-        <div class="panel-zoom bg-red-950/30 p-6 sm:p-7 rounded-2xl border border-red-900/40 flex flex-col">
-
-          <div class="flex items-center justify-between mb-7">
-            <div>
-              <p class="text-red-500 text-xs font-bold tracking-[0.2em] uppercase">02 / Updates</p>
-              <h3 class="text-2xl font-bold text-white mt-2">Recent Updates</h3>
-            </div>
-            <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-xl"><i class="fa-solid fa-calendar-check"></i></div>
-          </div>
-
-          <div id="updates-list">
-            <div id="recent-hackathons" class="space-y-4" aria-live="polite">
-              <p class="text-slate-500 text-xs py-4 text-center">Loading updates...</p>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- APPLY -->
-  <section id="apply" class="defer-render max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 border-t border-red-900/30 w-full text-center">
-    <h2 class="text-3xl sm:text-4xl font-bold text-white">Apply for NeNoX Forge</h2>
-    <p class="text-slate-400 mt-3 text-base sm:text-lg mb-8">Ready to execute? Fill out our application form and join our Discord community.</p>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="action-link inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl text-lg">
-      <i class="fa-solid fa-paper-plane mr-3"></i>Open Application Form
-    </a>
-  </section>
-
-  <footer class="border-t border-red-900/30 bg-black/80 py-8 text-center text-slate-500 text-sm space-y-3">
-    <p class="text-slate-300 italic text-sm max-w-2xl mx-auto px-4">
-      &ldquo;The strength of the team is each individual member. The strength of each member is the team.&rdquo;
-      <span class="not-italic text-red-400 font-medium">— Phil Jackson</span>
-    </p>
-    <p>© 2026 Team NeNoX Forge • Built for University Hackathons</p>
-    <p class="text-red-500/80 uppercase text-xs tracking-widest font-semibold">Build on NeNoX Heart to ace competition</p>
-  </footer>
-
-</div>
-
-<script>
-/* ---------- LOGO VIDEOS: play the instant data is ready (no autoplay lag) ----------
-   The autoplay attribute asks the browser to play, but on mobile it can start lazily.
-   This nudges every logo.mp4 video the exact millisecond it can play. */
-(function(){
-  const kick=v=>{try{const p=v.play();if(p&&typeof p.catch==='function')p.catch(()=>{});}catch(_){}};
-  const arm=()=>{
-    document.querySelectorAll('video[src="logo.mp4"]').forEach(v=>{
-      if(v.readyState>=2)kick(v);
-      else v.addEventListener('canplay',()=>kick(v),{once:true});
-    });
-  };
-  arm();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm);
-  window.addEventListener('load',arm);
-})();
-</script>
-
-<script>
-/* ---------- SPLASH: ~2.75-second brand intro, then reveals the site ---------- */
-(function(){
-  const splash=document.getElementById('splash-screen');
-  if(!splash)return;
-  const t0=performance.now();
-  const SHOW=2750, CAP=12000;
-  let hidden=false, loaded=document.readyState==='complete';
-  function hide(){
-    if(hidden)return;
-    hidden=true;
-    splash.style.opacity='0';
-    splash.style.visibility='hidden';
-    setTimeout(()=>splash.remove(),650);
-  }
-  function maybeHide(){
-    if(!hidden&&loaded&&performance.now()-t0>=SHOW)hide();
-  }
-  window.addEventListener('load',()=>{loaded=true;maybeHide();});
-  setTimeout(maybeHide,SHOW);
-  setTimeout(hide,CAP);
-})();
-</script>
-
-
-
-
-
-<script>
-/* ---------- DEFERRED BACKGROUND VIDEO ---------- */
-document.addEventListener('DOMContentLoaded',()=>{
-  const bg=document.getElementById('bg-video');
-  const saveData=navigator.connection&&navigator.connection.saveData;
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!bg)return;
-  if(saveData||reduced){bg.remove();return;}
-
-  const kick=()=>{
-    if(!bg.isConnected||bg.src)return;
-    bg.src=bg.dataset.src;
-    bg.load();
-    bg.play().catch(()=>{});
-  };
-  if(document.readyState==='complete')setTimeout(kick,1200);
-  else window.addEventListener('load',()=>setTimeout(kick,1200));
-
-  new IntersectionObserver(entries=>entries.forEach(e=>{
-    if(!bg.isConnected)return;
-    if(e.isIntersecting)bg.play().catch(()=>{});else bg.pause();
-  }),{threshold:.05}).observe(bg);
-});
-</script>
-
-<!-- Mobile cards zoom on scroll (see #mobile-scroll-zoom). This tiny cleanup only
-     strips any stale zoom classes so cards never get stuck scaled. -->
-<script>
-(function(){
-  function clearZoom(){
-    document.querySelectorAll('.is-active,.is-pressed').forEach(function(el){
-      el.classList.remove('is-active');el.classList.remove('is-pressed');
-    });
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',clearZoom);
-  else clearZoom();
-  window.addEventListener('load',clearZoom);
-})();
-</script>
-
-<!-- PROJECTS + UPDATES: read project.md and updates.md from this same folder.
-     Keep these files beside index.html. If fetch is unavailable (e.g. opening via file://),
-     the built-in fallback content below is shown instead. -->
-<script>
-(function(){
-  const projectsTarget=document.getElementById('projects-list');
-  const updatesTarget=document.getElementById('recent-hackathons');
-  if(!projectsTarget||!updatesTarget)return;
-
-  const fallbackProjects=[
-    {title:'NeNoX Forge Website',status:'Active',description:"The collective's main digital platform for projects, activities, team roles, student opportunities and community updates.",tags:['WEB','UI/UX','COMMUNITY','HTML']},
-    {title:'NeNoX Forge Discord Server',status:'Under Development',description:'A Python-powered project for developing and supporting the NeNoX Forge Discord server.',tags:['DISCORD','UNDERDEVELOPMENT','PYTHON']},
-    {title:'AI-Assisted Cybersecurity Toolkit',status:'In Dev',description:'A student project exploring how AI can work alongside authorized Linux security tools such as Nmap to organize reconnaissance, explain results and improve security workflows.',tags:['AI','CYBERSECURITY','LINUX']}
-  ];
-  const fallbackUpdates=[
-    {title:'CRSU Hackathon 2026',type:'Event',date:'ONLINE · 05–18 OCT 2026',badge:'OPEN TO ALL',description:'A fully online two-stage hackathon. No specific college, degree or discipline is required, so participants can join from anywhere.',details:['TEAM: 1–3 | MODE: ONLINE','30 TEAMS → FINAL | DEADLINE: 05 OCT'],link:'https://events.romeojuliet.love/crsu-hackathon-2026',linkLabel:'Open Website'},
-    {title:'FirstHack 2026',type:'Event',date:'ONLINE · 22 OCT – 04 NOV 2026',badge:'STUDENT EVENT',description:'Open across branches and years for students in India, including CS, ECE, Mechanical, Commerce and Arts. Solo participation is allowed.',details:['TEAM: 1–4 | SOLO: YES','FEE: ₹400 | REG. CLOSES: 19 OCT'],link:'https://hackathon.firsthack.in/',linkLabel:'Open Website'},
-    {title:"HypneXis '26",type:'Event',date:'OFFLINE · 24–25 OCT 2026',badge:'APTITUDE TEST TONIGHT',description:'A 36-hour hackathon at Manipal University Jaipur with a ₹10L+ prize pool. Entry requires a 60-minute online aptitude challenge on Oct 16 from 6:00–11:59 PM; results are expected tomorrow. Open to UG and PG students from any stream.',details:['TEAM: 1–4 | SOLO: YES','FEE: ₹400 | REG. CLOSES: 19 OCT'],link:'https://unstop.com/competitions/hypnexis-2026-manipal-university-mu-jaipur-1711890',linkLabel:'Register and take the test'},
-    {title:'HackX 3.0',type:'Event',date:'OFFLINE · 30–31 OCT 2026',badge:'REGISTRATION CLOSED',description:'A 36-hour national hackathon at Manipal University Jaipur, with a ₹5L+ prize pool across 10 tracks, including AI/ML, cybersecurity and blockchain. Registrations closed Oct 12; check the event page in case they reopen.',details:['10 TRACKS | 2,000+ BUILDERS','50+ UNIVERSITIES | REG. CLOSED: 12 OCT'],link:'https://internshala.com/competitions/hackx-3-0/',linkLabel:'Check HackX 3.0'}
-  ];
-
-  function parseMarkdown(text){
-    const normalized=text.replace(/\r/g,'');
-    const sections=[];
-    let current=null;
-    normalized.split('\n').forEach(line=>{
-      const heading=line.match(/^##\s+(.+?)\s*$/);
-      if(heading){current={title:heading[1].trim(),fields:{}};sections.push(current);return;}
-      if(!current)return;
-      const field=line.match(/^\s*-\s*\*\*(.+?):\*\*\s*(.*?)\s*$/);
-      if(field){
-        const key=field[1].trim().toLowerCase();
-        (current.fields[key]||(current.fields[key]=[])).push(field[2].trim());
-      }
-    });
-    return sections;
-  }
-  function first(fields,key){return (fields[key]||[])[0]||'';}
-  function parseProjects(text){
-    return parseMarkdown(text).map(section=>({
-      title:section.title,
-      status:first(section.fields,'status'),
-      description:first(section.fields,'description'),
-      tags:(first(section.fields,'tags')||'').split(',').map(t=>t.trim()).filter(Boolean)
-    })).filter(p=>p.status&&p.description&&!/^example\s*:/i.test(p.title));
-  }
-  function parseUpdates(text){
-    return parseMarkdown(text).map(section=>{
-      const f=section.fields;
-      let link=first(f,'link');
-      const mdLink=link.match(/\[[^\]]*\]\((https?:\/\/[^)]+)\)/i);
-      if(mdLink)link=mdLink[1];
-      else {
-        const rawUrl=link.match(/https?:\/\/\S+/i);
-        link=rawUrl?rawUrl[0].replace(/[)>]+$/,''):'';
-      }
-      return {title:section.title,type:first(f,'type'),date:first(f,'date'),badge:first(f,'badge'),label:first(f,'label'),description:first(f,'description'),details:f.details||[],link,linkLabel:first(f,'link label')||'Open Website'};
-    }).filter(u=>u.type&&u.description&&!/^example\s*:/i.test(u.title));
-  }
-  function node(tag,className,text){
-    const n=document.createElement(tag);
-    if(className)n.className=className;
-    if(text!==undefined&&text!==null)n.textContent=text;
-    return n;
-  }
-  function renderProjects(items){
-    const frag=document.createDocumentFragment();
-    items.forEach(project=>{
-      const card=node('article','p-4 rounded-xl bg-black/50 border border-red-900/30');
-      const top=node('div','flex items-start justify-between gap-4');
-      const content=node('div','min-w-0');
-      content.append(node('h4','font-bold text-white text-base sm:text-lg',project.title));
-      content.append(node('p','text-slate-400 text-sm leading-relaxed mt-2',project.description));
-      const status=(project.status||'In Dev').trim();
-      const statusLower=status.toLowerCase();
-      const statusClass=statusLower==='active'
-        ?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-        :(statusLower.includes('dev')?'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20':'bg-slate-500/10 text-slate-300 border border-slate-500/20');
-      const badge=node('span','text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap '+statusClass,status);
-      top.append(content,badge);card.append(top);
-      if(project.tags&&project.tags.length){
-        const tags=node('div','mt-4 flex flex-wrap gap-2 text-[10px] font-bold text-slate-500');
-        project.tags.forEach(tag=>tags.append(node('span','px-2 py-1 rounded bg-white/5',tag)));
-        card.append(tags);
-      }
-      frag.append(card);
-    });
-    projectsTarget.replaceChildren(frag);
+  <!-- MAIN WEBSITE CONTENT -->
+  <div id="main-content" class="min-h-screen flex flex-col justify-between relative">
     
-  }
-  function renderUpdates(items){
-    const frag=document.createDocumentFragment();
-    items.forEach(update=>{
-      const card=node('article','card-lift p-4 rounded-xl bg-black/50 border border-red-900/30');
-      const top=node('div','flex items-start justify-between gap-3');
-      const heading=node('div','min-w-0');
-      const metaWrap=node('div','flex items-center gap-2');
-      metaWrap.append(node('span','w-2 h-2 rounded-full shrink-0 '+(/policy/i.test(update.type)?'bg-amber-400':'bg-blue-500')));
-      metaWrap.append(node('p','text-red-500 text-[10px] font-bold tracking-[0.15em] uppercase',update.date||update.label||update.type||'UPDATE'));
-      heading.append(metaWrap,node('h4','font-bold text-white mt-1',update.title));
-      top.append(heading);
-      const badgeText=update.badge||update.label;
-      if(badgeText){
-        const closed=/closed/i.test(badgeText);
-        top.append(node('span','shrink-0 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap '+(closed?'bg-red-500/10 text-red-400 border border-red-500/20':'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'),badgeText));
-      }
-      card.append(top,node('p','text-slate-400 text-xs leading-relaxed mt-2',update.description));
-      const detailParts=(update.details||[]).flatMap(value=>value.split('|').map(part=>part.trim())).filter(Boolean);
-      if(detailParts.length){
-        const details=node('div','grid grid-cols-2 gap-2 mt-3 text-[10px] text-slate-500');
-        detailParts.forEach(detail=>details.append(node('span','',detail)));
-        card.append(details);
-      }
-      if(update.link&&/^https?:\/\//i.test(update.link)){
-        const link=node('a','mt-3 inline-flex w-full justify-center px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors duration-150',((update.linkLabel||'Open Website')+' ↗'));
-        link.href=update.link;link.target='_blank';link.rel='noopener noreferrer';card.append(link);
-      }
-      frag.append(card);
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-black/80 border-b border-red-900/40">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        
+        <!-- Navbar Logo -->
+        <a href="intro.html" class="flex items-center space-x-3">
+          <video 
+            src="logo.mp4" 
+            autoplay 
+            loop 
+            muted 
+            playsinline 
+            class="h-10 w-10 rounded-full border border-red-600/60 object-cover shadow-sm">
+          </video>
+          <span class="font-bold text-xl tracking-wider text-white">NeNoX Forge</span>
+        </a>
+
+        <!-- Discord Button -->
+        <a 
+          href="https://discord.gg/tYzSBzRZGE" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="button-animate discord-button flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition-all shadow-lg shadow-indigo-600/30">
+          <i class="fa-brands fa-discord text-lg"></i>
+          <span class="hidden sm:inline">Join Discord</span>
+        </a>
+
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 overflow-hidden">
+      
+      <!-- BACKGROUND VIDEO WITH RED TINT OVERLAY -->
+      <video 
+        src="bg-video.mp4" 
+        autoplay 
+        loop 
+        muted 
+        playsinline 
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-60 filter blur-[1px]">
+      </video>
+
+      <!-- Crimson Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-red-950/40 z-0"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(185,28,28,0.15)_0%,transparent_70%)] z-0"></div>
+
+      <!-- 3-COLUMN REFERENCE GRID -->
+      <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- LEFT COLUMN: ABOUT / MISSION TEXT -->
+        <div class="lg:col-span-4 text-left space-y-4 bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-red-900/30 shadow-2xl">
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+            NeNoX Forge
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            We are building a dedicated team of students to compete—and win—in hackathons all year long. We won't micro-manage you, push you to care, or chase you for updates. We want self-driven builders who want to be here, collaborate, and execute on their own initiative.
+          </p>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed pt-2 border-t border-red-900/40">
+            Here's the deal: When you hit a wall or face a tough technical challenge, we've got your back with guidance and support. But the fire to show up and build has to come from you.
+          </p>
+          <p class="text-red-500 font-semibold text-xs sm:text-sm tracking-wide uppercase pt-1">
+            <span class="block mb-2">Caution :-</span>
+            <span class="block">we work aggressively ( Hyper Fast )</span>
+          </p>
+        </div>
+
+        <!-- CENTER COLUMN: HERO LOGO VIDEO -->
+        <div class="lg:col-span-4 flex justify-center items-center py-6">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-rose-700 rounded-full blur-xl opacity-50 group-hover:opacity-80 transition duration-1000"></div>
+            <video 
+              src="logo.mp4" 
+              autoplay 
+              loop 
+              muted 
+              playsinline 
+              class="relative h-64 w-64 sm:h-72 sm:w-72 rounded-full object-cover border-2 border-red-600/80 shadow-2xl shadow-red-900/50">
+            </video>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: ACTION LINKS & COMMUNITY -->
+        <div class="lg:col-span-4 flex flex-col justify-center space-y-6 pl-0 lg:pl-6">
+          
+          <!-- Discord Server Link -->
+          <a href="https://discord.gg/tYzSBzRZGE" target="_blank" rel="noopener noreferrer" class="button-animate hero-action-button discord-button group flex items-center space-x-4 bg-slate-900/80 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg backdrop-blur-sm">
+            <div class="w-12 h-12 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-brands fa-discord"></i>
+            </div>
+            <span class="text-xl font-bold text-white">
+              NeNoX Forge Server
+            </span>
+          </a>
+
+          <!-- Application Link -->
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="button-animate hero-action-button application-action-button group flex items-center space-x-4 bg-slate-900/80 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg backdrop-blur-sm">
+            <div class="application-icon-box w-12 h-12 rounded-lg bg-red-600/20 text-red-500 border border-red-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <span class="text-xl font-bold text-white">
+              Application Link
+            </span>
+          </a>
+
+          <!-- Team Details Link -->
+          <a href="#roles" class="button-animate hero-action-button team-details-action-button group flex items-center space-x-4 bg-slate-900/80 border border-red-900/40 p-4 rounded-xl transition-all shadow-lg backdrop-blur-sm">
+            <div class="team-details-icon-box w-12 h-12 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <span class="text-xl font-bold text-white">
+              Team Details
+            </span>
+          </a>
+
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ROLES SECTION -->
+    <section id="roles" class="max-w-7xl mx-auto px-6 py-24 border-t border-red-900/30 w-full">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-5xl font-extrabold text-white">Team Details & Open Roles</h2>
+        <p class="text-red-400/80 mt-3 text-lg">Detailed breakdown of specialized roles for our hackathon lineup</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- ROLE 1: Ethical Hacker -->
+        <div class="panel-animate role-panel bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Ethical Hacker / Security Specialist</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Linux, Bash, Nmap, Metasploit, Wireshark, Burp Suite, Network Security.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              You are the team's defensive shield and offensive strategist, securing endpoints, handling cloud deployments, and running exploit scripts under time constraints.
+            </p>
+          </div>
+          <!-- Sub-page Link for Role 1 -->
+          <a href="ethical-hacker.html" class="button-animate inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
+            <span>View Role Details</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+          </a>
+        </div>
+
+        <!-- ROLE 2: Frontend Developer -->
+        <div class="panel-animate role-panel bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-code"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Frontend Developer</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> React.js, Next.js, TypeScript, Tailwind CSS, WebSockets, State Management.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              You own client-side execution, translating raw prototypes into dynamic, production-ready web apps built for speed and live demonstrations.
+            </p>
+          </div>
+          <!-- Sub-page Link for Role 2 -->
+          <a href="frontend-developer.html" class="button-animate inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
+            <span>View Role Details</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+          </a>
+        </div>
+
+        <!-- ROLE 3: Backend Developer -->
+        <div class="panel-animate role-panel bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Backend Developer</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Python (FastAPI), Node.js, PostgreSQL, MongoDB, Redis, LLM Integration.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              You design server architectures, manage database schemas, connect machine learning pipelines, and ensure lightning-fast backend responses.
+            </p>
+          </div>
+          <!-- Sub-page Link for Role 3 -->
+          <a href="backend-developer.html" class="button-animate inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
+            <span>View Role Details</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+          </a>
+        </div>
+
+        <!-- ROLE 4: Research, Strategy & PM -->
+        <div class="panel-animate role-panel bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Research, Strategy & PM</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Agile, Problem Framing, Market Research, Pitch Strategy, Notion/Jira.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              You validate problem statements, align execution with competition rubrics, manage MVP sprint timelines, and sculpt winning pitch decks.
+            </p>
+          </div>
+          <!-- Sub-page Link for Role 4 -->
+          <a href="research-pm.html" class="button-animate inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
+            <span>View Role Details</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+          </a>
+        </div>
+
+        <!-- ROLE 5: UI/UX Designer & Product Lead -->
+        <div class="panel-animate role-panel bg-red-950/20 p-8 rounded-2xl border border-red-900/40 hover:border-red-600/80 transition-all backdrop-blur-sm flex flex-col justify-between group">
+          <div>
+            <div class="w-14 h-14 rounded-xl bg-red-600/10 border border-red-600/30 flex items-center justify-center text-red-500 text-2xl mb-6 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-palette"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">UI/UX Designer & Product Lead</h3>
+            <p class="text-slate-300 text-xs leading-relaxed mb-4">
+              <span class="font-bold text-red-400">Tech Stack:</span> Figma, Interactive Prototyping, Design Systems, Motion Graphics, Wireframing.
+            </p>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+              You craft high-fidelity prototypes, build design systems early in sprints, and design striking visual presentation slides that hook judges.
+            </p>
+          </div>
+          <!-- Sub-page Link for Role 5 -->
+          <a href="uiux-designer.html" class="button-animate inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-300 font-semibold text-sm transition-all hover:text-white">
+            <span>View Role Details</span>
+            <i class="fa-solid fa-arrow-right text-xs ml-2"></i>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FORGE ACTIVITY SECTION -->
+    <section id="activity" class="max-w-7xl mx-auto px-6 py-16 border-t border-red-900/30 w-full">
+      <div class="text-center mb-12">
+        <h2 class="text-xs sm:text-sm font-extrabold tracking-[0.35em] text-red-500 uppercase">Forge Activity</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-7 items-start">
+        <div class="panel-animate rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">01 / Projects</p>
+              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Projects</h3>
+            </div>
+            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
+              <i class="fa-solid fa-code"></i>
+            </div>
+          </div>
+          <div id="projects-list" class="space-y-3" aria-live="polite">
+            <p class="text-sm text-slate-400">Loading projects…</p>
+          </div>
+        </div>
+
+        <div class="panel-animate rounded-2xl border border-red-900/50 bg-red-950/20 p-6 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-[11px] font-bold tracking-[0.2em] text-red-500 uppercase">02 / Updates</p>
+              <h3 class="text-2xl font-extrabold text-white mt-1">Recent Updates</h3>
+            </div>
+            <div class="w-11 h-11 rounded-xl border border-red-800/60 bg-red-950/60 flex items-center justify-center text-red-500 text-xl">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+          </div>
+          <div id="updates-list" class="space-y-3" aria-live="polite">
+            <p class="text-sm text-slate-400">Loading updates…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPLICATION SECTION -->
+    <section id="apply" class="max-w-3xl mx-auto px-6 py-20 border-t border-red-900/30 w-full text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white">Apply for NeNoX Forge</h2>
+      <p class="text-slate-400 mt-3 text-lg mb-8">Ready to execute? Fill out our application form and join our Discord community.</p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="button-animate inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg shadow-red-600/30 text-lg">
+        <i class="fa-solid fa-paper-plane mrhttps://docs.google.com/forms/d/e/1FAIpQLSfmnMVp0bzTQPwQx21giPovY9UxyBOXO3R5dkxs4ajmG5xOhg/viewform?usp=header-3"></i> Open Application Form
+      </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-red-900/30 bg-black/80 py-8 text-center text-slate-500 text-sm space-y-3">
+      <p class="text-slate-300 italic text-sm max-w-2xl mx-auto px-4">
+        &ldquo;The strength of the team is each individual member. The strength of each member is the team.&rdquo; <span class="not-italic text-red-400 font-medium">— Phil Jackson</span>
+      </p>
+      <p>© 2026 Team NeNoX Forge • Built for University Hackathons</p>
+      <p class="text-red-500/80 uppercase text-xs tracking-widest font-semibold">Build on NeNoX Heart to ace competition</p>
+    </footer>
+
+  </div>
+
+  <!-- FLOATING MUSIC TOGGLE BUTTON -->
+  <button 
+    id="music-toggle" 
+    aria-label="Toggle Background Music"
+    class="button-animate fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-red-950/80 border border-red-900/60 text-slate-400 hover:text-white hover:bg-red-900/90 hover:scale-110 shadow-[0_0_20px_rgba(220,38,38,0.3)] transition-all duration-300 backdrop-blur-md group">
+    <i id="music-icon" class="fa-solid fa-music text-lg group-hover:rotate-12 transition-transform"></i>
+  </button>
+
+  <!-- AMBIENT AUDIO ELEMENT -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="ambient.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Splash Screen Control
+    window.addEventListener('load', () => {
+      const splashScreen = document.getElementById('splash-screen');
+      setTimeout(() => {
+        splashScreen.style.opacity = '0';
+        splashScreen.style.visibility = 'hidden';
+      }, 1500);
     });
-    updatesTarget.replaceChildren(frag);
-    
-  }
 
-  // Render instantly, then replace with the latest Markdown content when hosted.
-  renderProjects(fallbackProjects);
-  renderUpdates(fallbackUpdates);
-  Promise.allSettled([
-    fetch('project.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('project.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseProjects(text);if(items.length)renderProjects(items);}),
-    fetch('updates.md',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('updates.md HTTP '+r.status);return r.text();}).then(text=>{const items=parseUpdates(text);if(items.length)renderUpdates(items);})
-  ]).then(results=>{
-    results.forEach((result,index)=>{if(result.status==='rejected')console.info((index===0?'project.md':'updates.md')+' could not be loaded; using built-in fallback content.',result.reason);});
-  });
-})();
-</script>
+    // Background Audio Control
+    document.addEventListener('DOMContentLoaded', () => {
+      const music = document.getElementById('bg-music');
+      const musicBtn = document.getElementById('music-toggle');
+      const musicIcon = document.getElementById('music-icon');
 
-<!-- Tailwind Play CDN loads LAST so it can never delay the splash / logo first paint -->
-<script src="https://cdn.tailwindcss.com"></script>
+      function parseMarkdownCards(markdown) {
+        return markdown.split(/^##\s+/m).slice(1).map(section => {
+          const lines = section.split(/\r?\n/);
+          const card = { title: lines[0].trim(), fields: {} };
 
-<!-- NeNoX Forge site-wide ambient music: no visible player; resumes across HTML pages. -->
-<audio id="nenox-ambient-audio" preload="auto" loop playsinline>
-  <source src="ambient.mp3" type="audio/mpeg">
-</audio>
-<script>
-(function () {
-  const audio = document.getElementById('nenox-ambient-audio');
-  if (!audio) return;
-  const KEY_TIME = 'nenoxAmbientTime';
-  const KEY_WANTED = 'nenoxAmbientWanted';
-  audio.volume = 0.5;
-  try {
-    const savedTime = Number(sessionStorage.getItem(KEY_TIME));
-    if (Number.isFinite(savedTime) && savedTime > 0) {
-      audio.addEventListener('loadedmetadata', function restorePosition() {
-        try {
-          if (Number.isFinite(audio.duration) && audio.duration > 0) {
-            audio.currentTime = savedTime % audio.duration;
-          } else {
-            audio.currentTime = savedTime;
+          lines.slice(1).forEach(line => {
+            const fieldMatch = line.match(/^\s*-\s+\*\*([^*]+):\*\*\s*(.*)$/);
+            if (!fieldMatch) return;
+            const key = fieldMatch[1].trim().toLowerCase();
+            if (!card.fields[key]) card.fields[key] = [];
+            card.fields[key].push(fieldMatch[2].trim());
+          });
+
+          return card;
+        }).filter(card => card.title);
+      }
+
+      function field(card, name) {
+        return card.fields[name] || [];
+      }
+
+      function element(tag, className, text) {
+        const node = document.createElement(tag);
+        node.className = className;
+        if (text) node.textContent = text;
+        return node;
+      }
+
+      function renderProjects(cards, container) {
+        container.replaceChildren();
+        if (!cards.length) {
+          container.append(element('p', 'text-sm text-slate-400', 'No projects have been listed yet.'));
+          return;
+        }
+
+        cards.forEach(card => {
+          const item = element('article', 'panel-animate rounded-xl border border-red-950 bg-black/60 p-4');
+          const header = element('div', 'flex items-start justify-between gap-3');
+          header.append(element('h4', 'text-base sm:text-lg font-bold text-white', card.title));
+
+          const status = field(card, 'status')[0];
+          if (status) {
+            header.append(element('span', 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400', status));
           }
-        } catch (_) {}
-      }, { once: true });
-    }
-    if (sessionStorage.getItem(KEY_WANTED) !== 'false') sessionStorage.setItem(KEY_WANTED, 'true');
-  } catch (_) {}
+          item.append(header);
 
-  let unlocked = false; // true once playback has actually begun
-  let trying = false;   // a play() attempt is currently in flight
-  const GESTURES = ['pointerdown', 'touchstart', 'keydown', 'click'];
-  function detach() {
-    GESTURES.forEach(function (n) { document.removeEventListener(n, onGesture); });
-    document.removeEventListener('visibilitychange', onVis);
-  }
-  function tryPlay() {
-    if (unlocked) return;
-    if (!audio.paused) { unlocked = true; detach(); return; }
-    if (trying) return; // a pending play() will resolve/reject on its own; don't pile on
-    trying = true;
-    let p;
-    try { p = audio.play(); } catch (_) { trying = false; return; }
-    if (p && typeof p.then === 'function') {
-      p.then(function () {
-        trying = false; unlocked = true; detach();
-        try { sessionStorage.setItem(KEY_WANTED, 'true'); } catch (_) {}
-      }).catch(function () {
-        trying = false;
-        tryMutedAutoplay(); // audible blocked: fall back to muted start + lift
-      });
-    } else { trying = false; }
-  }
-  // Phones block audible autoplay until a tap, but muted autoplay is always
-  // allowed. So: start muted at the 4s mark, then lift the mute shortly after
-  // the sound actually begins. On most Android phones this yields music with
-  // no tap at all; where the browser still insists, the first tap finishes it.
-  function tryMutedAutoplay() {
-    if (unlocked || trying || !audio.paused) return;
-    trying = true;
-    audio.muted = true;
-    let p;
-    try { p = audio.play(); } catch (_) { trying = false; audio.muted = false; return; }
-    Promise.resolve(p).then(function () {
-      window.setTimeout(function () {
-        trying = false;
-        audio.muted = false;
-        // Audibility can't be verified programmatically, so the gesture
-        // listeners stay: the first real tap guarantees sound via tryPlay.
-      }, 700);
-    }).catch(function () { trying = false; audio.muted = false; });
-  }
-  function onGesture() { audio.muted = false; tryPlay(); }
-  function onVis() { if (!document.hidden) tryPlay(); }
-  GESTURES.forEach(function (n) { document.addEventListener(n, onGesture, { passive: true }); });
-  document.addEventListener('visibilitychange', onVis);
-  audio.addEventListener('playing', function () { unlocked = true; trying = false; detach(); });
+          const description = field(card, 'description')[0];
+          if (description) item.append(element('p', 'mt-2 text-sm leading-relaxed text-slate-400', description));
 
-  // Start automatically 4 seconds after the page loads, on both mobile and
-  // desktop. If the browser blocks audible autoplay (phones always do until
-  // the first tap), the gesture listeners above start it on first touch.
-  function scheduleStart() { window.setTimeout(tryPlay, 4000); }
-  if (document.readyState === 'complete') scheduleStart();
-  else window.addEventListener('load', scheduleStart, { once: true });
+          const tags = field(card, 'tags').flatMap(value => value.split(',')).map(tag => tag.trim()).filter(Boolean);
+          if (tags.length) {
+            const tagList = element('div', 'mt-3 flex flex-wrap gap-2');
+            tags.forEach(tag => tagList.append(element('span', 'rounded bg-white/5 px-2 py-1 text-[10px] font-semibold text-slate-400', tag)));
+            item.append(tagList);
+          }
 
-  // Preserve the track position between pages in the same tab. Closing the tab ends playback.
-  window.addEventListener('pagehide', function () {
-    try {
-      if (Number.isFinite(audio.currentTime)) sessionStorage.setItem(KEY_TIME, String(audio.currentTime));
-      sessionStorage.setItem(KEY_WANTED, 'true');
-    } catch (_) {}
-  });
-})();
-</script>
-<!-- Mobile-first finishing pass: comfortable phone spacing, readable type, and no sideways overflow. -->
-<style id="professional-phone-layout">
-@media (max-width: 767px) {
-  html, body { width:100%; max-width:100%; overflow-x:clip; }
-  body { min-width:0; }
-  #main-content, main, section, footer, header { min-width:0; max-width:100%; }
-  #main-content nav { padding-left:1rem !important; padding-right:1rem !important; }
-  #hero-section {
-    min-height:auto !important;
-    padding:1.25rem 1rem 2.25rem !important;
-    box-sizing:border-box !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl {
-    width:100% !important;
-    max-width:34rem !important;
-    margin:0 auto !important;
-    padding:0 !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:stretch !important;
-    justify-content:center !important;
-    gap:1.25rem !important;
-    box-sizing:border-box !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child,
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    margin:0 !important;
-    padding:0 !important;
-    box-sizing:border-box !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:first-child {
-    order:1 !important;
-  }
-  #hero-section #logo-stage {
-    order:2 !important;
-    width:min(70vw, 17rem) !important;
-    max-width:17rem !important;
-    margin:0 auto !important;
-    padding:0 !important;
-    position:relative !important;
-    inset:auto !important;
-    transform:none !important;
-    box-sizing:border-box !important;
-  }
-  #hero-section #hero-logo {
-    display:block !important;
-    width:100% !important;
-    max-width:100% !important;
-    height:auto !important;
-    aspect-ratio:1 / 1 !important;
-    margin:0 auto !important;
-    border-radius:50% !important;
-    object-fit:cover !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child {
-    order:3 !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:stretch !important;
-    gap:.8rem !important;
-  }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link {
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    margin:0 !important;
-    padding:1rem !important;
-    box-sizing:border-box !important;
-  }
-  #hero-section h1 { font-size:clamp(2.1rem, 10vw, 3.3rem) !important; line-height:1.04 !important; overflow-wrap:anywhere; }
-  #hero-section p { font-size:1rem !important; line-height:1.65 !important; overflow-wrap:anywhere; }
-  #hero-section img, #hero-section video, #hero-section canvas { max-width:100%; }
-  .tilt-stage { width:100% !important; max-width:100% !important; }
-  .island-wrap { right:.75rem !important; bottom:calc(.75rem + env(safe-area-inset-bottom, 0px)) !important; }
-  .island-wrap[data-open="true"], .island-wrap[data-open="true"] .island { width:min(320px, calc(100vw - 1.5rem)) !important; }
-  .defer-render { contain-intrinsic-size:1px 500px; }
-  /* Keep grids and cards within the phone viewport. */
-  [class*="grid-cols-"] { min-width:0; }
-  .action-link, .card-lift, .panel-zoom { max-width:100%; box-sizing:border-box; }
-  footer { padding-left:1rem !important; padding-right:1rem !important; }
-}
-@media (max-width: 380px) {
-  #hero-section { padding-left:.75rem !important; padding-right:.75rem !important; }
-  #hero-section > .relative.z-10.max-w-7xl { gap:1rem !important; }
-  #hero-section #logo-stage { width:min(66vw, 14rem) !important; }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link { padding:.85rem !important; }
-}
-@media (min-width:768px) and (max-width:1023px) {
-  #hero-section { padding:2rem 1.5rem !important; }
-  #hero-section > .relative.z-10.max-w-7xl { width:100% !important; max-width:46rem !important; margin-inline:auto !important; gap:1.5rem !important; }
-  #hero-section > .relative.z-10.max-w-7xl > div:last-child > .action-link { width:100% !important; max-width:none !important; margin:0 !important; }
-}
-</style>
+          container.append(item);
+        });
+      }
 
+      function renderUpdates(cards, container) {
+        container.replaceChildren();
+        if (!cards.length) {
+          container.append(element('p', 'text-sm text-slate-400', 'No updates have been listed yet.'));
+          return;
+        }
 
-<script id="nenox-persistent-navigation">
-/* Persistent site navigation: keep the same audio element alive while internal HTML pages change. */
-(function () {
-  if (window.__nenoxPersistentNavigationInstalled) return;
-  window.__nenoxPersistentNavigationInstalled = true;
-  var audio = document.getElementById('nenox-ambient-audio');
-  if (!audio) return;
-  // Keep the media element outside the replaceable page body so navigation never resets it.
-  document.head.appendChild(audio);
-  document.querySelectorAll('head style, head link[rel="stylesheet"]').forEach(function (node) { node.setAttribute('data-nenox-page-style', 'true'); });
+        cards.forEach(card => {
+          const isPolicy = (field(card, 'type')[0] || '').toLowerCase() === 'policy';
+          const item = element('article', 'panel-animate rounded-xl border border-red-950 bg-black/60 p-4');
 
-  function isLocalHtmlLink(link) {
-    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return false;
-    var raw = link.getAttribute('href');
-    if (!raw || raw.charAt(0) === '#' || /^(mailto:|tel:|javascript:|data:)/i.test(raw)) return false;
-    var url;
-    try { url = new URL(raw, window.location.href); } catch (_) { return false; }
-    return url.origin === window.location.origin && /\.html?$/i.test(url.pathname) && !url.searchParams.has('fullreload');
-  }
+          if (isPolicy) {
+            const heading = element('div', 'flex items-center gap-2');
+            heading.append(element('span', 'h-2 w-2 rounded-full bg-yellow-400'));
+            heading.append(element('p', 'text-[10px] font-extrabold tracking-[0.18em] text-yellow-400 uppercase', field(card, 'label')[0] || 'Policy'));
+            item.append(heading);
+            item.append(element('h4', 'mt-2 text-sm font-bold text-white', card.title));
+            const description = field(card, 'description')[0];
+            if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
+            container.append(item);
+            return;
+          }
 
-  async function renderPage(url, addHistory) {
-    var response = await fetch(url.href, { credentials: 'same-origin' });
-    if (!response.ok) throw new Error('Page request failed: ' + response.status);
-    var html = await response.text();
-    var nextDoc = new DOMParser().parseFromString(html, 'text/html');
-    if (!nextDoc.body || !nextDoc.body.children.length) throw new Error('Page content was empty');
+          const header = element('div', 'flex items-start justify-between gap-3');
+          header.append(element('p', 'text-[10px] font-extrabold tracking-[0.16em] text-red-500 uppercase', field(card, 'date')[0] || 'Update'));
+          const badge = field(card, 'badge')[0];
+          if (badge) {
+            const badgeClass = /student/i.test(badge)
+              ? 'shrink-0 rounded-full border border-yellow-900/70 bg-yellow-950/50 px-2.5 py-1 text-[10px] font-bold text-yellow-400'
+              : 'shrink-0 rounded-full border border-emerald-900/70 bg-emerald-950/50 px-2.5 py-1 text-[10px] font-bold text-emerald-400';
+            header.append(element('span', badgeClass, badge));
+          }
+          item.append(header);
+          item.append(element('h4', 'mt-1 text-base font-bold text-white', card.title));
 
-    var nextAudio = nextDoc.getElementById('nenox-ambient-audio');
-    if (!nextAudio) throw new Error('Persistent audio element missing from destination page');
+          const description = field(card, 'description')[0];
+          if (description) item.append(element('p', 'mt-2 text-xs leading-relaxed text-slate-400', description));
 
-    if (addHistory) history.pushState({ nenoxPage: true }, '', url.pathname + url.search + url.hash);
-    document.title = nextDoc.title || document.title;
-    document.documentElement.className = nextDoc.documentElement.className || '';
-    document.body.className = nextDoc.body.className || '';
+          const details = field(card, 'details');
+          if (details.length) {
+            const detailList = element('div', 'mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2');
+            details.forEach(detail => detail.split('|').map(value => value.trim()).filter(Boolean).forEach(value => {
+              detailList.append(element('p', 'text-[9px] font-medium uppercase tracking-wide text-slate-500', value));
+            }));
+            item.append(detailList);
+          }
 
-    // Swap page-specific CSS while leaving loaded JavaScript libraries and the audio untouched.
-    document.querySelectorAll('head style[data-nenox-page-style], head link[data-nenox-page-style]').forEach(function (node) { node.remove(); });
-    Array.from(nextDoc.head.querySelectorAll('style, link[rel="stylesheet"]')).forEach(function (node) {
-      var clone = node.cloneNode(true);
-      clone.setAttribute('data-nenox-page-style', 'true');
-      document.head.appendChild(clone);
-    });
+          const link = field(card, 'link')[0];
+          if (link) {
+            try {
+              const url = new URL(link);
+              if (url.protocol === 'https:' || url.protocol === 'http:') {
+                const anchor = element('a', 'button-animate mt-3 flex w-full items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-red-700', field(card, 'link label')[0] || 'Learn more ↗');
+                anchor.href = url.href;
+                anchor.target = '_blank';
+                anchor.rel = 'noopener noreferrer';
+                item.append(anchor);
+              }
+            } catch (error) {
+              console.error(`Invalid update link in "${card.title}".`, error);
+            }
+          }
 
-    // Keep the original audio element in <head>; only replace visible page content.
-    Array.from(document.body.childNodes).forEach(function (node) { node.remove(); });
-    Array.from(nextDoc.body.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && (node.id === 'nenox-ambient-audio' || node.id === 'nenox-persistent-navigation')) return;
-      if (node.nodeType === 1 && node.tagName === 'SCRIPT') return;
-      document.body.appendChild(document.importNode(node, true));
-    });
+          container.append(item);
+        });
+      }
 
-    // Re-run page-local inline scripts, excluding the music initializer and navigation controller.
-    var scripts = Array.from(nextDoc.body.querySelectorAll('script:not([src])'));
-    scripts.forEach(function (oldScript) {
-      var code = oldScript.textContent || '';
-      if (oldScript.id === 'nenox-persistent-navigation' || code.indexOf("getElementById('nenox-ambient-audio')") !== -1 || code.indexOf('getElementById("nenox-ambient-audio")') !== -1) return;
-      var fresh = document.createElement('script');
-      if (oldScript.type) fresh.type = oldScript.type;
-      fresh.textContent = code;
-      document.body.appendChild(fresh);
-      fresh.remove();
-    });
-
-    // Re-fire readiness for page scripts that initialize from DOMContentLoaded.
-    document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    window.dispatchEvent(new Event('nenox:pagechange'));
-  }
-
-  document.addEventListener('click', function (event) {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    var link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
-    if (!isLocalHtmlLink(link)) return;
-    var url = new URL(link.href, window.location.href);
-    if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
-    event.preventDefault();
-    renderPage(url, true).catch(function (error) {
-      console.warn('NeNoX seamless navigation fallback:', error);
-      window.location.href = url.href;
-    });
-  });
-
-  window.addEventListener('popstate', function () {
-    renderPage(new URL(window.location.href), false).catch(function () { window.location.reload(); });
-  });
-})();
-</script>
-<script>
-/* In-page anchors (e.g. Team Details -> #roles): smooth scroll to the section
-   (user request). The scroll-margin-top offset keeps the sticky navbar clear
-   of the heading. */
-(function(){
-  document.addEventListener('click',function(e){
-    var a=e.target&&e.target.closest?e.target.closest('a[href^="#"]'):null;
-    if(!a)return;
-    var id=a.getAttribute('href').slice(1);
-    if(!id)return;
-    var t=document.getElementById(id);
-    if(!t)return;
-    e.preventDefault();
-    try{history.replaceState(null,'','#'+id);}catch(_){}
-    t.scrollIntoView({behavior:(id==='roles'?'smooth':'auto'),block:'start'});
-  });
-})();
-</script>
-<script>
-/* Mobile scroll zoom: every card (including cards injected later inside the
-   panels and lists) rests slightly zoomed-out; scrolling it into view
-   smoothly zooms it to full size, scrolling away zooms it back out. Cards
-   entering together cascade with a tiny stagger. Touch-only, transform-only,
-   reduced-motion respected. */
-(function(){
-  if(!window.matchMedia)return;
-  var touch=matchMedia('(hover: none), (pointer: coarse)').matches;
-  var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!touch||reduced||!('IntersectionObserver' in window))return;
-  var SEL='.action-link,.card-lift,.panel-zoom,#projects-list>*,#recent-hackathons>*';
-  var seen=new WeakSet();
-  var io=new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      en.target.classList.toggle('in-view',en.isIntersecting);
-    });
-  },{threshold:.2,rootMargin:'0px 0px -5% 0px'});
-  function watch(root){
-    var els=root.querySelectorAll?root.querySelectorAll(SEL):[];
-    for(var i=0;i<els.length;i++)add(els[i]);
-    if(root.nodeType===1&&root.matches&&root.matches(SEL))add(root);
-  }
-  function add(el){
-    if(seen.has(el))return;
-    seen.add(el);
-    var idx=el.parentNode?Array.prototype.indexOf.call(el.parentNode.children,el):0;
-    /* Cards nested in the update/project lists start their zoom a beat after
-       their panel, so the two animations read as a clear sequence. */
-    var nested=el.parentNode&&(el.parentNode.id==='projects-list'||el.parentNode.id==='recent-hackathons');
-    el.style.setProperty('--sz-d',(nested?140:0)+Math.min(Math.max(idx,0),3)*70+'ms');
-    el.classList.add('scroll-zoom');
-    io.observe(el);
-  }
-  watch(document);
-  if('MutationObserver' in window){
-    new MutationObserver(function(muts){
-      for(var m=0;m<muts.length;m++){
-        var nodes=muts[m].addedNodes;
-        for(var n=0;n<nodes.length;n++){
-          if(nodes[n].nodeType===1)watch(nodes[n]);
+      async function loadMarkdown(file, container, render) {
+        try {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+          render(parseMarkdownCards(await response.text()), container);
+        } catch (error) {
+          console.error(`Unable to load ${file}.`, error);
+          container.replaceChildren(element('p', 'text-sm text-red-400', `Unable to load ${file}. Check that the file is available and the page is served over HTTP or HTTPS.`));
         }
       }
-    }).observe(document.body,{childList:true,subtree:true});
-  }
-})();
-</script>
+
+      loadMarkdown('project.md', document.getElementById('projects-list'), renderProjects);
+      loadMarkdown('updates.md', document.getElementById('updates-list'), renderUpdates);
+
+      music.volume = 0.3;
+      let isPlaying = false;
+
+      function toggleMusic() {
+        if (isPlaying) {
+          music.pause();
+          musicIcon.className = 'fa-solid fa-music text-lg text-slate-400';
+        } else {
+          music.play().then(() => {
+            musicIcon.className = 'fa-solid fa-compact-disc text-lg text-red-400 animate-spin';
+          }).catch(err => {
+            console.log("Autoplay prevented:", err);
+          });
+        }
+        isPlaying = !isPlaying;
+      }
+
+      musicBtn.addEventListener('click', toggleMusic);
+    });
+  </script>
+
 </body>
 </html>
-<!-- Fine alignment: move the complete desktop logo stage another ~0.5 cm toward the action cards (about 38 px total from the previous baseline). -->
-
-
-<!-- Final visual balance: place the logo midway between the left intro and right action cards. -->
-
-
-<!-- Fine alignment: shift the logo 0.2 cm right from the previous position on desktop. -->
-
-
-<!-- Final layout: center the complete hero composition in the viewport, with balanced left/right columns. -->
